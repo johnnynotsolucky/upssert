@@ -44,24 +44,7 @@
 						"required": ["url", "method"]
 					},
 					"response": {
-						"type": "object",
-						"properties": {
-							"content-type": {
-								"type": "string"
-							},
-							"status": {
-								"type": "object"
-							},
-							"header": {
-								"type": "object"
-							},
-							"response-time": {
-								"type": "object"
-							},
-							"body": {
-								"type": "object"
-							}
-						}
+						"type": "object"
 					}
 				},
 				"required": ["name", "request"]

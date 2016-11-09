@@ -1,6 +1,6 @@
-const main = require('./lib/executeTestCase');
+import main from './lib/executeTestCase';
 
-module.exports = main({
+export default main({
   name: 'Test',
   workflow: [
     {
@@ -11,12 +11,14 @@ module.exports = main({
       },
       response: {
         'content-type': 'application/json',
-        'status': {
-          'is-at-least': 200,
-          'is-below': 300,
+        'status-code': {
+          'equal': 200,
         },
-        'response-time': {
-          'is-below': 400
+        'timing.dns-resolution': {
+          'is-below': 1,
+        },
+        'timing.total': {
+          'is-below': 500
         }
       }
     },
@@ -31,7 +33,7 @@ module.exports = main({
     console.log('ValidationError');
   } else if (err.name === 'AssertionError') {
     console.log(err.message);
-  } else {
-    console.log(err);
+  } else if (err.name === 'ErrorContainer') {
+    err.errors.forEach((error) => console.log(error.message));
   }
 });
