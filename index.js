@@ -35,5 +35,7 @@ export default main({
     console.log(err.message);
   } else if (err.name === 'ErrorContainer') {
     err.errors.forEach((error) => console.log(error.message));
+  } else {
+    console.log(err);
   }
 });
