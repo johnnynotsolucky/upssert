@@ -17,6 +17,8 @@
   },
   "homepage": "https://github.com/johnnynotsolucky/frigg#readme",
   "devDependencies": {
+    "babel-cli": "^6.18.0",
+    "babel-preset-es2016": "^6.16.0",
     "chai": "^3.5.0",
     "mocha": "^3.1.2"
   },
