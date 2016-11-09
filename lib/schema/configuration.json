@@ -24,7 +24,12 @@
 							},
 							"method": {
 								"type": "string",
-								"enum": ["POST", "GET", "PUT", "PATCH", "DELETE"]
+								"enum": ["POST",
+									"GET",
+									"PUT",
+									"PATCH",
+									"DELETE",
+									"HEAD"]
 							},
 							"headers": {
 								"type": "object"
