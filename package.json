@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "REST endpoint test framework",
   "main": "index.js",
+  "bin": "./bin/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -18,6 +19,7 @@
   "homepage": "https://github.com/johnnynotsolucky/frigg#readme",
   "devDependencies": {
     "babel-cli": "^6.18.0",
+    "babel-preset-es2015": "^6.18.0",
     "babel-preset-es2016": "^6.16.0",
     "babel-preset-stage-0": "^6.16.0",
     "chai": "^3.5.0",
@@ -28,6 +30,7 @@
     "chai": "^3.5.0",
     "falsy": "0.0.2",
     "httpstat": "^1.3.0",
+    "minimist": "^1.2.0",
     "tv4": "^1.2.7"
   }
 }

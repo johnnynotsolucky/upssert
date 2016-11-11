@@ -8,13 +8,16 @@
 		"base-url": {
 			"type": "string"
 		},
-		"workflow": {
+		"steps": {
 			"type": "array",
 			"items": {
 				"type": "object",
 				"properties": {
 					"name": {
 						"type": "string"
+					},
+					"needs-previous-step": {
+						"type": "boolean"
 					},
 					"request": {
 						"type": "object",
