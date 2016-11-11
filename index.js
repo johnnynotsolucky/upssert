@@ -53,6 +53,7 @@ function run() {
   runner.on('suite.step.end', () => console.log('suite.step.end'));
   runner.on('suite.step.pass', () => console.log('suite.step.pass'));
   runner.on('suite.step.fail', (obj, err) => console.log('suite.step.fail', err));
+  runner.on('suite.step.count', (count) => console.log('suite.step.count', count));
   runner.run();
 }
 
