@@ -1,5 +1,5 @@
 {
-  "name": "frigg",
+  "name": "upssert",
   "version": "0.0.1",
   "description": "REST endpoint test framework",
   "main": "./dist/index.js",
