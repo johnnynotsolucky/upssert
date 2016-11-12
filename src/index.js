@@ -1,3 +1,4 @@
+import 'babel-polyfill';
 import Runner from './lib/runner';
 import TAP from './lib/reporter/tap';
 

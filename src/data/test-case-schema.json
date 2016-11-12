@@ -1,0 +1,58 @@
+{
+	"title": "Configuration Schema",
+	"type": "object",
+	"properties": {
+		"name": {
+			"type": "string"
+		},
+		"base-url": {
+			"type": "string"
+		},
+		"steps": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"needs-previous-step": {
+						"type": "boolean"
+					},
+					"request": {
+						"type": "object",
+						"properties": {
+							"url": {
+								"type": "string"
+							},
+							"method": {
+								"type": "string",
+								"enum": ["POST",
+									"GET",
+									"PUT",
+									"PATCH",
+									"DELETE",
+									"HEAD"]
+							},
+							"headers": {
+								"type": "object"
+							},
+							"query": {
+								"type": "object"
+							},
+							"data": {
+								"type": "object"
+							}
+						},
+						"required": ["url", "method"]
+					},
+					"response": {
+						"type": "object"
+					}
+				},
+				"required": ["name", "request"]
+			}
+		}
+	},
+	"required": ["name"]
+}
