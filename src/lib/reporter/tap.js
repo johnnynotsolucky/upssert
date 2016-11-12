@@ -4,6 +4,7 @@ import events from '../../data/events.json';
 class TAP {
   constructor(runner) {
     this.stepCount = 0;
+    this.assertionCount = 0;
     this.passes = 0;
     this.fails = 0;
     this.tests = 1;
@@ -12,15 +13,19 @@ class TAP {
 
   bindHandlers(runner) {
     runner.on(events.SUITE_STEP_COUNT, this::this.handleCount);
+    runner.on(events.SUITE_ASSERTION_COUNT, this::this.handleAssertCount);
     runner.on(events.START, this::this.handleStart);
     runner.on(events.SUITE_STEP_PASS, this::this.handleStepPass);
     runner.on(events.SUITE_STEP_FAIL, this::this.handleStepFail);
-    runner.on(events.SUITE_STEP_END, this::this.handleStepEnd);
     runner.on(events.END, this::this.handleEnd);
   }
 
   handleCount(count) {
     this.stepCount += count;
+  }
+
+  handleAssertCount(count) {
+    this.assertionCount += count;
   }
 
   handleStart() {
@@ -41,14 +46,11 @@ class TAP {
     }
   }
 
-  handleStepEnd() {
-    this.tests++;
-  }
-
   handleEnd() {
-    console.log('# tests ' + this.tests);
+    console.log(`# tests ${this.stepCount}`);
     console.log('# pass ' + this.passes);
     console.log('# fail ' + this.fails);
+    console.log(`# assertions ${this.assertionCount}`);
   }
 
   name(step) {

@@ -27,7 +27,8 @@ function run() {
       response: {
         'content-type': 'application/json',
         'status-code': {
-          'equal': 200
+          'equal': 200,
+          'is-at-least': 199
         },
         'timing.dns-resolution': {
           'is-below': 100

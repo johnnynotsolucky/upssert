@@ -19,6 +19,7 @@ var TAP = function () {
     _classCallCheck(this, TAP);
 
     this.stepCount = 0;
+    this.assertionCount = 0;
     this.passes = 0;
     this.fails = 0;
     this.tests = 1;
@@ -29,16 +30,21 @@ var TAP = function () {
     key: 'bindHandlers',
     value: function bindHandlers(runner) {
       runner.on(_events2.default.SUITE_STEP_COUNT, this.handleCount.bind(this));
+      runner.on(_events2.default.SUITE_ASSERTION_COUNT, this.handleAssertCount.bind(this));
       runner.on(_events2.default.START, this.handleStart.bind(this));
       runner.on(_events2.default.SUITE_STEP_PASS, this.handleStepPass.bind(this));
       runner.on(_events2.default.SUITE_STEP_FAIL, this.handleStepFail.bind(this));
-      runner.on(_events2.default.SUITE_STEP_END, this.handleStepEnd.bind(this));
       runner.on(_events2.default.END, this.handleEnd.bind(this));
     }
   }, {
     key: 'handleCount',
     value: function handleCount(count) {
       this.stepCount += count;
+    }
+  }, {
+    key: 'handleAssertCount',
+    value: function handleAssertCount(count) {
+      this.assertionCount += count;
     }
   }, {
     key: 'handleStart',
@@ -61,16 +67,12 @@ var TAP = function () {
       }
     }
   }, {
-    key: 'handleStepEnd',
-    value: function handleStepEnd() {
-      this.tests++;
-    }
-  }, {
     key: 'handleEnd',
     value: function handleEnd() {
-      console.log('# tests ' + this.tests);
+      console.log('# tests ' + this.stepCount);
       console.log('# pass ' + this.passes);
       console.log('# fail ' + this.fails);
+      console.log('# assertions ' + this.assertionCount);
     }
   }, {
     key: 'name',
