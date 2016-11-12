@@ -6,7 +6,7 @@ function run() {
       { name: 'Test',
         steps: [
           {
-            name: 'Something',
+            name: 'Something#hmmm',
             request: {
               url: 'https://httpbin.org/get?a=b',
               method: 'GET'
