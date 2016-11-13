@@ -23,6 +23,7 @@ var TAP = function () {
     this.passes = 0;
     this.fails = 0;
     this.tests = 1;
+    this.bail = false;
     this.bindHandlers(runner);
   }
 
@@ -34,6 +35,7 @@ var TAP = function () {
       runner.on(_events2.default.START, this.handleStart.bind(this));
       runner.on(_events2.default.SUITE_STEP_PASS, this.handleStepPass.bind(this));
       runner.on(_events2.default.SUITE_STEP_FAIL, this.handleStepFail.bind(this));
+      runner.on(_events2.default.SUITE_FAIL, this.handleSuiteFail.bind(this));
       runner.on(_events2.default.END, this.handleEnd.bind(this));
     }
   }, {
@@ -49,30 +51,59 @@ var TAP = function () {
   }, {
     key: 'handleStart',
     value: function handleStart() {
-      console.log('%d..%d', 1, this.stepCount);
+      var _this = this;
+
+      this.runIfNotBailed(function () {
+        console.log('%d..%d', 1, _this.stepCount);
+      });
     }
   }, {
     key: 'handleStepPass',
     value: function handleStepPass(step) {
+      var _this2 = this;
+
       this.passes++;
-      console.log('ok %d %s', this.tests, this.name(step));
+      this.runIfNotBailed(function () {
+        console.log('ok %d %s', _this2.tests, _this2.name(step));
+      });
     }
   }, {
     key: 'handleStepFail',
     value: function handleStepFail(step, err) {
+      var _this3 = this;
+
       this.fails++;
-      console.log('not ok %d %s', this.tests, this.name(step));
-      if (err.stack) {
-        console.log(err.stack.replace(/^/gm, '  '));
-      }
+      this.runIfNotBailed(function () {
+        console.log('not ok %d %s', _this3.tests, _this3.name(step));
+        if (err.stack) {
+          console.log(err.stack.replace(/^/gm, '  '));
+        }
+      });
+    }
+  }, {
+    key: 'handleSuiteFail',
+    value: function handleSuiteFail(suite, err) {
+      this.bail = true;
+      console.log('Bail out! %s', err.message);
     }
   }, {
     key: 'handleEnd',
     value: function handleEnd() {
-      console.log('# tests ' + this.stepCount);
-      console.log('# pass ' + this.passes);
-      console.log('# fail ' + this.fails);
-      console.log('# assertions ' + this.assertionCount);
+      var _this4 = this;
+
+      this.runIfNotBailed(function () {
+        console.log('# tests ' + _this4.stepCount);
+        console.log('# pass ' + _this4.passes);
+        console.log('# fail ' + _this4.fails);
+        console.log('# assertions ' + _this4.assertionCount);
+      });
+    }
+  }, {
+    key: 'runIfNotBailed',
+    value: function runIfNotBailed(fn) {
+      if (!this.bail) {
+        fn();
+      }
     }
   }, {
     key: 'name',

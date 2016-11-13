@@ -28,7 +28,6 @@ const showHelp = () => {
     ${pack.description}
     Usage: upssert [options...]
     options:
-      -v, --verbose Verbose output
       -h, --help Show help
       --version
   `);
@@ -40,6 +39,7 @@ const data = [];
 if (opts.help) {
   showHelp();
 } else if (opts.version) {
+  console.log(pack.version);
   process.exit(0);
 }
 

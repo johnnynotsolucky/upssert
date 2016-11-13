@@ -8,6 +8,7 @@ class Runner extends EventEmitter {
     this.bindEmitters();
     this.suites = suites;
     this.executors = [];
+    this.stopExecution = false;
   }
 
   bindEmitters() {
@@ -26,7 +27,9 @@ class Runner extends EventEmitter {
     this.initialize();
     this.emit(events.START);
     for (const executor of this.executors) {
-      await executor.execute();
+      if(!this.stopExecution) {
+        await executor.execute();
+      }
     }
     this.emit(events.END);
   }
@@ -57,6 +60,7 @@ class Runner extends EventEmitter {
   }
 
   suiteFail(suite, err) {
+    this.stopExecution = true;
     this.emit(events.FAIL, suite, err);
     this.emit(events.SUITE_FAIL, suite, err);
   }
