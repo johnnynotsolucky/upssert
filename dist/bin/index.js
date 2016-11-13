@@ -38,7 +38,7 @@ var opts = (0, _optionParser2.default)(argv);
 // import reporter from '../lib/reporter';
 
 var showHelp = function showHelp() {
-  console.log('\n    ' + _package2.default.description + '\n    Usage: upssert [options...]\n    options:\n      -f, --file File to be tested\n      -d, --dir Directory to load\n      -g, --glob Glob pattern\n      -v, --verbose Verbose output\n      -h, --help Show help\n      --version\n  ');
+  console.log('\n    ' + _package2.default.description + '\n    Usage: upssert [options...]\n    options:\n      -v, --verbose Verbose output\n      -h, --help Show help\n      --version\n  ');
   process.exit(0);
 };
 
@@ -47,22 +47,15 @@ var data = [];
 if (opts.help) {
   showHelp();
 } else if (opts.version) {
-  console.log(_package2.default.version);
   process.exit(0);
-} else if (opts.files || opts.dirs || opts.globPattern) {
-  if (opts.files) {
-    opts.files.forEach(function (file) {
-      data.push(require(process.cwd() + '/' + file));
-    });
-  }
 }
+
+opts.files.forEach(function (file) {
+  data.push(require(file));
+});
 
 var upssert = new _2.default();
 upssert.on(_events2.default.FAIL, function () {
   process.exitCode = 1;
 });
 upssert.execute(data);
-
-// upssert(opts.target, opts.options, opts.headers, opts.data, opts.formInputs).then(
-//   (results) => reporter(results, opts)
-// ).catch(console.error);

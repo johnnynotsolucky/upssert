@@ -28,9 +28,6 @@ const showHelp = () => {
     ${pack.description}
     Usage: upssert [options...]
     options:
-      -f, --file File to be tested
-      -d, --dir Directory to load
-      -g, --glob Glob pattern
       -v, --verbose Verbose output
       -h, --help Show help
       --version
@@ -43,20 +40,13 @@ const data = [];
 if (opts.help) {
   showHelp();
 } else if (opts.version) {
-  console.log(pack.version);
   process.exit(0);
-} else if (opts.files || opts.dirs || opts.globPattern) {
-  if(opts.files) {
-    opts.files.forEach((file) => {
-      data.push(require(`${process.cwd()}/${file}`));
-    });
-  }
 }
+
+opts.files.forEach((file) => {
+  data.push(require(file));
+});
 
 const upssert = new Upssert();
 upssert.on(events.FAIL, () => { process.exitCode = 1; });
 upssert.execute(data);
-
-// upssert(opts.target, opts.options, opts.headers, opts.data, opts.formInputs).then(
-//   (results) => reporter(results, opts)
-// ).catch(console.error);
