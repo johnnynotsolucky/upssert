@@ -17,10 +17,10 @@ export default (result) => {
 
   const headers = {};
   const headerFields = [];
-  Object.keys(result.response.headers).forEach((field) => {
+  for(const field in result.response.headers) {
     headers[camelcase(field)] = result.response.headers[field];
     headerFields.push(field);
-  });
+  };
 
   let contentType = '';
   if (headers.contentType) {

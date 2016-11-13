@@ -30,10 +30,10 @@ exports.default = function (result) {
 
   var headers = {};
   var headerFields = [];
-  Object.keys(result.response.headers).forEach(function (field) {
+  for (var field in result.response.headers) {
     headers[(0, _camelcase2.default)(field)] = result.response.headers[field];
     headerFields.push(field);
-  });
+  };
 
   var contentType = '';
   if (headers.contentType) {

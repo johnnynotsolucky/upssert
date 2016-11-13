@@ -123,14 +123,12 @@ var Step = function (_EventEmitter) {
   }, {
     key: 'addAssertionsIfReponseIsSet',
     value: function addAssertionsIfReponseIsSet(responseSet) {
-      var _this2 = this;
-
       if (responseSet) {
-        Object.keys(this.step.response).forEach(function (key) {
-          var assertion = _this2.step.response[key];
-          _this2.addEqualAssertionIfString(assertion, key);
-          _this2.addAssertionsIfObject(assertion, key);
-        });
+        for (var key in this.step.response) {
+          var assertion = this.step.response[key];
+          this.addEqualAssertionIfString(assertion, key);
+          this.addAssertionsIfObject(assertion, key);
+        }
       }
     }
   }, {
@@ -167,12 +165,12 @@ var Step = function (_EventEmitter) {
   }, {
     key: 'assert',
     value: function assert(object) {
-      var _this3 = this;
+      var _this2 = this;
 
       var result = void 0;
       try {
         this.assertions.forEach(function (assertion) {
-          _this3.assertObjectProperty(object, assertion);
+          _this2.assertObjectProperty(object, assertion);
         });
         result = true;
       } catch (err) {
@@ -184,17 +182,15 @@ var Step = function (_EventEmitter) {
   }, {
     key: 'assertObjectProperty',
     value: function assertObjectProperty(body, assertion) {
-      var _this4 = this;
-
       var key = Object.keys(assertion)[0];
       var object = this.getObjectFromKey(body, key);
       if ((0, _falsy2.default)(object)) {
         this.emit(_events3.default.SUITE_STEP_FAIL, this.step, new Error(key + ' is not valid'));
       } else {
-        Object.keys(assertion[key]).forEach(function (assertionKey) {
+        for (var assertionKey in assertion[key]) {
           var property = assertion[key];
-          _this4.assertProperty(object, property, assertionKey);
-        });
+          this.assertProperty(object, property, assertionKey);
+        };
       }
     }
   }, {

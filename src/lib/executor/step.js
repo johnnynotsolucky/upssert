@@ -50,11 +50,11 @@ class Step extends EventEmitter {
 
   addAssertionsIfReponseIsSet(responseSet) {
     if (responseSet) {
-      Object.keys(this.step.response).forEach((key) => {
+      for(const key in this.step.response) {
         const assertion = this.step.response[key];
         this.addEqualAssertionIfString(assertion, key);
         this.addAssertionsIfObject(assertion, key);
-      });
+      }
     }
   }
 
@@ -110,11 +110,10 @@ class Step extends EventEmitter {
     if(falsy(object)) {
       this.emit(events.SUITE_STEP_FAIL, this.step, new Error(`${key} is not valid`));
     } else {
-      Object.keys(assertion[key])
-        .forEach((assertionKey) => {
+      for(const assertionKey in assertion[key]) {
           const property = assertion[key];
           this.assertProperty(object, property, assertionKey);
-        });
+        };
     }
   }
 
