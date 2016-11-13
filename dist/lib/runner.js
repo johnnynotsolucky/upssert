@@ -170,6 +170,7 @@ var Runner = function (_EventEmitter) {
   }, {
     key: 'suiteFail',
     value: function suiteFail(suite, err) {
+      this.emit(_events3.default.FAIL, suite, err);
       this.emit(_events3.default.SUITE_FAIL, suite, err);
     }
   }, {
@@ -190,6 +191,7 @@ var Runner = function (_EventEmitter) {
   }, {
     key: 'suiteStepFail',
     value: function suiteStepFail(step, err) {
+      this.emit(_events3.default.FAIL, step, err);
       this.emit(_events3.default.SUITE_STEP_FAIL, step, err);
     }
   }, {

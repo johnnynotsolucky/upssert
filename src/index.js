@@ -1,56 +1,22 @@
 import 'babel-polyfill';
+import { EventEmitter } from 'events';
 import Runner from './lib/runner';
 import TAP from './lib/reporter/tap';
+import events from './data/events.json';
 
-function run() {
-  const runner = new Runner([
-      { name: 'Test',
-        steps: [
-          {
-            name: 'Something#hmmm',
-            request: {
-              url: 'https://httpbin.org/get?a=b',
-              method: 'GET'
-            },
-            response: {
-              'content-type': 'application/json',
-              'status-code': {
-                'equal': 200,
-                'is-at-least': 199,
-              },
-              'timing.dns-resolution': {
-                'is-below': 100,
-              },
-              'timing.total': {
-                'is-below': 500
-              }
-            }
-          }, {
-            name: 'Something else',
-            'needs-previous-step': false,
-            request: {
-              url: 'https://httpbin.org/get?a=b',
-              method: 'GET'
-            },
-            response: {
-              'content-type': 'application/json',
-              'status-code': {
-                'equal': 200,
-              },
-              'timing.dns-resolution': {
-                'is-below': 100,
-              },
-              'timing.total': {
-                'is-below': 500
-              }
-            }
-          },
-        ]
+class Upssert extends EventEmitter {
+
+  execute(tests) {
+    if (!Array.isArray(tests)) {
+      tests = [tests];
     }
-  ]);
-
-  new TAP(runner);
-  runner.run();
+    const runner = new Runner(tests);
+    runner.on(events.FAIL, (obj, err) => {
+      this.emit(events.FAIL, obj, err);
+    });
+    new TAP(runner);
+    runner.run();
+  }
 }
 
-export default run();
+export default Upssert;

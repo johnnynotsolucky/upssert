@@ -1,0 +1,45 @@
+{
+  "name": "Test httpbin/get",
+  "steps": [
+    {
+      "name": "Returns with args `a: b`",
+      "request": {
+        "url": "https://httpbin.org/get?a=b",
+        "method": "GET"
+      },
+      "response": {
+        "content-type": "application/json",
+        "status-code": {
+          "equal": 200,
+          "is-at-least": 199
+        },
+        "timing.dns-resolution": {
+          "is-below": 100
+        },
+        "timing.total": {
+          "is-below": 500
+        },
+        "body.args.a": "b"
+      }
+    }, {
+      "name": "Something else",
+      "needs-previous-step": false,
+      "request": {
+        "url": "https://httpbin.org/get?a=b",
+        "method": "GET"
+      },
+      "response": {
+        "content-type": "application/json",
+        "status-code": {
+          "equal": 200
+        },
+        "timing.dns-resolution": {
+          "is-below": 100
+        },
+        "timing.total": {
+          "is-below": 500
+        }
+      }
+    }
+  ]
+}

@@ -57,6 +57,7 @@ class Runner extends EventEmitter {
   }
 
   suiteFail(suite, err) {
+    this.emit(events.FAIL, suite, err);
     this.emit(events.SUITE_FAIL, suite, err);
   }
 
@@ -73,6 +74,7 @@ class Runner extends EventEmitter {
   }
 
   suiteStepFail(step, err) {
+    this.emit(events.FAIL, step, err);
     this.emit(events.SUITE_STEP_FAIL, step, err);
   }
 

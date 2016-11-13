@@ -4,6 +4,8 @@ const es = require('event-stream');
 
 gulp.task('default', () => {
   return es.concat(
+    gulp.src('./package.json')
+      .pipe(gulp.dest('./dist/')),
     gulp.src('./src/data/**/*')
       .pipe(gulp.dest('./dist/data/')),
     gulp.src('./src/**/*.js')

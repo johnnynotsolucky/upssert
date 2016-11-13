@@ -1,5 +1,6 @@
 {
   "START": "start",
+  "FAIL": "fail",
   "END": "end",
   "SUITE_START": "suite.start",
   "SUITE_END": "suite.end",

@@ -5,6 +5,10 @@ var _optionParser = require('./optionParser');
 
 var _optionParser2 = _interopRequireDefault(_optionParser);
 
+var _events = require('../data/events.json');
+
+var _events2 = _interopRequireDefault(_events);
+
 var _package = require('../package.json');
 
 var _package2 = _interopRequireDefault(_package);
@@ -38,12 +42,26 @@ var showHelp = function showHelp() {
   process.exit(0);
 };
 
+var data = [];
+
 if (opts.help) {
   showHelp();
 } else if (opts.version) {
   console.log(_package2.default.version);
   process.exit(0);
+} else if (opts.files || opts.dirs || opts.globPattern) {
+  if (opts.files) {
+    opts.files.forEach(function (file) {
+      data.push(require(process.cwd() + '/' + file));
+    });
+  }
 }
+
+var upssert = new _2.default();
+upssert.on(_events2.default.FAIL, function () {
+  process.exitCode = 1;
+});
+upssert.execute(data);
 
 // upssert(opts.target, opts.options, opts.headers, opts.data, opts.formInputs).then(
 //   (results) => reporter(results, opts)

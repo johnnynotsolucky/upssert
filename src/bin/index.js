@@ -7,6 +7,7 @@ const optionDefinitions = {
 const minimist = require('minimist');
 
 import optParser from './optionParser';
+import events from '../data/events.json';
 
 let argv;
 try {
@@ -19,7 +20,7 @@ argv = minimist(process.argv.slice(2), optionDefinitions);
 const opts = optParser(argv);
 
 import pack from '../package.json';
-import upssert from '../';
+import Upssert from '../';
 // import reporter from '../lib/reporter';
 
 const showHelp = () => {
@@ -37,12 +38,24 @@ const showHelp = () => {
   process.exit(0);
 };
 
+const data = [];
+
 if (opts.help) {
   showHelp();
 } else if (opts.version) {
   console.log(pack.version);
   process.exit(0);
+} else if (opts.files || opts.dirs || opts.globPattern) {
+  if(opts.files) {
+    opts.files.forEach((file) => {
+      data.push(require(`${process.cwd()}/${file}`));
+    });
+  }
 }
+
+const upssert = new Upssert();
+upssert.on(events.FAIL, () => { process.exitCode = 1; });
+upssert.execute(data);
 
 // upssert(opts.target, opts.options, opts.headers, opts.data, opts.formInputs).then(
 //   (results) => reporter(results, opts)
