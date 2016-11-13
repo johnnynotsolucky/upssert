@@ -15,14 +15,31 @@ class Step extends EventEmitter {
 
   async execute(previousResults) {
     this.emit(events.SUITE_STEP_START, this.step);
+    const data = this.extractRequiredData(previousResults);
     const result = await this.httpRequest();
+    let stepPassed = false;
     if(result) {
-      const stepPassed = this.assert(result);
+      stepPassed = this.assert(result);
       if(stepPassed) {
         this.emit(events.SUITE_STEP_PASS, this.step);
       }
     }
     this.emit(events.SUITE_STEP_END, this.step);
+    return {
+      step: this.step,
+      pass: stepPassed,
+      result,
+    };
+  }
+
+  extractRequiredData(results) {
+    const data = {};
+    if (this.step.requires) {
+      this.step.requires.forEach((id) => {
+        data[id] = results[id].result;
+      });
+    }
+    return data;
   }
 
   initialize() {
@@ -123,6 +140,7 @@ class Step extends EventEmitter {
     const result = await httpstat(this.step.request.url, {
         method: this.step.request.method
       });
+    //TODO use mustache templating and add post data, etc
     const object = transposeStatResult(result);
     return object;
     } catch (err) {

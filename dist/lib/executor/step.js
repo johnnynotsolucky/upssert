@@ -61,28 +61,34 @@ var Step = function (_EventEmitter) {
     key: 'execute',
     value: function () {
       var _ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee(previousResults) {
-        var result, stepPassed;
+        var data, result, stepPassed;
         return regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
                 this.emit(_events3.default.SUITE_STEP_START, this.step);
-                _context.next = 3;
+                data = this.extractRequiredData(previousResults);
+                _context.next = 4;
                 return this.httpRequest();
 
-              case 3:
+              case 4:
                 result = _context.sent;
+                stepPassed = false;
 
                 if (result) {
                   stepPassed = this.assert(result);
-
                   if (stepPassed) {
                     this.emit(_events3.default.SUITE_STEP_PASS, this.step);
                   }
                 }
                 this.emit(_events3.default.SUITE_STEP_END, this.step);
+                return _context.abrupt('return', {
+                  step: this.step,
+                  pass: stepPassed,
+                  result: result
+                });
 
-              case 6:
+              case 9:
               case 'end':
                 return _context.stop();
             }
@@ -96,6 +102,17 @@ var Step = function (_EventEmitter) {
 
       return execute;
     }()
+  }, {
+    key: 'extractRequiredData',
+    value: function extractRequiredData(results) {
+      var data = {};
+      if (this.step.requires) {
+        this.step.requires.forEach(function (id) {
+          data[id] = results[id].result;
+        });
+      }
+      return data;
+    }
   }, {
     key: 'initialize',
     value: function initialize() {
@@ -216,6 +233,8 @@ var Step = function (_EventEmitter) {
 
               case 3:
                 result = _context2.sent;
+
+                //TODO use mustache templating and add post data, etc
                 object = (0, _transposeStatResult2.default)(result);
                 return _context2.abrupt('return', object);
 

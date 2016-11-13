@@ -23,7 +23,7 @@
       }
     }, {
       "name": "Something else",
-      "needs-previous-step": false,
+      "requires": ["step-1"],
       "request": {
         "url": "https://httpbin.org/get?a=b",
         "method": "GET"

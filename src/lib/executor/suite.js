@@ -36,7 +36,11 @@ class Suite extends EventEmitter {
   }
 
   initializeSteps() {
+    let i = 1;
     for (const step of this.testCase.steps) {
+      if (!step.id) {
+        step.id = `step-${i++}`;
+      }
       const executor = new StepExecutor(step);
       executor.on(events.SUITE_STEP_START, this.stepStart);
       executor.on(events.SUITE_STEP_END, this.stepEnd);
@@ -45,13 +49,16 @@ class Suite extends EventEmitter {
       executor.on(events.SUITE_ASSERTION_COUNT, this.assertionCount);
       executor.initialize();
       this.stepExecutors.push(executor);
+
     }
     this.emit(events.SUITE_STEP_COUNT, this.testCase.steps.length);
   }
 
   async executeStepsInOrder(steps) {
+    const results = {};
     for (const executor of this.stepExecutors) {
-      await executor.execute();
+      const result = await executor.execute(results);
+      results[result.step.id] = result;
     }
   }
 

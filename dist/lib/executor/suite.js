@@ -99,6 +99,7 @@ var Suite = function (_EventEmitter) {
   }, {
     key: 'initializeSteps',
     value: function initializeSteps() {
+      var i = 1;
       var _iteratorNormalCompletion = true;
       var _didIteratorError = false;
       var _iteratorError = undefined;
@@ -107,6 +108,9 @@ var Suite = function (_EventEmitter) {
         for (var _iterator = this.testCase.steps[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
           var _step2 = _step.value;
 
+          if (!_step2.id) {
+            _step2.id = 'step-' + i++;
+          }
           var executor = new _step5.default(_step2);
           executor.on(_events3.default.SUITE_STEP_START, this.stepStart);
           executor.on(_events3.default.SUITE_STEP_END, this.stepEnd);
@@ -137,73 +141,79 @@ var Suite = function (_EventEmitter) {
     key: 'executeStepsInOrder',
     value: function () {
       var _ref2 = _asyncToGenerator(regeneratorRuntime.mark(function _callee2(steps) {
-        var _iteratorNormalCompletion2, _didIteratorError2, _iteratorError2, _iterator2, _step3, executor;
+        var results, _iteratorNormalCompletion2, _didIteratorError2, _iteratorError2, _iterator2, _step3, executor, result;
 
         return regeneratorRuntime.wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
+                results = {};
                 _iteratorNormalCompletion2 = true;
                 _didIteratorError2 = false;
                 _iteratorError2 = undefined;
-                _context2.prev = 3;
+                _context2.prev = 4;
                 _iterator2 = this.stepExecutors[Symbol.iterator]();
 
-              case 5:
+              case 6:
                 if (_iteratorNormalCompletion2 = (_step3 = _iterator2.next()).done) {
-                  _context2.next = 12;
+                  _context2.next = 15;
                   break;
                 }
 
                 executor = _step3.value;
-                _context2.next = 9;
-                return executor.execute();
+                _context2.next = 10;
+                return executor.execute(results);
 
-              case 9:
-                _iteratorNormalCompletion2 = true;
-                _context2.next = 5;
-                break;
+              case 10:
+                result = _context2.sent;
+
+                results[result.step.id] = result;
 
               case 12:
-                _context2.next = 18;
+                _iteratorNormalCompletion2 = true;
+                _context2.next = 6;
                 break;
 
-              case 14:
-                _context2.prev = 14;
-                _context2.t0 = _context2['catch'](3);
+              case 15:
+                _context2.next = 21;
+                break;
+
+              case 17:
+                _context2.prev = 17;
+                _context2.t0 = _context2['catch'](4);
                 _didIteratorError2 = true;
                 _iteratorError2 = _context2.t0;
 
-              case 18:
-                _context2.prev = 18;
-                _context2.prev = 19;
+              case 21:
+                _context2.prev = 21;
+                _context2.prev = 22;
 
                 if (!_iteratorNormalCompletion2 && _iterator2.return) {
                   _iterator2.return();
                 }
 
-              case 21:
-                _context2.prev = 21;
+              case 24:
+                _context2.prev = 24;
 
                 if (!_didIteratorError2) {
-                  _context2.next = 24;
+                  _context2.next = 27;
                   break;
                 }
 
                 throw _iteratorError2;
 
-              case 24:
+              case 27:
+                return _context2.finish(24);
+
+              case 28:
                 return _context2.finish(21);
 
-              case 25:
-                return _context2.finish(18);
-
-              case 26:
+              case 29:
               case 'end':
                 return _context2.stop();
             }
           }
-        }, _callee2, this, [[3, 14, 18, 26], [19,, 21, 25]]);
+        }, _callee2, this, [[4, 17, 21, 29], [22,, 24, 28]]);
       }));
 
       function executeStepsInOrder(_x) {

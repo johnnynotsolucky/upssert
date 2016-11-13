@@ -13,11 +13,17 @@
 			"items": {
 				"type": "object",
 				"properties": {
+					"id": {
+						"type": "string"
+					},
 					"name": {
 						"type": "string"
 					},
-					"needs-previous-step": {
-						"type": "boolean"
+					"requires": {
+						"type": "array",
+						"items": {
+							"type": "string"
+						}
 					},
 					"request": {
 						"type": "object",
