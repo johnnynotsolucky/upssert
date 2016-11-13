@@ -3,7 +3,7 @@
   "steps": [
     {
       "name": "Returns with args `a: b`",
-      "request": {
+      "requedst": {
         "url": "https://httpbin.org/get?a=b",
         "method": "GET"
       },

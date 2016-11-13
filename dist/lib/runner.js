@@ -74,14 +74,14 @@ var Runner = function (_EventEmitter) {
 
               case 7:
                 if (_iteratorNormalCompletion = (_step = _iterator.next()).done) {
-                  _context.next = 15;
+                  _context.next = 18;
                   break;
                 }
 
                 executor = _step.value;
 
                 if (this.stopExecution) {
-                  _context.next = 12;
+                  _context.next = 14;
                   break;
                 }
 
@@ -89,53 +89,60 @@ var Runner = function (_EventEmitter) {
                 return executor.execute();
 
               case 12:
+                _context.next = 15;
+                break;
+
+              case 14:
+                return _context.abrupt('break', 18);
+
+              case 15:
                 _iteratorNormalCompletion = true;
                 _context.next = 7;
                 break;
 
-              case 15:
-                _context.next = 21;
+              case 18:
+                _context.next = 24;
                 break;
 
-              case 17:
-                _context.prev = 17;
+              case 20:
+                _context.prev = 20;
                 _context.t0 = _context['catch'](5);
                 _didIteratorError = true;
                 _iteratorError = _context.t0;
 
-              case 21:
-                _context.prev = 21;
-                _context.prev = 22;
+              case 24:
+                _context.prev = 24;
+                _context.prev = 25;
 
                 if (!_iteratorNormalCompletion && _iterator.return) {
                   _iterator.return();
                 }
 
-              case 24:
-                _context.prev = 24;
+              case 27:
+                _context.prev = 27;
 
                 if (!_didIteratorError) {
-                  _context.next = 27;
+                  _context.next = 30;
                   break;
                 }
 
                 throw _iteratorError;
 
-              case 27:
+              case 30:
+                return _context.finish(27);
+
+              case 31:
                 return _context.finish(24);
 
-              case 28:
-                return _context.finish(21);
-
-              case 29:
+              case 32:
                 this.emit(_events3.default.END);
 
-              case 30:
+              case 33:
               case 'end':
                 return _context.stop();
             }
           }
-        }, _callee, this, [[5, 17, 21, 29], [22,, 24, 28]]);
+        }, _callee, this, [[5, 20, 24, 32], [25,, 27, 31]]);
       }));
 
       function run() {
