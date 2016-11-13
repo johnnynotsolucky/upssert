@@ -38,7 +38,7 @@ var opts = (0, _optionParser2.default)(argv);
 // import reporter from '../lib/reporter';
 
 var showHelp = function showHelp() {
-  console.log('\n    ' + _package2.default.description + '\n    Usage: upssert [options...]\n    options:\n      -v, --verbose Verbose output\n      -h, --help Show help\n      --version\n  ');
+  console.log('\n    ' + _package2.default.description + '\n    Usage: upssert [options...]\n    options:\n      -h, --help Show help\n      --version\n  ');
   process.exit(0);
 };
 
@@ -47,6 +47,7 @@ var data = [];
 if (opts.help) {
   showHelp();
 } else if (opts.version) {
+  console.log(_package2.default.version);
   process.exit(0);
 }
 
