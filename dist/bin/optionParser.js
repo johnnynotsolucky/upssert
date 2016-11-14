@@ -43,7 +43,7 @@ var opts = function opts(argv) {
     if (clientPackage.testDir) {
       argv._.push(clientPackage.testDir);
     } else {
-      argv._.push(process.cwd() + '/test/**/*.json');
+      argv._.push(process.cwd() + '/test/api/*.json');
     }
   }
   argv._.forEach(function (pattern) {
