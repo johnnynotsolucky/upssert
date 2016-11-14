@@ -1,8 +1,8 @@
 {
-  "name": "Test httpbin/get",
+  "name": "Test against httpbin",
   "steps": [
     {
-      "name": "Returns with args `a: b`",
+      "name": "/get",
       "request": {
         "url": "https://httpbin.org/get?a=b",
         "method": "GET"
@@ -19,18 +19,20 @@
         "timing.total": {
           "is-below": 500
         },
-        "body.args.a": "b"
+        "body[args].a": "b"
       }
     }, {
-      "name": "Something else",
+      "name": "/post formdata",
       "requires": ["step1"],
       "request": {
-        "url": "https://httpbin.org/get?a=b",
-        "method": "GET",
-        "headers": {
-          "Content-Type": "application/x-www-form-urlencoded"
-        },
-        "data": "this={{step1.body.args.a}}&a={{step1.body.args.a}}"
+        "url": "https://httpbin.org/post",
+        "method": "POST",
+        "form": [
+          {
+            "key": "out",
+            "value": "{{step1.body.args.a}}"
+          }
+        ]
       },
       "response": {
         "content-type": "application/json",
@@ -42,7 +44,33 @@
         },
         "timing.total": {
           "is-below": 500
-        }
+        },
+        "body.form.out": "b"
+      }
+    }, {
+      "name": "/post raw data",
+      "requires": ["step1", "step2"],
+      "request": {
+        "url": "https://httpbin.org/post",
+        "method": "POST",
+        "headers": {
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        "data": "step1-data={{step1.body.args.a}}&step2-data={{step2.body.form.out}}"
+      },
+      "response": {
+        "content-type": "application/json",
+        "status-code": {
+          "equal": 200
+        },
+        "timing.dns-resolution": {
+          "is-below": 100
+        },
+        "timing.total": {
+          "is-below": 500
+        },
+        "body[form][step1-data]": "b",
+        "body.form[step2-data]": "b"
       }
     }
   ]

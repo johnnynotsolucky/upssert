@@ -1,13 +1,11 @@
 import Mustache from 'mustache';
 
-class Renderer {
-  constructor() {
-
+export default (view, model) => {
+  if(view) {
+    try {
+    return Mustache.render(view, model);
+    } catch(err) {
+      console.log(err);
+    }
   }
-
-  render() {
-    // console.log(Mustache.render('Something {{ outOf }} the ordinary', { outOf: 'out of' }));
-  }
-}
-
-export default Renderer;
+};

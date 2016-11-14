@@ -107,7 +107,7 @@ class Step extends EventEmitter {
   assertObjectProperty(body, assertion) {
     const key = Object.keys(assertion)[0];
     const object = this.getObjectFromKey(body, key);
-    if(falsy(object)) {
+    if(object === undefined || object === null) {
       this.emit(events.SUITE_STEP_FAIL, this.step, new Error(`${key} is not valid`));
     } else {
       for(const assertionKey in assertion[key]) {
@@ -118,11 +118,24 @@ class Step extends EventEmitter {
   }
 
   getObjectFromKey(object, key) {
-    const properties = key.split('.');
-    properties.forEach((property) => {
-      object = object[camelcase(property)];
-    });
-    return object;
+    try {
+      const properties = key.split('.');
+      for(const property of properties) {
+        const bracketNotation = property.match(/\[(.*?)\]/g);
+        if (bracketNotation) {
+          const parentProperty = property.substr(0, property.match(/\[/).index);
+          object = object[camelcase(parentProperty)];
+          for(const part of bracketNotation) {
+            object = object[part.replace('[', '').replace(']', '')];
+          }
+        } else {
+          object = object[camelcase(property)];
+        }
+      };
+      return object;
+    } catch (err) {
+      return null;
+    }
   }
 
   assertProperty(object, property, key) {

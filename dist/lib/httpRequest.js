@@ -4,6 +4,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _httpstat = require('httpstat');
@@ -13,6 +15,10 @@ var _httpstat2 = _interopRequireDefault(_httpstat);
 var _transposeStatResult = require('./transposeStatResult');
 
 var _transposeStatResult2 = _interopRequireDefault(_transposeStatResult);
+
+var _renderer = require('./renderer');
+
+var _renderer2 = _interopRequireDefault(_renderer);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -31,38 +37,92 @@ var HttpRequest = function () {
   _createClass(HttpRequest, [{
     key: 'execute',
     value: function () {
-      var _ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee() {
-        var result, object;
-        return regeneratorRuntime.wrap(function _callee$(_context) {
+      var _ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee2() {
+        var _this = this;
+
+        var _ret;
+
+        return regeneratorRuntime.wrap(function _callee2$(_context2) {
           while (1) {
-            switch (_context.prev = _context.next) {
+            switch (_context2.prev = _context2.next) {
               case 0:
-                _context.prev = 0;
-                _context.next = 3;
-                return (0, _httpstat2.default)(this.step.request.url, {
-                  method: this.step.request.method
-                });
+                _context2.prev = 0;
+                return _context2.delegateYield(regeneratorRuntime.mark(function _callee() {
+                  var form, data, headers, key, value, concatenated, result, object;
+                  return regeneratorRuntime.wrap(function _callee$(_context) {
+                    while (1) {
+                      switch (_context.prev = _context.next) {
+                        case 0:
+                          form = void 0;
 
-              case 3:
-                result = _context.sent;
+                          if (_this.step.request.form) {
+                            form = [];
+                            _this.step.request.form.forEach(function (item) {
+                              var renderedKey = (0, _renderer2.default)(item.key, _this.resultset);
+                              var renderedValue = (0, _renderer2.default)(item.value, _this.resultset);
+                              var formItem = renderedKey + '=' + renderedValue;
+                              form.push(formItem);
+                            });
+                          }
+                          data = (0, _renderer2.default)(_this.step.request.data, _this.resultset);
+                          headers = void 0;
 
-                //TODO use mustache templating and add post data, etc
-                object = (0, _transposeStatResult2.default)(result);
-                return _context.abrupt('return', object);
+                          if (_this.step.request.headers) {
+                            headers = [];
+                            for (key in _this.step.request.headers) {
+                              value = _this.step.request.headers[key];
+                              concatenated = key + ': ' + value;
 
-              case 8:
-                _context.prev = 8;
-                _context.t0 = _context['catch'](0);
+                              headers.push(concatenated);
+                            }
+                          }
+                          _context.next = 7;
+                          return (0, _httpstat2.default)(_this.step.request.url, {
+                            method: _this.step.request.method
+                          }, headers, data, form);
 
-                this.emit(events.SUITE_STEP_FAIL, this.step, _context.t0);
-                return _context.abrupt('return', false);
+                        case 7:
+                          result = _context.sent;
+                          object = (0, _transposeStatResult2.default)(result);
+                          return _context.abrupt('return', {
+                            v: object
+                          });
 
-              case 12:
+                        case 10:
+                        case 'end':
+                          return _context.stop();
+                      }
+                    }
+                  }, _callee, _this);
+                })(), 't0', 2);
+
+              case 2:
+                _ret = _context2.t0;
+
+                if (!((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object")) {
+                  _context2.next = 5;
+                  break;
+                }
+
+                return _context2.abrupt('return', _ret.v);
+
+              case 5:
+                _context2.next = 11;
+                break;
+
+              case 7:
+                _context2.prev = 7;
+                _context2.t1 = _context2['catch'](0);
+
+                this.emit(events.SUITE_STEP_FAIL, this.step, _context2.t1);
+                return _context2.abrupt('return', false);
+
+              case 11:
               case 'end':
-                return _context.stop();
+                return _context2.stop();
             }
           }
-        }, _callee, this, [[0, 8]]);
+        }, _callee2, this, [[0, 7]]);
       }));
 
       function execute() {

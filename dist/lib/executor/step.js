@@ -181,7 +181,7 @@ var Step = function (_EventEmitter) {
     value: function assertObjectProperty(body, assertion) {
       var key = Object.keys(assertion)[0];
       var object = this.getObjectFromKey(body, key);
-      if ((0, _falsy2.default)(object)) {
+      if (object === undefined || object === null) {
         this.emit(_events3.default.SUITE_STEP_FAIL, this.step, new Error(key + ' is not valid'));
       } else {
         for (var assertionKey in assertion[key]) {
@@ -193,11 +193,68 @@ var Step = function (_EventEmitter) {
   }, {
     key: 'getObjectFromKey',
     value: function getObjectFromKey(object, key) {
-      var properties = key.split('.');
-      properties.forEach(function (property) {
-        object = object[(0, _camelcase2.default)(property)];
-      });
-      return object;
+      try {
+        var properties = key.split('.');
+        var _iteratorNormalCompletion = true;
+        var _didIteratorError = false;
+        var _iteratorError = undefined;
+
+        try {
+          for (var _iterator = properties[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            var property = _step.value;
+
+            var bracketNotation = property.match(/\[(.*?)\]/g);
+            if (bracketNotation) {
+              var parentProperty = property.substr(0, property.match(/\[/).index);
+              object = object[(0, _camelcase2.default)(parentProperty)];
+              var _iteratorNormalCompletion2 = true;
+              var _didIteratorError2 = false;
+              var _iteratorError2 = undefined;
+
+              try {
+                for (var _iterator2 = bracketNotation[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                  var part = _step2.value;
+
+                  object = object[part.replace('[', '').replace(']', '')];
+                }
+              } catch (err) {
+                _didIteratorError2 = true;
+                _iteratorError2 = err;
+              } finally {
+                try {
+                  if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                    _iterator2.return();
+                  }
+                } finally {
+                  if (_didIteratorError2) {
+                    throw _iteratorError2;
+                  }
+                }
+              }
+            } else {
+              object = object[(0, _camelcase2.default)(property)];
+            }
+          }
+        } catch (err) {
+          _didIteratorError = true;
+          _iteratorError = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion && _iterator.return) {
+              _iterator.return();
+            }
+          } finally {
+            if (_didIteratorError) {
+              throw _iteratorError;
+            }
+          }
+        }
+
+        ;
+        return object;
+      } catch (err) {
+        return null;
+      }
     }
   }, {
     key: 'assertProperty',

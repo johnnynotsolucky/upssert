@@ -47,7 +47,7 @@
 								"type": "object"
 							},
 							"data": {
-								"type": ["string", "object"]
+								"type": ["string"]
 							},
 							"form": {
 								"type": "array",
