@@ -1,9 +1,8 @@
 import { EventEmitter } from 'events';
-import httpstat from 'httpstat';
+import HttpRequest from '../httpRequest';
 import falsy from 'falsy';
 import { assert } from 'chai';
 import camelcase from 'camelcase';
-import transposeStatResult from './transposeStatResult';
 import events from '../../data/events.json';
 
 class Step extends EventEmitter {
@@ -13,10 +12,11 @@ class Step extends EventEmitter {
     this.assertions = [];
   }
 
-  async execute(previousResults) {
+  async execute(resultset) {
     this.emit(events.SUITE_STEP_START, this.step);
-    const data = this.extractRequiredData(previousResults);
-    const result = await this.httpRequest();
+    const data = this.extractRequiredData(resultset);
+    const httpRequest = new HttpRequest(this.step, data);
+    const result = await httpRequest.execute();
     let stepPassed = false;
     if(result) {
       stepPassed = this.assert(result);
@@ -132,20 +132,6 @@ class Step extends EventEmitter {
       throw new Error(`${key} is not a valid assertion`);
     }
     assert[assertion](object, value);
-  }
-
-  async httpRequest(previousResult) {
-    try {
-    const result = await httpstat(this.step.request.url, {
-        method: this.step.request.method
-      });
-    //TODO use mustache templating and add post data, etc
-    const object = transposeStatResult(result);
-    return object;
-    } catch (err) {
-      this.emit(events.SUITE_STEP_FAIL, this.step, err);
-      return false;
-    }
   }
 }
 

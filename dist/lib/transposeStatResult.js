@@ -1,11 +1,24 @@
-import camelcase from 'camelcase';
-import parserFactory from '../parser/parserFactory';
+'use strict';
 
-export default (result) => {
-  const url = result.url;
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _camelcase = require('camelcase');
+
+var _camelcase2 = _interopRequireDefault(_camelcase);
+
+var _parserFactory = require('./parser/parserFactory');
+
+var _parserFactory2 = _interopRequireDefault(_parserFactory);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = function (result) {
+  var url = result.url;
   url.protocol = url.protocol.replace(/:/, '');
 
-  let responseTimes;
+  var responseTimes = void 0;
   switch (url.protocol) {
     case 'http':
       responseTimes = calculateResponseTimes(result.time);
@@ -15,19 +28,19 @@ export default (result) => {
       break;
   }
 
-  const headers = {};
-  const headerFields = [];
-  for(const field in result.response.headers) {
-    headers[camelcase(field)] = result.response.headers[field];
+  var headers = {};
+  var headerFields = [];
+  for (var field in result.response.headers) {
+    headers[(0, _camelcase2.default)(field)] = result.response.headers[field];
     headerFields.push(field);
   };
 
-  let contentType = '';
+  var contentType = '';
   if (headers.contentType) {
     contentType = headers.contentType;
   }
 
-  let contentLength = 0;
+  var contentLength = 0;
   if (headers.contentLength) {
     contentLength = parseInt(headers.contentLength, 10);
     if (isNaN(contentLength)) {
@@ -35,21 +48,21 @@ export default (result) => {
     }
   }
 
-  const parser = parserFactory(contentType);
-  const body = parser.parse(result.response.body);
+  var parser = (0, _parserFactory2.default)(contentType);
+  var body = parser.parse(result.response.body);
 
   return {
     statusCode: result.response.statusCode,
-    contentType,
-    contentLength,
+    contentType: contentType,
+    contentLength: contentLength,
     timing: responseTimes,
-    headers,
-    headerFields,
-    body,
+    headers: headers,
+    headerFields: headerFields,
+    body: body
   };
 };
 
-const calculateResponseTimes = (times) => {
+var calculateResponseTimes = function calculateResponseTimes(times) {
   return {
     dnsResolution: times.onLookup - times.begin,
     tcpConnection: times.onConnect - times.onLookup,
@@ -58,11 +71,11 @@ const calculateResponseTimes = (times) => {
     nameLookup: times.onLookup - times.begin,
     connect: times.onConnect - times.begin,
     startTransfer: times.onTransfer - times.begin,
-    total: times.onTotal - times.begin,
+    total: times.onTotal - times.begin
   };
 };
 
-const calculateTlsResponseTimes = (times) => {
+var calculateTlsResponseTimes = function calculateTlsResponseTimes(times) {
   return {
     dnsResolution: times.onLookup - times.begin,
     tcpConnection: times.onConnect - times.onLookup,
@@ -73,6 +86,6 @@ const calculateTlsResponseTimes = (times) => {
     connect: times.onConnect - times.begin,
     pretransfer: times.onSecureConnect - times.begin,
     startTransfer: times.onTransfer - times.begin,
-    total: times.onTotal - times.begin,
+    total: times.onTotal - times.begin
   };
 };

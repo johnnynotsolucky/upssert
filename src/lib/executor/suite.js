@@ -39,7 +39,7 @@ class Suite extends EventEmitter {
     let i = 1;
     for (const step of this.testCase.steps) {
       if (!step.id) {
-        step.id = `step-${i++}`;
+        step.id = `step${i++}`;
       }
       const executor = new StepExecutor(step);
       executor.on(events.SUITE_STEP_START, this.stepStart);

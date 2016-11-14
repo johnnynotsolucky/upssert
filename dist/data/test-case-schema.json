@@ -47,7 +47,21 @@
 								"type": "object"
 							},
 							"data": {
-								"type": "object"
+								"type": ["string", "object"]
+							},
+							"form": {
+								"type": "array",
+								"items": {
+									"type": "object",
+									"properties": {
+										"key": {
+											"type": "string"
+										},
+										"value": {
+											"type": "string"
+										}
+									}
+								}
 							}
 						},
 						"required": ["url", "method"]

@@ -109,7 +109,7 @@ var Suite = function (_EventEmitter) {
           var _step2 = _step.value;
 
           if (!_step2.id) {
-            _step2.id = 'step-' + i++;
+            _step2.id = 'step' + i++;
           }
           var executor = new _step5.default(_step2);
           executor.on(_events3.default.SUITE_STEP_START, this.stepStart);

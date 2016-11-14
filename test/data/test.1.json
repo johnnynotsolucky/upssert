@@ -23,10 +23,14 @@
       }
     }, {
       "name": "Something else",
-      "requires": ["step-1"],
+      "requires": ["step1"],
       "request": {
         "url": "https://httpbin.org/get?a=b",
-        "method": "GET"
+        "method": "GET",
+        "headers": {
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        "data": "this={{step1.body.args.a}}&a={{step1.body.args.a}}"
       },
       "response": {
         "content-type": "application/json",

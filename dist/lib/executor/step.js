@@ -10,9 +10,9 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _events = require('events');
 
-var _httpstat = require('httpstat');
+var _httpRequest = require('../httpRequest');
 
-var _httpstat2 = _interopRequireDefault(_httpstat);
+var _httpRequest2 = _interopRequireDefault(_httpRequest);
 
 var _falsy = require('falsy');
 
@@ -23,10 +23,6 @@ var _chai = require('chai');
 var _camelcase = require('camelcase');
 
 var _camelcase2 = _interopRequireDefault(_camelcase);
-
-var _transposeStatResult = require('./transposeStatResult');
-
-var _transposeStatResult2 = _interopRequireDefault(_transposeStatResult);
 
 var _events2 = require('../../data/events.json');
 
@@ -60,18 +56,19 @@ var Step = function (_EventEmitter) {
   _createClass(Step, [{
     key: 'execute',
     value: function () {
-      var _ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee(previousResults) {
-        var data, result, stepPassed;
+      var _ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee(resultset) {
+        var data, httpRequest, result, stepPassed;
         return regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
                 this.emit(_events3.default.SUITE_STEP_START, this.step);
-                data = this.extractRequiredData(previousResults);
-                _context.next = 4;
-                return this.httpRequest();
+                data = this.extractRequiredData(resultset);
+                httpRequest = new _httpRequest2.default(this.step, data);
+                _context.next = 5;
+                return httpRequest.execute();
 
-              case 4:
+              case 5:
                 result = _context.sent;
                 stepPassed = false;
 
@@ -88,7 +85,7 @@ var Step = function (_EventEmitter) {
                   result: result
                 });
 
-              case 9:
+              case 10:
               case 'end':
                 return _context.stop();
             }
@@ -212,49 +209,6 @@ var Step = function (_EventEmitter) {
       }
       _chai.assert[assertion](object, value);
     }
-  }, {
-    key: 'httpRequest',
-    value: function () {
-      var _ref2 = _asyncToGenerator(regeneratorRuntime.mark(function _callee2(previousResult) {
-        var result, object;
-        return regeneratorRuntime.wrap(function _callee2$(_context2) {
-          while (1) {
-            switch (_context2.prev = _context2.next) {
-              case 0:
-                _context2.prev = 0;
-                _context2.next = 3;
-                return (0, _httpstat2.default)(this.step.request.url, {
-                  method: this.step.request.method
-                });
-
-              case 3:
-                result = _context2.sent;
-
-                //TODO use mustache templating and add post data, etc
-                object = (0, _transposeStatResult2.default)(result);
-                return _context2.abrupt('return', object);
-
-              case 8:
-                _context2.prev = 8;
-                _context2.t0 = _context2['catch'](0);
-
-                this.emit(_events3.default.SUITE_STEP_FAIL, this.step, _context2.t0);
-                return _context2.abrupt('return', false);
-
-              case 12:
-              case 'end':
-                return _context2.stop();
-            }
-          }
-        }, _callee2, this, [[0, 8]]);
-      }));
-
-      function httpRequest(_x2) {
-        return _ref2.apply(this, arguments);
-      }
-
-      return httpRequest;
-    }()
   }]);
 
   return Step;
