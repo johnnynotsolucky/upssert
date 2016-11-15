@@ -20,6 +20,10 @@ var _falsy2 = _interopRequireDefault(_falsy);
 
 var _chai = require('chai');
 
+var _crypto = require('crypto');
+
+var _crypto2 = _interopRequireDefault(_crypto);
+
 var _camelcase = require('camelcase');
 
 var _camelcase2 = _interopRequireDefault(_camelcase);
@@ -57,18 +61,19 @@ var Step = function (_EventEmitter) {
     key: 'execute',
     value: function () {
       var _ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee(resultset) {
-        var data, httpRequest, result, stepPassed;
+        var trace, data, httpRequest, result, stepPassed;
         return regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
                 this.emit(_events3.default.SUITE_STEP_START, this.step);
+                trace = this.addTraceHeader();
                 data = this.extractRequiredData(resultset);
                 httpRequest = new _httpRequest2.default(this.step, data);
-                _context.next = 5;
+                _context.next = 6;
                 return httpRequest.execute();
 
-              case 5:
+              case 6:
                 result = _context.sent;
                 stepPassed = false;
 
@@ -80,12 +85,13 @@ var Step = function (_EventEmitter) {
                 }
                 this.emit(_events3.default.SUITE_STEP_END, this.step);
                 return _context.abrupt('return', {
+                  trace: trace,
                   step: this.step,
                   pass: stepPassed,
                   result: result
                 });
 
-              case 10:
+              case 11:
               case 'end':
                 return _context.stop();
             }
@@ -99,6 +105,24 @@ var Step = function (_EventEmitter) {
 
       return execute;
     }()
+  }, {
+    key: 'addTraceHeader',
+    value: function addTraceHeader() {
+      if (!this.step.request.headers) {
+        this.step.request['headers'] = {};
+      }
+      var token = this.generateTraceToken();
+      this.step.request.headers['X-Upssert-Trace'] = token;
+      return token;
+    }
+  }, {
+    key: 'generateTraceToken',
+    value: function generateTraceToken() {
+      var hash = _crypto2.default.createHash('sha256');
+      hash.update(_crypto2.default.randomBytes(64));
+      var digest = hash.digest('hex');
+      return digest;
+    }
   }, {
     key: 'extractRequiredData',
     value: function extractRequiredData(results) {

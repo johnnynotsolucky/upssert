@@ -2,6 +2,7 @@ import { EventEmitter } from 'events';
 import HttpRequest from '../httpRequest';
 import falsy from 'falsy';
 import { assert } from 'chai';
+import crypto from 'crypto';
 import camelcase from 'camelcase';
 import events from '../../data/events.json';
 
@@ -14,6 +15,7 @@ class Step extends EventEmitter {
 
   async execute(resultset) {
     this.emit(events.SUITE_STEP_START, this.step);
+    const trace = this.addTraceHeader();
     const data = this.extractRequiredData(resultset);
     const httpRequest = new HttpRequest(this.step, data);
     const result = await httpRequest.execute();
@@ -26,10 +28,27 @@ class Step extends EventEmitter {
     }
     this.emit(events.SUITE_STEP_END, this.step);
     return {
+      trace,
       step: this.step,
       pass: stepPassed,
       result,
     };
+  }
+
+  addTraceHeader() {
+    if (!this.step.request.headers) {
+      this.step.request['headers'] = {};
+    }
+    const token = this.generateTraceToken();
+    this.step.request.headers['X-Upssert-Trace'] = token;
+    return token;
+  }
+
+  generateTraceToken() {
+    const hash = crypto.createHash('sha256');
+    hash.update(crypto.randomBytes(64));
+    const digest = hash.digest('hex');
+    return digest;
   }
 
   extractRequiredData(results) {

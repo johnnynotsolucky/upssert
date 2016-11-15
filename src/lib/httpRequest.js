@@ -9,40 +9,59 @@ class HttpRequest {
   }
 
   async execute() {
+    let result;
     try {
-      let form;
-      if (this.step.request.form) {
-        form = [];
-        this.step.request.form.forEach((item) => {
-          const renderedKey = renderer(item.key, this.resultset);
-          const renderedValue = renderer(item.value, this.resultset);
-          const formItem = `${renderedKey}=${renderedValue}`;
-          form.push(formItem);
-        });
-      }
-      const data = renderer(this.step.request.data, this.resultset);
-
-      let headers;
-      if (this.step.request.headers) {
-        headers = [];
-        for(const key in this.step.request.headers) {
-          const value = this.step.request.headers[key];
-          const concatenated = `${key}: ${value}`;
-          headers.push(concatenated);
-        }
-      }
-      const result = await httpstat(this.step.request.url, {
-          method: this.step.request.method
-        },
-        headers,
-        data,
-        form);
-      const object = transposeStatResult(result);
-      return object;
+      const form = this.formatFormData();
+      const data = this.formatData();
+      const headers = this.formatRequestHeaders();
+      const response = await this.makeRequest(form, data, headers);
+      result = response;
     } catch (err) {
       this.emit(events.SUITE_STEP_FAIL, this.step, err);
-      return false;
+      result = false;
     }
+    return result;
+  }
+
+  formatFormData() {
+    let form;
+    if (this.step.request.form) {
+      form = [];
+      this.step.request.form.forEach((item) => {
+        const renderedKey = renderer(item.key, this.resultset);
+        const renderedValue = renderer(item.value, this.resultset);
+        const formItem = `${renderedKey}=${renderedValue}`;
+        form.push(formItem);
+      });
+    }
+    return form;
+  }
+
+  formatData() {
+    return renderer(this.step.request.data, this.resultset);
+  }
+
+  formatRequestHeaders() {
+    let headers = [];
+    if (this.step.request.headers) {
+      for(const key in this.step.request.headers) {
+        const value = this.step.request.headers[key];
+        const concatenated = `${key}: ${value}`;
+        headers.push(concatenated);
+      }
+    }
+    return headers;
+  }
+
+  async makeRequest(form, data, headers) {
+    const response = await httpstat(this.step.request.url, {
+        method: this.step.request.method
+      },
+      headers,
+      data,
+      form);
+    const result = transposeStatResult(response);
+    return result;
   }
 }
 

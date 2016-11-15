@@ -4,8 +4,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _httpstat = require('httpstat');
@@ -37,92 +35,43 @@ var HttpRequest = function () {
   _createClass(HttpRequest, [{
     key: 'execute',
     value: function () {
-      var _ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee2() {
-        var _this = this;
-
-        var _ret;
-
-        return regeneratorRuntime.wrap(function _callee2$(_context2) {
+      var _ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee() {
+        var result, form, data, headers, response;
+        return regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
-            switch (_context2.prev = _context2.next) {
+            switch (_context.prev = _context.next) {
               case 0:
-                _context2.prev = 0;
-                return _context2.delegateYield(regeneratorRuntime.mark(function _callee() {
-                  var form, data, headers, key, value, concatenated, result, object;
-                  return regeneratorRuntime.wrap(function _callee$(_context) {
-                    while (1) {
-                      switch (_context.prev = _context.next) {
-                        case 0:
-                          form = void 0;
-
-                          if (_this.step.request.form) {
-                            form = [];
-                            _this.step.request.form.forEach(function (item) {
-                              var renderedKey = (0, _renderer2.default)(item.key, _this.resultset);
-                              var renderedValue = (0, _renderer2.default)(item.value, _this.resultset);
-                              var formItem = renderedKey + '=' + renderedValue;
-                              form.push(formItem);
-                            });
-                          }
-                          data = (0, _renderer2.default)(_this.step.request.data, _this.resultset);
-                          headers = void 0;
-
-                          if (_this.step.request.headers) {
-                            headers = [];
-                            for (key in _this.step.request.headers) {
-                              value = _this.step.request.headers[key];
-                              concatenated = key + ': ' + value;
-
-                              headers.push(concatenated);
-                            }
-                          }
-                          _context.next = 7;
-                          return (0, _httpstat2.default)(_this.step.request.url, {
-                            method: _this.step.request.method
-                          }, headers, data, form);
-
-                        case 7:
-                          result = _context.sent;
-                          object = (0, _transposeStatResult2.default)(result);
-                          return _context.abrupt('return', {
-                            v: object
-                          });
-
-                        case 10:
-                        case 'end':
-                          return _context.stop();
-                      }
-                    }
-                  }, _callee, _this);
-                })(), 't0', 2);
-
-              case 2:
-                _ret = _context2.t0;
-
-                if (!((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object")) {
-                  _context2.next = 5;
-                  break;
-                }
-
-                return _context2.abrupt('return', _ret.v);
-
-              case 5:
-                _context2.next = 11;
-                break;
+                result = void 0;
+                _context.prev = 1;
+                form = this.formatFormData();
+                data = this.formatData();
+                headers = this.formatRequestHeaders();
+                _context.next = 7;
+                return this.makeRequest(form, data, headers);
 
               case 7:
-                _context2.prev = 7;
-                _context2.t1 = _context2['catch'](0);
+                response = _context.sent;
 
-                this.emit(events.SUITE_STEP_FAIL, this.step, _context2.t1);
-                return _context2.abrupt('return', false);
+                result = response;
+                _context.next = 15;
+                break;
 
               case 11:
+                _context.prev = 11;
+                _context.t0 = _context['catch'](1);
+
+                this.emit(events.SUITE_STEP_FAIL, this.step, _context.t0);
+                result = false;
+
+              case 15:
+                return _context.abrupt('return', result);
+
+              case 16:
               case 'end':
-                return _context2.stop();
+                return _context.stop();
             }
           }
-        }, _callee2, this, [[0, 7]]);
+        }, _callee, this, [[1, 11]]);
       }));
 
       function execute() {
@@ -130,6 +79,74 @@ var HttpRequest = function () {
       }
 
       return execute;
+    }()
+  }, {
+    key: 'formatFormData',
+    value: function formatFormData() {
+      var _this = this;
+
+      var form = void 0;
+      if (this.step.request.form) {
+        form = [];
+        this.step.request.form.forEach(function (item) {
+          var renderedKey = (0, _renderer2.default)(item.key, _this.resultset);
+          var renderedValue = (0, _renderer2.default)(item.value, _this.resultset);
+          var formItem = renderedKey + '=' + renderedValue;
+          form.push(formItem);
+        });
+      }
+      return form;
+    }
+  }, {
+    key: 'formatData',
+    value: function formatData() {
+      return (0, _renderer2.default)(this.step.request.data, this.resultset);
+    }
+  }, {
+    key: 'formatRequestHeaders',
+    value: function formatRequestHeaders() {
+      var headers = [];
+      if (this.step.request.headers) {
+        for (var key in this.step.request.headers) {
+          var value = this.step.request.headers[key];
+          var concatenated = key + ': ' + value;
+          headers.push(concatenated);
+        }
+      }
+      return headers;
+    }
+  }, {
+    key: 'makeRequest',
+    value: function () {
+      var _ref2 = _asyncToGenerator(regeneratorRuntime.mark(function _callee2(form, data, headers) {
+        var response, result;
+        return regeneratorRuntime.wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                _context2.next = 2;
+                return (0, _httpstat2.default)(this.step.request.url, {
+                  method: this.step.request.method
+                }, headers, data, form);
+
+              case 2:
+                response = _context2.sent;
+                result = (0, _transposeStatResult2.default)(response);
+                return _context2.abrupt('return', result);
+
+              case 5:
+              case 'end':
+                return _context2.stop();
+            }
+          }
+        }, _callee2, this);
+      }));
+
+      function makeRequest(_x, _x2, _x3) {
+        return _ref2.apply(this, arguments);
+      }
+
+      return makeRequest;
     }()
   }]);
 
