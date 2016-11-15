@@ -1,4 +1,10 @@
 #!/usr/bin/env node
+/* eslint-disable no-console*/
+import readJsonFile from './readJsonFile';
+import optParser from './optionParser';
+import events from '../data/events.json';
+import pack from '../package.json'; // eslint-disable-line import/no-unresolved
+import Upssert from '../';
 
 const optionDefinitions = {
   boolean: ['help', 'h'],
@@ -6,22 +12,16 @@ const optionDefinitions = {
 
 const minimist = require('minimist');
 
-import optParser from './optionParser';
-import events from '../data/events.json';
 
 let argv;
 try {
-argv = minimist(process.argv.slice(2), optionDefinitions);
+  argv = minimist(process.argv.slice(2), optionDefinitions);
 } catch (err) {
   console.log('Hmmm...');
   process.exit(1);
 }
 
 const opts = optParser(argv);
-
-import pack from '../package.json';
-import Upssert from '../';
-// import reporter from '../lib/reporter';
 
 const showHelp = () => {
   console.log(`
@@ -44,7 +44,8 @@ if (opts.help) {
 }
 
 opts.files.forEach((file) => {
-  data.push(require(file));
+  const json = readJsonFile(file);
+  data.push(json);
 });
 
 const upssert = new Upssert();

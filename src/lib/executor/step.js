@@ -1,10 +1,41 @@
 import { EventEmitter } from 'events';
-import HttpRequest from '../httpRequest';
 import falsy from 'falsy';
 import { assert } from 'chai';
-import crypto from 'crypto';
 import camelcase from 'camelcase';
+import generateToken from '../generateToken';
+import HttpRequest from '../httpRequest';
 import events from '../../data/events.json';
+
+const getObjectFromKey = (object, key) => {
+  try {
+    const properties = key.split('.');
+    for (const property of properties) {
+      const bracketNotation = property.match(/\[(.*?)]/g);
+      if (bracketNotation) {
+        const parentProperty = property.substr(0, property.match(/\[/).index);
+        object = object[camelcase(parentProperty)];
+        for (const part of bracketNotation) {
+          object = object[part.replace('[', '').replace(']', '')];
+        }
+      } else {
+        object = object[camelcase(property)];
+      }
+    }
+    return object;
+  } catch (err) {
+    return null;
+  }
+};
+
+const assertProperty = (object, property, key) => {
+  const value = property[key];
+  const assertion = camelcase(key);
+  if (!assert[assertion]) {
+    throw new Error(`${key} is not a valid assertion`);
+  }
+  assert[assertion](object, value);
+};
+
 
 class Step extends EventEmitter {
   constructor(step) {
@@ -20,9 +51,9 @@ class Step extends EventEmitter {
     const httpRequest = new HttpRequest(this.step, data);
     const result = await httpRequest.execute();
     let stepPassed = false;
-    if(result) {
+    if (result) {
       stepPassed = this.assert(result);
-      if(stepPassed) {
+      if (stepPassed) {
         this.emit(events.SUITE_STEP_PASS, this.step);
       }
     }
@@ -37,18 +68,11 @@ class Step extends EventEmitter {
 
   addTraceHeader() {
     if (!this.step.request.headers) {
-      this.step.request['headers'] = {};
+      this.step.request.headers = {};
     }
-    const token = this.generateTraceToken();
+    const token = generateToken();
     this.step.request.headers['X-Upssert-Trace'] = token;
     return token;
-  }
-
-  generateTraceToken() {
-    const hash = crypto.createHash('sha256');
-    hash.update(crypto.randomBytes(64));
-    const digest = hash.digest('hex');
-    return digest;
   }
 
   extractRequiredData(results) {
@@ -69,16 +93,16 @@ class Step extends EventEmitter {
 
   addAssertionsIfReponseIsSet(responseSet) {
     if (responseSet) {
-      for(const key in this.step.response) {
+      Object.keys(this.step.response).forEach((key) => {
         const assertion = this.step.response[key];
         this.addEqualAssertionIfString(assertion, key);
         this.addAssertionsIfObject(assertion, key);
-      }
+      });
     }
   }
 
   addEqualAssertionIfString(assertion, key) {
-    if(typeof assertion === 'string') {
+    if (typeof assertion === 'string') {
       this.assertions.push({
         [key]: {
           equal: assertion,
@@ -89,7 +113,7 @@ class Step extends EventEmitter {
   }
 
   addAssertionsIfObject(assertion, key) {
-    if(typeof assertion === 'object') {
+    if (typeof assertion === 'object') {
       this.assertions.push({
         [key]: assertion,
       });
@@ -98,7 +122,7 @@ class Step extends EventEmitter {
   }
 
   addDefaultPingAssertions(responseSet) {
-    if(!responseSet) {
+    if (!responseSet) {
       this.assertions.push({
         statusCode: {
           isAtLeast: 200,
@@ -125,45 +149,15 @@ class Step extends EventEmitter {
 
   assertObjectProperty(body, assertion) {
     const key = Object.keys(assertion)[0];
-    const object = this.getObjectFromKey(body, key);
-    if(object === undefined || object === null) {
+    const object = getObjectFromKey(body, key);
+    if (object === undefined || object === null) {
       this.emit(events.SUITE_STEP_FAIL, this.step, new Error(`${key} is not valid`));
     } else {
-      for(const assertionKey in assertion[key]) {
-          const property = assertion[key];
-          this.assertProperty(object, property, assertionKey);
-        };
+      Object.keys(assertion[key]).forEach((assertionKey) => {
+        const property = assertion[key];
+        assertProperty(object, property, assertionKey);
+      });
     }
-  }
-
-  getObjectFromKey(object, key) {
-    try {
-      const properties = key.split('.');
-      for(const property of properties) {
-        const bracketNotation = property.match(/\[(.*?)\]/g);
-        if (bracketNotation) {
-          const parentProperty = property.substr(0, property.match(/\[/).index);
-          object = object[camelcase(parentProperty)];
-          for(const part of bracketNotation) {
-            object = object[part.replace('[', '').replace(']', '')];
-          }
-        } else {
-          object = object[camelcase(property)];
-        }
-      };
-      return object;
-    } catch (err) {
-      return null;
-    }
-  }
-
-  assertProperty(object, property, key) {
-    const value = property[key];
-    const assertion = camelcase(key);
-    if (!assert[assertion]) {
-      throw new Error(`${key} is not a valid assertion`);
-    }
-    assert[assertion](object, value);
   }
 }
 

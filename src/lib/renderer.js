@@ -1,11 +1,13 @@
 import Mustache from 'mustache';
 
 export default (view, model) => {
-  if(view) {
+  let result;
+  if (view) {
     try {
-    return Mustache.render(view, model);
-    } catch(err) {
-      console.log(err);
+      result = Mustache.render(view, model);
+    } catch (err) {
+      result = false;
     }
   }
+  return result;
 };

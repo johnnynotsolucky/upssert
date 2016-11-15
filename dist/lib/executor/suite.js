@@ -67,7 +67,7 @@ var Suite = function (_EventEmitter) {
               case 0:
                 this.emit(_events3.default.SUITE_START, this.testCase);
                 _context.next = 3;
-                return this.executeStepsInOrder(this.testCase.steps);
+                return this.executeStepsInOrder();
 
               case 3:
                 this.emit(_events3.default.SUITE_END, this.testCase);
@@ -109,7 +109,8 @@ var Suite = function (_EventEmitter) {
           var _step2 = _step.value;
 
           if (!_step2.id) {
-            _step2.id = 'step' + i++;
+            _step2.id = 'step' + i;
+            i += 1;
           }
           var executor = new _step5.default(_step2);
           executor.on(_events3.default.SUITE_STEP_START, this.stepStart);
@@ -140,7 +141,7 @@ var Suite = function (_EventEmitter) {
   }, {
     key: 'executeStepsInOrder',
     value: function () {
-      var _ref2 = _asyncToGenerator(regeneratorRuntime.mark(function _callee2(steps) {
+      var _ref2 = _asyncToGenerator(regeneratorRuntime.mark(function _callee2() {
         var results, _iteratorNormalCompletion2, _didIteratorError2, _iteratorError2, _iterator2, _step3, executor, result;
 
         return regeneratorRuntime.wrap(function _callee2$(_context2) {
@@ -216,7 +217,7 @@ var Suite = function (_EventEmitter) {
         }, _callee2, this, [[4, 17, 21, 29], [22,, 24, 28]]);
       }));
 
-      function executeStepsInOrder(_x) {
+      function executeStepsInOrder() {
         return _ref2.apply(this, arguments);
       }
 

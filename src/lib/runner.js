@@ -27,7 +27,7 @@ class Runner extends EventEmitter {
     this.initialize();
     this.emit(events.START);
     for (const executor of this.executors) {
-      if(!this.stopExecution) {
+      if (!this.stopExecution) {
         await executor.execute();
       } else {
         break;

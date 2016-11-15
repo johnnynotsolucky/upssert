@@ -1,5 +1,6 @@
 import glob from 'glob';
 import fs from 'fs';
+import readJsonFile from './readJsonFile';
 
 const opts = (argv) => {
   const help = argv.help || argv.h;
@@ -8,13 +9,12 @@ const opts = (argv) => {
   const files = [];
 
   const getClientPackage = () => {
-    const clientPackage = require(`${process.cwd()}/package.json`);
-    if(clientPackage &&
-      clientPackage.upssert) {
-        return clientPackage.upssert;
-    } else {
-      return {};
+    let result = {};
+    const clientPackage = readJsonFile(`${process.cwd()}/package.json`);
+    if (clientPackage && clientPackage.upssert) {
+      result = clientPackage.upssert;
     }
+    return result;
   };
 
   const globPattern = (pattern) => {
@@ -26,7 +26,7 @@ const opts = (argv) => {
 
   if (argv._.length === 0) {
     const clientPackage = getClientPackage();
-    if(clientPackage.testDir) {
+    if (clientPackage.testDir) {
       argv._.push(clientPackage.testDir);
     } else {
       argv._.push(`${process.cwd()}/test/api/*.json`);
@@ -40,7 +40,7 @@ const opts = (argv) => {
     try {
       stat = fs.statSync(pattern);
     } catch (err) {
-      //noOp
+      // noOp
     }
     if (stat && stat.isDirectory()) {
       pattern = `${pattern}/**/*.json`;

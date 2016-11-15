@@ -1,5 +1,1 @@
-const parse = (data) => {
-  return JSON.parse(data);
-};
-
-export { parse };
+export default data => JSON.parse(data);

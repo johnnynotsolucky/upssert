@@ -18,6 +18,10 @@ var _renderer = require('./renderer');
 
 var _renderer2 = _interopRequireDefault(_renderer);
 
+var _events = require('../data/events.json');
+
+var _events2 = _interopRequireDefault(_events);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
@@ -60,7 +64,7 @@ var HttpRequest = function () {
                 _context.prev = 11;
                 _context.t0 = _context['catch'](1);
 
-                this.emit(events.SUITE_STEP_FAIL, this.step, _context.t0);
+                this.emit(_events2.default.SUITE_STEP_FAIL, this.step, _context.t0);
                 result = false;
 
               case 15:
@@ -105,13 +109,15 @@ var HttpRequest = function () {
   }, {
     key: 'formatRequestHeaders',
     value: function formatRequestHeaders() {
+      var _this2 = this;
+
       var headers = [];
       if (this.step.request.headers) {
-        for (var key in this.step.request.headers) {
-          var value = this.step.request.headers[key];
+        Object.keys(this.step.request.headers).forEach(function (key) {
+          var value = _this2.step.request.headers[key];
           var concatenated = key + ': ' + value;
           headers.push(concatenated);
-        }
+        });
       }
       return headers;
     }
@@ -119,22 +125,22 @@ var HttpRequest = function () {
     key: 'makeRequest',
     value: function () {
       var _ref2 = _asyncToGenerator(regeneratorRuntime.mark(function _callee2(form, data, headers) {
-        var response, result;
+        var url, method, response, result;
         return regeneratorRuntime.wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
-                _context2.next = 2;
-                return (0, _httpstat2.default)(this.step.request.url, {
-                  method: this.step.request.method
-                }, headers, data, form);
+                url = this.step.request.url;
+                method = { method: this.step.request.method };
+                _context2.next = 4;
+                return (0, _httpstat2.default)(url, method, headers, data, form);
 
-              case 2:
+              case 4:
                 response = _context2.sent;
                 result = (0, _transposeStatResult2.default)(response);
                 return _context2.abrupt('return', result);
 
-              case 5:
+              case 7:
               case 'end':
                 return _context2.stop();
             }

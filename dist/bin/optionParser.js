@@ -12,6 +12,10 @@ var _fs = require('fs');
 
 var _fs2 = _interopRequireDefault(_fs);
 
+var _readJsonFile = require('./readJsonFile');
+
+var _readJsonFile2 = _interopRequireDefault(_readJsonFile);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
@@ -23,12 +27,12 @@ var opts = function opts(argv) {
   var files = [];
 
   var getClientPackage = function getClientPackage() {
-    var clientPackage = require(process.cwd() + '/package.json');
+    var result = {};
+    var clientPackage = (0, _readJsonFile2.default)(process.cwd() + '/package.json');
     if (clientPackage && clientPackage.upssert) {
-      return clientPackage.upssert;
-    } else {
-      return {};
+      result = clientPackage.upssert;
     }
+    return result;
   };
 
   var globPattern = function globPattern(pattern) {
@@ -54,7 +58,7 @@ var opts = function opts(argv) {
     try {
       stat = _fs2.default.statSync(pattern);
     } catch (err) {
-      //noOp
+      // noOp
     }
     if (stat && stat.isDirectory()) {
       pattern = pattern + '/**/*.json';

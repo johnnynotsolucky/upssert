@@ -4,7 +4,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /* eslint-disable no-console*/
+
 
 var _events = require('../../data/events.json');
 
@@ -13,6 +14,10 @@ var _events2 = _interopRequireDefault(_events);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var name = function name(step) {
+  return step.name.replace(/#/g, '_');
+};
 
 var TAP = function () {
   function TAP(runner) {
@@ -62,9 +67,9 @@ var TAP = function () {
     value: function handleStepPass(step) {
       var _this2 = this;
 
-      this.passes++;
+      this.passes += 1;
       this.runIfNotBailed(function () {
-        console.log('ok %d %s', _this2.tests, _this2.name(step));
+        console.log('ok %d %s', _this2.tests, name(step));
       });
     }
   }, {
@@ -72,9 +77,9 @@ var TAP = function () {
     value: function handleStepFail(step, err) {
       var _this3 = this;
 
-      this.fails++;
+      this.fails += 1;
       this.runIfNotBailed(function () {
-        console.log('not ok %d %s', _this3.tests, _this3.name(step));
+        console.log('not ok %d %s', _this3.tests, name(step));
         if (err.stack) {
           console.log(err.stack.replace(/^/gm, '  '));
         }
@@ -105,14 +110,12 @@ var TAP = function () {
         fn();
       }
     }
-  }, {
-    key: 'name',
-    value: function name(step) {
-      return step.name.replace(/#/g, '_');
-    }
   }]);
 
   return TAP;
 }();
 
-exports.default = TAP;
+exports.default = function (runner) {
+  var tap = new TAP(runner);
+  return tap;
+};

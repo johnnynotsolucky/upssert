@@ -51,7 +51,7 @@ var Upssert = function (_EventEmitter) {
       runner.on(_events3.default.FAIL, function (obj, err) {
         _this2.emit(_events3.default.FAIL, obj, err);
       });
-      new _tap2.default(runner);
+      (0, _tap2.default)(runner);
       runner.run();
     }
   }]);

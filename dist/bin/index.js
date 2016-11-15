@@ -1,6 +1,10 @@
 #!/usr/bin/env node
 'use strict';
 
+var _readJsonFile = require('./readJsonFile');
+
+var _readJsonFile2 = _interopRequireDefault(_readJsonFile);
+
 var _optionParser = require('./optionParser');
 
 var _optionParser2 = _interopRequireDefault(_optionParser);
@@ -21,7 +25,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var optionDefinitions = {
   boolean: ['help', 'h']
-};
+}; // eslint-disable-line import/no-unresolved
+
+/* eslint-disable no-console*/
+
 
 var minimist = require('minimist');
 
@@ -34,8 +41,6 @@ try {
 }
 
 var opts = (0, _optionParser2.default)(argv);
-
-// import reporter from '../lib/reporter';
 
 var showHelp = function showHelp() {
   console.log('\n    ' + _package2.default.description + '\n    Usage: upssert [options...]\n    options:\n      -h, --help Show help\n      --version\n  ');
@@ -52,7 +57,8 @@ if (opts.help) {
 }
 
 opts.files.forEach(function (file) {
-  data.push(require(file));
+  var json = (0, _readJsonFile2.default)(file);
+  data.push(json);
 });
 
 var upssert = new _2.default();

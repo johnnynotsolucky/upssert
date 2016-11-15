@@ -3,8 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-var parse = function parse(data) {
+
+exports.default = function (data) {
   return JSON.parse(data);
 };
-
-exports.parse = parse;

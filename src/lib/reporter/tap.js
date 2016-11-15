@@ -1,5 +1,7 @@
+/* eslint-disable no-console*/
 import events from '../../data/events.json';
 
+const name = step => step.name.replace(/#/g, '_');
 
 class TAP {
   constructor(runner) {
@@ -37,16 +39,16 @@ class TAP {
   }
 
   handleStepPass(step) {
-    this.passes++;
+    this.passes += 1;
     this.runIfNotBailed(() => {
-      console.log('ok %d %s', this.tests, this.name(step));
+      console.log('ok %d %s', this.tests, name(step));
     });
   }
 
   handleStepFail(step, err) {
-    this.fails++;
+    this.fails += 1;
     this.runIfNotBailed(() => {
-      console.log('not ok %d %s', this.tests, this.name(step));
+      console.log('not ok %d %s', this.tests, name(step));
       if (err.stack) {
         console.log(err.stack.replace(/^/gm, '  '));
       }
@@ -61,21 +63,20 @@ class TAP {
   handleEnd() {
     this.runIfNotBailed(() => {
       console.log(`# tests ${this.stepCount}`);
-      console.log('# pass ' + this.passes);
-      console.log('# fail ' + this.fails);
+      console.log(`# pass ${this.passes}`);
+      console.log(`# fail ${this.fails}`);
       console.log(`# assertions ${this.assertionCount}`);
     });
   }
 
   runIfNotBailed(fn) {
-    if(!this.bail) {
+    if (!this.bail) {
       fn();
     }
   }
-
-  name(step) {
-    return step.name.replace(/#/g, '_');
-  }
 }
 
-export default TAP;
+export default (runner) => {
+  const tap = new TAP(runner);
+  return tap;
+};

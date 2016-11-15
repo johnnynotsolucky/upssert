@@ -1,10 +1,11 @@
+import jsonParser from './jsonParser';
 import contentTypes from '../../data/content-types.json';
 
 export default (contentType) => {
-  switch(contentType) {
+  switch (contentType) {
     case contentTypes.JSON:
-      return require('./jsonParser');
+      return jsonParser;
     default:
-      return { parse: (data) => data };
+      return data => data;
   }
 };

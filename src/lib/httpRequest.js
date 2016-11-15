@@ -1,6 +1,7 @@
 import httpstat from 'httpstat';
 import transposeStatResult from './transposeStatResult';
 import renderer from './renderer';
+import events from '../data/events.json';
 
 class HttpRequest {
   constructor(step, resultset) {
@@ -42,24 +43,21 @@ class HttpRequest {
   }
 
   formatRequestHeaders() {
-    let headers = [];
+    const headers = [];
     if (this.step.request.headers) {
-      for(const key in this.step.request.headers) {
+      Object.keys(this.step.request.headers).forEach((key) => {
         const value = this.step.request.headers[key];
         const concatenated = `${key}: ${value}`;
         headers.push(concatenated);
-      }
+      });
     }
     return headers;
   }
 
   async makeRequest(form, data, headers) {
-    const response = await httpstat(this.step.request.url, {
-        method: this.step.request.method
-      },
-      headers,
-      data,
-      form);
+    const url = this.step.request.url;
+    const method = { method: this.step.request.method };
+    const response = await httpstat(url, method, headers, data, form);
     const result = transposeStatResult(response);
     return result;
   }
