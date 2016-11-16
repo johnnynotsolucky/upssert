@@ -12,9 +12,21 @@ var _tv = require('tv4');
 
 var _tv2 = _interopRequireDefault(_tv);
 
-var _testCaseSchema = require('../../data/test-case-schema.json');
+var _formdata = require('../../data/schema/formdata.json');
 
-var _testCaseSchema2 = _interopRequireDefault(_testCaseSchema);
+var _formdata2 = _interopRequireDefault(_formdata);
+
+var _request = require('../../data/schema/request.json');
+
+var _request2 = _interopRequireDefault(_request);
+
+var _test = require('../../data/schema/test.json');
+
+var _test2 = _interopRequireDefault(_test);
+
+var _suite = require('../../data/schema/suite.json');
+
+var _suite2 = _interopRequireDefault(_suite);
 
 var _step4 = require('./step');
 
@@ -89,7 +101,10 @@ var Suite = function (_EventEmitter) {
   }, {
     key: 'initialize',
     value: function initialize() {
-      var testValid = _tv2.default.validate(this.testCase, _testCaseSchema2.default);
+      _tv2.default.addSchema('formdata-schema', _formdata2.default);
+      _tv2.default.addSchema('request-schema', _request2.default);
+      _tv2.default.addSchema('test-schema', _test2.default);
+      var testValid = _tv2.default.validate(this.testCase, _suite2.default);
       if (testValid) {
         this.initializeSteps();
       } else {

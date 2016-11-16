@@ -1,0 +1,22 @@
+{
+	"type": "object",
+	"properties": {
+		"id": {
+			"type": "string"
+		},
+		"name": {
+			"type": "string"
+		},
+		"requires": {
+			"type": "array",
+			"items": {
+				"type": "string"
+			}
+		},
+		"request": { "$ref": "request-schema" },
+		"response": {
+			"type": "object"
+		}
+	},
+	"required": ["name", "request"]
+}

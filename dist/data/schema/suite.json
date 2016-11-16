@@ -1,0 +1,17 @@
+{
+	"title": "Configuration Schema",
+	"type": "object",
+	"properties": {
+		"name": {
+			"type": "string"
+		},
+		"base-url": {
+			"type": "string"
+		},
+		"steps": {
+			"type": "array",
+			"items": { "$ref": "test-schema" }
+		}
+	},
+	"required": ["name"]
+}

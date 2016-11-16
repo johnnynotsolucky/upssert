@@ -1,0 +1,31 @@
+{
+	"type": "object",
+	"properties": {
+		"url": {
+			"type": "string"
+		},
+		"method": {
+			"type": "string",
+			"enum": ["POST",
+				"GET",
+				"PUT",
+				"PATCH",
+				"DELETE",
+				"HEAD"]
+		},
+		"headers": {
+			"type": "object"
+		},
+		"query": {
+			"type": "object"
+		},
+		"data": {
+			"type": ["string"]
+		},
+		"form": {
+			"type": "array",
+			"items": { "$ref": "formdata-schema" }
+		}
+	},
+	"required": ["url", "method"]
+}
