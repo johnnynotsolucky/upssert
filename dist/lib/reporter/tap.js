@@ -4,8 +4,11 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /* eslint-disable no-console*/
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _logWriter = require('./log-writer');
+
+var _logWriter2 = _interopRequireDefault(_logWriter);
 
 var _events = require('../../data/events.json');
 
@@ -23,6 +26,7 @@ var TAP = function () {
   function TAP(runner) {
     _classCallCheck(this, TAP);
 
+    this.writer = new _logWriter2.default();
     this.stepCount = 0;
     this.assertionCount = 0;
     this.passes = 0;
@@ -59,7 +63,7 @@ var TAP = function () {
       var _this = this;
 
       this.runIfNotBailed(function () {
-        console.log('%d..%d', 1, _this.stepCount);
+        _this.writer.out('%d..%d', 1, _this.stepCount);
       });
     }
   }, {
@@ -69,7 +73,7 @@ var TAP = function () {
 
       this.passes += 1;
       this.runIfNotBailed(function () {
-        console.log('ok %d %s', _this2.tests, name(step));
+        _this2.writer.out('ok %d %s', _this2.tests, name(step));
       });
     }
   }, {
@@ -79,9 +83,9 @@ var TAP = function () {
 
       this.fails += 1;
       this.runIfNotBailed(function () {
-        console.log('not ok %d %s', _this3.tests, name(step));
+        _this3.writer.out('not ok %d %s', _this3.tests, name(step));
         if (err.stack) {
-          console.log(err.stack.replace(/^/gm, '  '));
+          _this3.writer.out(err.stack.replace(/^/gm, '  '));
         }
       });
     }
@@ -89,7 +93,7 @@ var TAP = function () {
     key: 'handleSuiteFail',
     value: function handleSuiteFail(suite, err) {
       this.bail = true;
-      console.log('Bail out! %s', err.message);
+      this.writer.out('Bail out! %s', err.message);
     }
   }, {
     key: 'handleEnd',
@@ -97,10 +101,10 @@ var TAP = function () {
       var _this4 = this;
 
       this.runIfNotBailed(function () {
-        console.log('# tests ' + _this4.stepCount);
-        console.log('# pass ' + _this4.passes);
-        console.log('# fail ' + _this4.fails);
-        console.log('# assertions ' + _this4.assertionCount);
+        var _writer;
+
+        var out = ['# tests ' + _this4.stepCount, '# pass ' + _this4.passes, '# fail ' + _this4.fails, '# assertions ' + _this4.assertionCount];
+        (_writer = _this4.writer).lines.apply(_writer, out);
       });
     }
   }, {

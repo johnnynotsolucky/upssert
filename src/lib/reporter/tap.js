@@ -1,10 +1,11 @@
-/* eslint-disable no-console*/
+import LogWriter from './log-writer';
 import events from '../../data/events.json';
 
 const name = step => step.name.replace(/#/g, '_');
 
 class TAP {
   constructor(runner) {
+    this.writer = new LogWriter();
     this.stepCount = 0;
     this.assertionCount = 0;
     this.passes = 0;
@@ -34,38 +35,41 @@ class TAP {
 
   handleStart() {
     this.runIfNotBailed(() => {
-      console.log('%d..%d', 1, this.stepCount);
+      this.writer.out('%d..%d', 1, this.stepCount);
     });
   }
 
   handleStepPass(step) {
     this.passes += 1;
     this.runIfNotBailed(() => {
-      console.log('ok %d %s', this.tests, name(step));
+      this.writer.out('ok %d %s', this.tests, name(step));
     });
   }
 
   handleStepFail(step, err) {
     this.fails += 1;
     this.runIfNotBailed(() => {
-      console.log('not ok %d %s', this.tests, name(step));
+      this.writer.out('not ok %d %s', this.tests, name(step));
       if (err.stack) {
-        console.log(err.stack.replace(/^/gm, '  '));
+        this.writer.out(err.stack.replace(/^/gm, '  '));
       }
     });
   }
 
   handleSuiteFail(suite, err) {
     this.bail = true;
-    console.log('Bail out! %s', err.message);
+    this.writer.out('Bail out! %s', err.message);
   }
 
   handleEnd() {
     this.runIfNotBailed(() => {
-      console.log(`# tests ${this.stepCount}`);
-      console.log(`# pass ${this.passes}`);
-      console.log(`# fail ${this.fails}`);
-      console.log(`# assertions ${this.assertionCount}`);
+      const out = [
+        `# tests ${this.stepCount}`,
+        `# pass ${this.passes}`,
+        `# fail ${this.fails}`,
+        `# assertions ${this.assertionCount}`,
+      ];
+      this.writer.lines(...out);
     });
   }
 
