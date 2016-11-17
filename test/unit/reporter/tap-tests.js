@@ -2,6 +2,7 @@ import { assert } from 'chai';
 import sinon from 'sinon';
 import Runner from '../mocks/runner.js';
 import tapReporter from '../../../src/lib/reporter/tap';
+import LogWriter from '../../../src/lib/writer/log';
 import events from '../../../src/data/events.json';
 
 sinon.assert.expose(assert, { prefix: "" });
@@ -9,20 +10,24 @@ sinon.assert.expose(assert, { prefix: "" });
 describe('TAP Reporter', () => {
   let runner;
   let tap;
+  let writer;
   beforeEach(function() {
     runner = new Runner();
-    tap = tapReporter(runner);
-    sinon.stub(tap.writer, 'out');
+    writer = new LogWriter();
+    tap = tapReporter(runner, writer);
+    sinon.stub(writer, 'out');
+    sinon.stub(writer, 'lines');
   });
 
   afterEach(function() {
-    tap.writer.out.restore();
+    writer.out.restore();
+    writer.lines.restore();
   });
 
   it('should output the correct test count when the runner starts', (done) => {
     runner.on(events.START, () => {
-      sinon.assert.calledOnce(tap.writer.out);
-      sinon.assert.calledWith(tap.writer.out, '%d..%d', 1, 9);
+      sinon.assert.calledOnce(writer.out);
+      sinon.assert.calledWith(writer.out, '%d..%d', 1, 9);
       assert.equal(tap.stepCount, 9);
       done();
     });
@@ -32,8 +37,8 @@ describe('TAP Reporter', () => {
 
   it('should output Bail out! when a suite fails', (done) => {
     runner.on(events.SUITE_FAIL, (obj, err) => {
-      sinon.assert.calledOnce(tap.writer.out);
-      sinon.assert.calledWith(tap.writer.out, 'Bail out! %s', err.message);
+      sinon.assert.calledOnce(writer.out);
+      sinon.assert.calledWith(writer.out, 'Bail out! %s', err.message);
       assert.equal(tap.bail, true);
       done();
     });
@@ -67,16 +72,15 @@ describe('TAP Reporter', () => {
   // });
 
   it('should output the correct counts when the runner ends', (done) => {
-    sinon.stub(tap.writer, 'lines');
     runner.on(events.END, () => {
-      sinon.assert.calledOnce(tap.writer.lines);
+      sinon.assert.calledOnce(writer.lines);
       const out = [
         '# tests 6',
         '# pass 3',
         '# fail 3',
         '# assertions 18',
       ]
-      sinon.assert.calledWith(tap.writer.lines, ...out);
+      sinon.assert.calledWith(writer.lines, ...out);
       done();
     });
     runner.suiteStepCount(6);

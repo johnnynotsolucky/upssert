@@ -2,6 +2,7 @@ import 'babel-polyfill';
 import { EventEmitter } from 'events';
 import Runner from './lib/runner';
 import tapReporter from './lib/reporter/tap';
+import LogWriter from './lib/writer/log';
 import events from './data/events.json';
 
 class Upssert extends EventEmitter {
@@ -14,7 +15,7 @@ class Upssert extends EventEmitter {
     runner.on(events.FAIL, (obj, err) => {
       this.emit(events.FAIL, obj, err);
     });
-    tapReporter(runner);
+    tapReporter(runner, new LogWriter());
     runner.run();
   }
 }

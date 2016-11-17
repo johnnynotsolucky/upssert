@@ -1,11 +1,10 @@
-import LogWriter from './log-writer';
 import events from '../../data/events.json';
 
 const name = step => step.name.replace(/#/g, '_');
 
 class TAP {
-  constructor(runner) {
-    this.writer = new LogWriter();
+  constructor(runner, writer) {
+    this.writer = writer;
     this.stepCount = 0;
     this.assertionCount = 0;
     this.passes = 0;
@@ -80,7 +79,7 @@ class TAP {
   }
 }
 
-export default (runner) => {
-  const tap = new TAP(runner);
+export default (runner, writer) => {
+  const tap = new TAP(runner, writer);
   return tap;
 };
