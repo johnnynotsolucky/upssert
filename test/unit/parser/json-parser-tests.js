@@ -1,3 +1,4 @@
+/* eslint-disable no-undef, import/no-extraneous-dependencies */
 import { assert } from 'chai';
 import jsonParser from '../../../src/lib/parser/json';
 
@@ -26,7 +27,7 @@ describe('JSON Parser', () => {
       assert.isOk(obj);
       assert.isArray(obj);
       assert.strictEqual(obj.length, test.assert[0]);
-      assert.isTrue(typeof obj[0] === test.assert[1]);
+      assert.isTrue(typeof obj[0] === test.assert[1]); // eslint-disable-line valid-typeof
     }
   });
 
@@ -35,7 +36,7 @@ describe('JSON Parser', () => {
       '{foo: "bar"}',
       'foo: bar',
       '"foo": "bar"',
-      '{"foo": 1,10}'
+      '{"foo": 1,10}',
     ];
 
     for (const test of tests) {

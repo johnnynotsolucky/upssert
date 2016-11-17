@@ -8,9 +8,9 @@ var _camelcase = require('camelcase');
 
 var _camelcase2 = _interopRequireDefault(_camelcase);
 
-var _parserFactory = require('./parser/parserFactory');
+var _factory = require('./parser/factory');
 
-var _parserFactory2 = _interopRequireDefault(_parserFactory);
+var _factory2 = _interopRequireDefault(_factory);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -78,7 +78,7 @@ exports.default = function (result) {
     }
   }
 
-  var parser = (0, _parserFactory2.default)(contentType);
+  var parser = (0, _factory2.default)(contentType);
   var body = parser(result.response.body);
 
   return {

@@ -6,10 +6,6 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _logWriter = require('./log-writer');
-
-var _logWriter2 = _interopRequireDefault(_logWriter);
-
 var _events = require('../../data/events.json');
 
 var _events2 = _interopRequireDefault(_events);
@@ -23,10 +19,10 @@ var name = function name(step) {
 };
 
 var TAP = function () {
-  function TAP(runner) {
+  function TAP(runner, writer) {
     _classCallCheck(this, TAP);
 
-    this.writer = new _logWriter2.default();
+    this.writer = writer;
     this.stepCount = 0;
     this.assertionCount = 0;
     this.passes = 0;
@@ -119,7 +115,7 @@ var TAP = function () {
   return TAP;
 }();
 
-exports.default = function (runner) {
-  var tap = new TAP(runner);
+exports.default = function (runner, writer) {
+  var tap = new TAP(runner, writer);
   return tap;
 };

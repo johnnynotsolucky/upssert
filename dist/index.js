@@ -18,6 +18,10 @@ var _tap = require('./lib/reporter/tap');
 
 var _tap2 = _interopRequireDefault(_tap);
 
+var _log = require('./lib/writer/log');
+
+var _log2 = _interopRequireDefault(_log);
+
 var _events2 = require('./data/events.json');
 
 var _events3 = _interopRequireDefault(_events2);
@@ -51,7 +55,7 @@ var Upssert = function (_EventEmitter) {
       runner.on(_events3.default.FAIL, function (obj, err) {
         _this2.emit(_events3.default.FAIL, obj, err);
       });
-      (0, _tap2.default)(runner);
+      (0, _tap2.default)(runner, new _log2.default());
       runner.run();
     }
   }]);

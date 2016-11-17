@@ -9,7 +9,7 @@
     "start": "node ./dist/index.js",
     "test": "mocha --require babel-polyfill --compilers js:babel-register --recursive test/unit",
     "watch": "gulp watch",
-    "lint": "eslint --format 'node_modules/eslint-friendly-formatter' src"
+    "lint": "eslint --format 'node_modules/eslint-friendly-formatter' src,test"
   },
   "repository": {
     "type": "git",
