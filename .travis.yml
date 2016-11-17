@@ -1,0 +1,7 @@
+language: node_js
+node_js:
+  - "4.6.1"
+install:
+  - "npm install"
+script:
+  - "./node_modules/.bin/nyc --require babel-core/register --all ./node_modules/.bin/mocha | ./node_modules/.bin/coveralls"

@@ -1,0 +1,12 @@
+{
+  "include": [
+    "src/**/*.js"
+  ],
+  "reporter": [
+    "lcov"
+  ],
+  "require": [
+    "babel-core/register"
+  ],
+  "report-dir": "./coverage"
+}
