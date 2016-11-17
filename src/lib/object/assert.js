@@ -1,13 +1,18 @@
 import { assert } from 'chai';
 import camelcase from 'camelcase';
 import getObjectValue from './get-value';
-import events from '../../data/events.json';
 
 const assertValue = (value, assertAgainst, assertionMethodName) => {
   const expectedValue = assertAgainst[assertionMethodName];
   const assertionMethod = camelcase(assertionMethodName);
   if (!assert[assertionMethod]) {
-    throw new Error(`${assertionMethodName} is not a valid assertion`);
+    let message;
+    if (assertionMethodName.trim().length === 0) {
+      message = 'Invalid assertion';
+    } else {
+      message = `${assertionMethodName} is not a valid assertion`;
+    }
+    throw new Error(message);
   }
   assert[assertionMethod](value, expectedValue);
 };
@@ -25,19 +30,19 @@ class AssertObject {
         this.assertProperty(propertyToAssert, errorCb));
       result = true;
     } catch (err) {
-      this.emit(events.SUITE_STEP_FAIL, this.step, err);
+      if (typeof errorCb === 'function') {
+        errorCb(err);
+      }
       result = false;
     }
     return result;
   }
 
-  assertProperty(propertyToAssert, errorCb) {
+  assertProperty(propertyToAssert) {
     const propertyNameToAssert = Object.keys(propertyToAssert)[0];
     const objectValue = getObjectValue(this.object, propertyNameToAssert);
-    if (objectValue === undefined || objectValue === null) {
-      if (typeof errorCb === 'function') {
-        errorCb(new Error(`${propertyNameToAssert} is not valid`));
-      }
+    if (objectValue === undefined) {
+      throw new Error(`${propertyNameToAssert} is not valid`);
     } else {
       const assertAgainst = propertyToAssert[propertyNameToAssert];
       Object.keys(propertyToAssert[propertyNameToAssert])

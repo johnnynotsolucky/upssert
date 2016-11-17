@@ -8,6 +8,10 @@ var _camelcase = require('camelcase');
 
 var _camelcase2 = _interopRequireDefault(_camelcase);
 
+var _falsy = require('falsy');
+
+var _falsy2 = _interopRequireDefault(_falsy);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var getValueFromBracketNotation = function getValueFromBracketNotation(object, property, bracketNotation) {
@@ -42,6 +46,9 @@ var getValueFromBracketNotation = function getValueFromBracketNotation(object, p
 };
 
 var getObjectValue = function getObjectValue(object, key) {
+  if ((0, _falsy2.default)(key)) {
+    return object;
+  }
   try {
     var value = object;
     var properties = key.split('.');
@@ -77,7 +84,7 @@ var getObjectValue = function getObjectValue(object, key) {
 
     return value;
   } catch (err) {
-    return null;
+    return undefined;
   }
 };
 

@@ -1,4 +1,5 @@
 import camelcase from 'camelcase';
+import falsy from 'falsy';
 
 const getValueFromBracketNotation = (object, property, bracketNotation) => {
   const parentProperty = property.substr(0, property.match(/\[/).index);
@@ -10,6 +11,9 @@ const getValueFromBracketNotation = (object, property, bracketNotation) => {
 };
 
 const getObjectValue = (object, key) => {
+  if (falsy(key)) {
+    return object;
+  }
   try {
     let value = object;
     const properties = key.split('.');
@@ -23,7 +27,7 @@ const getObjectValue = (object, key) => {
     }
     return value;
   } catch (err) {
-    return null;
+    return undefined;
   }
 };
 

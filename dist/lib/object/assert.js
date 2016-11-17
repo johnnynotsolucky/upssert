@@ -16,10 +16,6 @@ var _getValue = require('./get-value');
 
 var _getValue2 = _interopRequireDefault(_getValue);
 
-var _events = require('../../data/events.json');
-
-var _events2 = _interopRequireDefault(_events);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -28,7 +24,13 @@ var assertValue = function assertValue(value, assertAgainst, assertionMethodName
   var expectedValue = assertAgainst[assertionMethodName];
   var assertionMethod = (0, _camelcase2.default)(assertionMethodName);
   if (!_chai.assert[assertionMethod]) {
-    throw new Error(assertionMethodName + ' is not a valid assertion');
+    var message = void 0;
+    if (assertionMethodName.trim().length === 0) {
+      message = 'Invalid assertion';
+    } else {
+      message = assertionMethodName + ' is not a valid assertion';
+    }
+    throw new Error(message);
   }
   _chai.assert[assertionMethod](value, expectedValue);
 };
@@ -53,20 +55,20 @@ var AssertObject = function () {
         });
         result = true;
       } catch (err) {
-        this.emit(_events2.default.SUITE_STEP_FAIL, this.step, err);
+        if (typeof errorCb === 'function') {
+          errorCb(err);
+        }
         result = false;
       }
       return result;
     }
   }, {
     key: 'assertProperty',
-    value: function assertProperty(propertyToAssert, errorCb) {
+    value: function assertProperty(propertyToAssert) {
       var propertyNameToAssert = Object.keys(propertyToAssert)[0];
       var objectValue = (0, _getValue2.default)(this.object, propertyNameToAssert);
-      if (objectValue === undefined || objectValue === null) {
-        if (typeof errorCb === 'function') {
-          errorCb(new Error(propertyNameToAssert + ' is not valid'));
-        }
+      if (objectValue === undefined) {
+        throw new Error(propertyNameToAssert + ' is not valid');
       } else {
         (function () {
           var assertAgainst = propertyToAssert[propertyNameToAssert];
