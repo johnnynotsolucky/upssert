@@ -1,5 +1,5 @@
 import camelcase from 'camelcase';
-import parserFactory from './parser/parserFactory';
+import parserFactory from './parser/factory';
 
 const calculateResponseTimes = (times) => {
   const calculated = {

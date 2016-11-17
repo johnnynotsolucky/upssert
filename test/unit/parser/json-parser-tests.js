@@ -1,5 +1,5 @@
 import { assert } from 'chai';
-import jsonParser from '../../../src/lib/parser/jsonParser';
+import jsonParser from '../../../src/lib/parser/json';
 
 describe('JSON Parser', () => {
   it('should correctly parse JSON data as an object', () => {

@@ -1,4 +1,4 @@
-import jsonParser from './jsonParser';
+import jsonParser from './json';
 import contentTypes from '../../data/content-types.json';
 
 export default (contentType) => {
