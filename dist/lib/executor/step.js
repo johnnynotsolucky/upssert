@@ -14,11 +14,9 @@ var _falsy = require('falsy');
 
 var _falsy2 = _interopRequireDefault(_falsy);
 
-var _chai = require('chai');
+var _assert = require('../object/assert');
 
-var _camelcase = require('camelcase');
-
-var _camelcase2 = _interopRequireDefault(_camelcase);
+var _assert2 = _interopRequireDefault(_assert);
 
 var _generateToken = require('../generateToken');
 
@@ -44,79 +42,6 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var getObjectFromKey = function getObjectFromKey(object, key) {
-  try {
-    var properties = key.split('.');
-    var _iteratorNormalCompletion = true;
-    var _didIteratorError = false;
-    var _iteratorError = undefined;
-
-    try {
-      for (var _iterator = properties[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-        var property = _step.value;
-
-        var bracketNotation = property.match(/\[(.*?)]/g);
-        if (bracketNotation) {
-          var parentProperty = property.substr(0, property.match(/\[/).index);
-          object = object[(0, _camelcase2.default)(parentProperty)];
-          var _iteratorNormalCompletion2 = true;
-          var _didIteratorError2 = false;
-          var _iteratorError2 = undefined;
-
-          try {
-            for (var _iterator2 = bracketNotation[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-              var part = _step2.value;
-
-              object = object[part.replace('[', '').replace(']', '')];
-            }
-          } catch (err) {
-            _didIteratorError2 = true;
-            _iteratorError2 = err;
-          } finally {
-            try {
-              if (!_iteratorNormalCompletion2 && _iterator2.return) {
-                _iterator2.return();
-              }
-            } finally {
-              if (_didIteratorError2) {
-                throw _iteratorError2;
-              }
-            }
-          }
-        } else {
-          object = object[(0, _camelcase2.default)(property)];
-        }
-      }
-    } catch (err) {
-      _didIteratorError = true;
-      _iteratorError = err;
-    } finally {
-      try {
-        if (!_iteratorNormalCompletion && _iterator.return) {
-          _iterator.return();
-        }
-      } finally {
-        if (_didIteratorError) {
-          throw _iteratorError;
-        }
-      }
-    }
-
-    return object;
-  } catch (err) {
-    return null;
-  }
-};
-
-var assertProperty = function assertProperty(object, property, key) {
-  var value = property[key];
-  var assertion = (0, _camelcase2.default)(key);
-  if (!_chai.assert[assertion]) {
-    throw new Error(key + ' is not a valid assertion');
-  }
-  _chai.assert[assertion](object, value);
-};
-
 var Step = function (_EventEmitter) {
   _inherits(Step, _EventEmitter);
 
@@ -134,7 +59,9 @@ var Step = function (_EventEmitter) {
     key: 'execute',
     value: function () {
       var _ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee(resultset) {
-        var trace, data, httpRequest, result, stepPassed;
+        var _this2 = this;
+
+        var trace, data, httpRequest, result, stepPassed, assertObject;
         return regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
@@ -151,7 +78,11 @@ var Step = function (_EventEmitter) {
                 stepPassed = false;
 
                 if (result) {
-                  stepPassed = this.assert(result);
+                  assertObject = new _assert2.default(result, this.assertions);
+
+                  stepPassed = assertObject.assert(function (err) {
+                    _this2.emit(_events3.default.SUITE_STEP_FAIL, _this2.step, err);
+                  });
                   if (stepPassed) {
                     this.emit(_events3.default.SUITE_STEP_PASS, this.step);
                   }
@@ -209,13 +140,13 @@ var Step = function (_EventEmitter) {
   }, {
     key: 'addAssertionsIfReponseIsSet',
     value: function addAssertionsIfReponseIsSet(responseSet) {
-      var _this2 = this;
+      var _this3 = this;
 
       if (responseSet) {
         Object.keys(this.step.response).forEach(function (key) {
-          var assertion = _this2.step.response[key];
-          _this2.addEqualAssertionIfString(assertion, key);
-          _this2.addAssertionsIfObject(assertion, key);
+          var assertion = _this3.step.response[key];
+          _this3.addEqualAssertionIfString(assertion, key);
+          _this3.addAssertionsIfObject(assertion, key);
         });
       }
     }
@@ -248,37 +179,6 @@ var Step = function (_EventEmitter) {
           }
         });
         this.emit(_events3.default.SUITE_ASSERTION_COUNT, 2);
-      }
-    }
-  }, {
-    key: 'assert',
-    value: function assert(object) {
-      var _this3 = this;
-
-      var result = void 0;
-      try {
-        this.assertions.forEach(function (assertion) {
-          _this3.assertObjectProperty(object, assertion);
-        });
-        result = true;
-      } catch (err) {
-        this.emit(_events3.default.SUITE_STEP_FAIL, this.step, err);
-        result = false;
-      }
-      return result;
-    }
-  }, {
-    key: 'assertObjectProperty',
-    value: function assertObjectProperty(body, assertion) {
-      var key = Object.keys(assertion)[0];
-      var object = getObjectFromKey(body, key);
-      if (object === undefined || object === null) {
-        this.emit(_events3.default.SUITE_STEP_FAIL, this.step, new Error(key + ' is not valid'));
-      } else {
-        Object.keys(assertion[key]).forEach(function (assertionKey) {
-          var property = assertion[key];
-          assertProperty(object, property, assertionKey);
-        });
       }
     }
   }]);

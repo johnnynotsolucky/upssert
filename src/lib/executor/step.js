@@ -1,41 +1,9 @@
 import { EventEmitter } from 'events';
 import falsy from 'falsy';
-import { assert } from 'chai';
-import camelcase from 'camelcase';
+import AssertObject from '../object/assert';
 import generateToken from '../generateToken';
 import HttpRequest from '../httpRequest';
 import events from '../../data/events.json';
-
-const getObjectFromKey = (object, key) => {
-  try {
-    const properties = key.split('.');
-    for (const property of properties) {
-      const bracketNotation = property.match(/\[(.*?)]/g);
-      if (bracketNotation) {
-        const parentProperty = property.substr(0, property.match(/\[/).index);
-        object = object[camelcase(parentProperty)];
-        for (const part of bracketNotation) {
-          object = object[part.replace('[', '').replace(']', '')];
-        }
-      } else {
-        object = object[camelcase(property)];
-      }
-    }
-    return object;
-  } catch (err) {
-    return null;
-  }
-};
-
-const assertProperty = (object, property, key) => {
-  const value = property[key];
-  const assertion = camelcase(key);
-  if (!assert[assertion]) {
-    throw new Error(`${key} is not a valid assertion`);
-  }
-  assert[assertion](object, value);
-};
-
 
 class Step extends EventEmitter {
   constructor(step) {
@@ -52,7 +20,10 @@ class Step extends EventEmitter {
     const result = await httpRequest.execute();
     let stepPassed = false;
     if (result) {
-      stepPassed = this.assert(result);
+      const assertObject = new AssertObject(result, this.assertions);
+      stepPassed = assertObject.assert((err) => {
+        this.emit(events.SUITE_STEP_FAIL, this.step, err);
+      });
       if (stepPassed) {
         this.emit(events.SUITE_STEP_PASS, this.step);
       }
@@ -130,33 +101,6 @@ class Step extends EventEmitter {
         },
       });
       this.emit(events.SUITE_ASSERTION_COUNT, 2);
-    }
-  }
-
-  assert(object) {
-    let result;
-    try {
-      this.assertions.forEach((assertion) => {
-        this.assertObjectProperty(object, assertion);
-      });
-      result = true;
-    } catch (err) {
-      this.emit(events.SUITE_STEP_FAIL, this.step, err);
-      result = false;
-    }
-    return result;
-  }
-
-  assertObjectProperty(body, assertion) {
-    const key = Object.keys(assertion)[0];
-    const object = getObjectFromKey(body, key);
-    if (object === undefined || object === null) {
-      this.emit(events.SUITE_STEP_FAIL, this.step, new Error(`${key} is not valid`));
-    } else {
-      Object.keys(assertion[key]).forEach((assertionKey) => {
-        const property = assertion[key];
-        assertProperty(object, property, assertionKey);
-      });
     }
   }
 }
