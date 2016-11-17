@@ -76,10 +76,9 @@ describe('TAP Reporter', () => {
     runner.suiteAssertionCount(6 * 3);
     runner.start();
     const step = { name: 'step' };
-    for (let i = 0; i < 3;) {
+    for (let i = 0; i < 3; i++) {
       runner.suiteStepPass(step);
       runner.suiteStepFail(step, { stack: '' });
-      i += 1;
     }
     runner.end();
   });

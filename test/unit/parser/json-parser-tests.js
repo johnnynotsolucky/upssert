@@ -46,6 +46,5 @@ describe('JSON Parser', () => {
         assert.isTrue(err instanceof SyntaxError);
       }
     }
-    // assert.throws(jsonParser('{foo: 1,10}'), /SyntaxError/);
   });
 });
