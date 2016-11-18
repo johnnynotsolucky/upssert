@@ -6,7 +6,6 @@
   "bin": "./dist/bin/index.js",
   "scripts": {
     "build": "gulp",
-    "start": "node ./dist/index.js",
     "test": "mocha",
     "watch": "gulp watch",
     "lint": "eslint --format 'node_modules/eslint-friendly-formatter' src,test"
