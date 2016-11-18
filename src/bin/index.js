@@ -39,17 +39,31 @@ const showHelp = () => {
 
 const data = [];
 
-if (opts.help) {
-  showHelp();
-} else if (opts.version) {
-  console.log(pack.version);
-  process.exit(0);
-}
+if (opts.url) {
+  const ping = {
+    name: 'Ping',
+    steps: [{
+      name: opts.url,
+      request: {
+        url: opts.url,
+        method: 'GET',
+      },
+    }],
+  };
+  data.push(ping);
+} else {
+  if (opts.help) {
+    showHelp();
+  } else if (opts.version) {
+    console.log(pack.version);
+    process.exit(0);
+  }
 
-opts.files.forEach((file) => {
-  const json = readJsonFile(file);
-  data.push(json);
-});
+  opts.files.forEach((file) => {
+    const json = readJsonFile(file);
+    data.push(json);
+  });
+}
 
 const runner = new Runner();
 const writer = new LogWriter();

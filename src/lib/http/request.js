@@ -1,24 +1,24 @@
 import render from '../util/render';
 
 class HttpRequest {
-  constructor(step, model) {
+  constructor(request, model) {
     this.model = model;
-    this.initialize(step);
+    this.initialize(request);
   }
 
-  initialize(step) {
-    this.url = step.request.url;
-    this.method = { method: step.request.method || 'GET' };
-    this.form = this.renderFormData(step);
-    this.data = this.renderData(step);
-    this.headers = this.renderRequestHeaders(step);
+  initialize(request) {
+    this.url = request.url;
+    this.method = request.method || 'GET';
+    this.form = this.renderFormData(request);
+    this.data = this.renderData(request);
+    this.headers = this.renderRequestHeaders(request);
   }
 
-  renderFormData(step) {
+  renderFormData(request) {
     let form;
-    if (step.request.form) {
+    if (request.form) {
       form = [];
-      step.request.form.forEach((item) => {
+      request.form.forEach((item) => {
         const renderedKey = render(item.key, this.model);
         const renderedValue = render(item.value, this.model);
         const formItem = `${renderedKey}=${renderedValue}`;
@@ -28,19 +28,19 @@ class HttpRequest {
     return form;
   }
 
-  renderData(step) {
+  renderData(request) {
     let data;
-    if (step.request.data) {
-      data = render(step.request.data, this.model);
+    if (request.data) {
+      data = render(request.data, this.model);
     }
     return data;
   }
 
-  renderRequestHeaders(step) {
+  renderRequestHeaders(request) {
     const headers = [];
-    if (step.request.headers) {
-      Object.keys(step.request.headers).forEach((key) => {
-        const value = step.request.headers[key];
+    if (request.headers) {
+      Object.keys(request.headers).forEach((key) => {
+        const value = request.headers[key];
         const concatenated = `${key}: ${render(value, this.model)}`;
         headers.push(concatenated);
       });

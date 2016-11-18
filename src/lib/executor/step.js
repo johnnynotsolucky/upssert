@@ -16,7 +16,7 @@ class Step extends EventEmitter {
     this.emit(events.SUITE_STEP_START, this.step);
     const trace = this.addTraceHeader();
     const data = this.extractRequiredData(resultset);
-    const httpRequest = new HttpRequest(this.step, data);
+    const httpRequest = new HttpRequest(this.step.request, data);
     const response = await makeRequest(httpRequest);
     const stat = httpStat(response);
     let stepPassed = false;

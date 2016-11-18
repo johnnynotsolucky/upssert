@@ -3,9 +3,10 @@ import HttpRequest from './request';
 
 export default async (request) => {
   if (request instanceof HttpRequest) {
+    const method = { method: request.method };
     const params = [
       request.url,
-      request.method,
+      method,
       request.headers,
       request.data,
       request.form,

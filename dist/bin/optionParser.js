@@ -23,6 +23,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 var opts = function opts(argv) {
   var help = argv.help || argv.h;
   var version = argv.version;
+  var url = argv.url;
 
   var files = [];
 
@@ -69,7 +70,8 @@ var opts = function opts(argv) {
   return {
     help: help,
     version: version,
-    files: files
+    files: files,
+    url: url
   };
 };
 

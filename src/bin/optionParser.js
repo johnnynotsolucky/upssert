@@ -5,6 +5,7 @@ import readJsonFile from './readJsonFile';
 const opts = (argv) => {
   const help = argv.help || argv.h;
   const version = argv.version;
+  const url = argv.url;
 
   const files = [];
 
@@ -52,6 +53,7 @@ const opts = (argv) => {
     help,
     version,
     files,
+    url,
   };
 };
 

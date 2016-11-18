@@ -63,17 +63,31 @@ var showHelp = function showHelp() {
 
 var data = [];
 
-if (opts.help) {
-  showHelp();
-} else if (opts.version) {
-  console.log(_package2.default.version);
-  process.exit(0);
-}
+if (opts.url) {
+  var ping = {
+    name: 'Ping',
+    steps: [{
+      name: opts.url,
+      request: {
+        url: opts.url,
+        method: 'GET'
+      }
+    }]
+  };
+  data.push(ping);
+} else {
+  if (opts.help) {
+    showHelp();
+  } else if (opts.version) {
+    console.log(_package2.default.version);
+    process.exit(0);
+  }
 
-opts.files.forEach(function (file) {
-  var json = (0, _readJsonFile2.default)(file);
-  data.push(json);
-});
+  opts.files.forEach(function (file) {
+    var json = (0, _readJsonFile2.default)(file);
+    data.push(json);
+  });
+}
 
 var runner = new _runner2.default();
 var writer = new _log2.default();

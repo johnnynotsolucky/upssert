@@ -15,31 +15,31 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var HttpRequest = function () {
-  function HttpRequest(step, model) {
+  function HttpRequest(request, model) {
     _classCallCheck(this, HttpRequest);
 
     this.model = model;
-    this.initialize(step);
+    this.initialize(request);
   }
 
   _createClass(HttpRequest, [{
     key: 'initialize',
-    value: function initialize(step) {
-      this.url = step.request.url;
-      this.method = { method: step.request.method || 'GET' };
-      this.form = this.renderFormData(step);
-      this.data = this.renderData(step);
-      this.headers = this.renderRequestHeaders(step);
+    value: function initialize(request) {
+      this.url = request.url;
+      this.method = request.method || 'GET';
+      this.form = this.renderFormData(request);
+      this.data = this.renderData(request);
+      this.headers = this.renderRequestHeaders(request);
     }
   }, {
     key: 'renderFormData',
-    value: function renderFormData(step) {
+    value: function renderFormData(request) {
       var _this = this;
 
       var form = void 0;
-      if (step.request.form) {
+      if (request.form) {
         form = [];
-        step.request.form.forEach(function (item) {
+        request.form.forEach(function (item) {
           var renderedKey = (0, _render2.default)(item.key, _this.model);
           var renderedValue = (0, _render2.default)(item.value, _this.model);
           var formItem = renderedKey + '=' + renderedValue;
@@ -50,22 +50,22 @@ var HttpRequest = function () {
     }
   }, {
     key: 'renderData',
-    value: function renderData(step) {
+    value: function renderData(request) {
       var data = void 0;
-      if (step.request.data) {
-        data = (0, _render2.default)(step.request.data, this.model);
+      if (request.data) {
+        data = (0, _render2.default)(request.data, this.model);
       }
       return data;
     }
   }, {
     key: 'renderRequestHeaders',
-    value: function renderRequestHeaders(step) {
+    value: function renderRequestHeaders(request) {
       var _this2 = this;
 
       var headers = [];
-      if (step.request.headers) {
-        Object.keys(step.request.headers).forEach(function (key) {
-          var value = step.request.headers[key];
+      if (request.headers) {
+        Object.keys(request.headers).forEach(function (key) {
+          var value = request.headers[key];
           var concatenated = key + ': ' + (0, _render2.default)(value, _this2.model);
           headers.push(concatenated);
         });

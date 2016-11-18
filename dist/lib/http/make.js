@@ -18,28 +18,29 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 
 exports.default = function () {
   var _ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee(request) {
-    var params, response;
+    var method, params, response;
     return regeneratorRuntime.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
             if (!(request instanceof _request2.default)) {
-              _context.next = 6;
+              _context.next = 7;
               break;
             }
 
-            params = [request.url, request.method, request.headers, request.data, request.form];
-            _context.next = 4;
+            method = { method: request.method };
+            params = [request.url, method, request.headers, request.data, request.form];
+            _context.next = 5;
             return _httpstat2.default.apply(undefined, params);
 
-          case 4:
+          case 5:
             response = _context.sent;
             return _context.abrupt('return', response);
 
-          case 6:
+          case 7:
             throw new Error('request must be an instance of HttpRequest');
 
-          case 7:
+          case 8:
           case 'end':
             return _context.stop();
         }

@@ -67,7 +67,7 @@ var Step = function (_EventEmitter) {
                 this.emit(_events3.default.SUITE_STEP_START, this.step);
                 trace = this.addTraceHeader();
                 data = this.extractRequiredData(resultset);
-                httpRequest = new _http.HttpRequest(this.step, data);
+                httpRequest = new _http.HttpRequest(this.step.request, data);
                 _context.next = 6;
                 return (0, _http.makeRequest)(httpRequest);
 
