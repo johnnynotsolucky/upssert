@@ -3,14 +3,20 @@ import events from '../../data/events.json';
 const name = step => step.name.replace(/#/g, '_');
 
 class TAP {
-  constructor(runner, writer) {
-    this.writer = writer;
+  constructor() {
     this.stepCount = 0;
     this.assertionCount = 0;
     this.passes = 0;
     this.fails = 0;
-    this.tests = 1;
+    this.tests = 0;
     this.bail = false;
+  }
+
+  setWriter(writer) {
+    this.writer = writer;
+  }
+
+  setRunner(runner) {
     this.bindHandlers(runner);
   }
 
@@ -18,6 +24,7 @@ class TAP {
     runner.on(events.SUITE_STEP_COUNT, this::this.handleCount);
     runner.on(events.SUITE_ASSERTION_COUNT, this::this.handleAssertCount);
     runner.on(events.START, this::this.handleStart);
+    runner.on(events.SUITE_STEP_START, this::this.handleStepStart);
     runner.on(events.SUITE_STEP_PASS, this::this.handleStepPass);
     runner.on(events.SUITE_STEP_FAIL, this::this.handleStepFail);
     runner.on(events.SUITE_FAIL, this::this.handleSuiteFail);
@@ -38,6 +45,10 @@ class TAP {
     });
   }
 
+  handleStepStart() {
+    this.tests += 1;
+  }
+
   handleStepPass(step) {
     this.passes += 1;
     this.runIfNotBailed(() => {
@@ -48,10 +59,13 @@ class TAP {
   handleStepFail(step, err) {
     this.fails += 1;
     this.runIfNotBailed(() => {
-      this.writer.out('not ok %d %s', this.tests, name(step));
+      const out = [
+        `not ok ${this.tests} ${name(step)}`,
+      ];
       if (err.stack) {
-        this.writer.out(err.stack.replace(/^/gm, '  '));
+        out.push(err.stack.replace(/^/gm, '  '));
       }
+      this.writer.lines(...out);
     });
   }
 
@@ -79,7 +93,4 @@ class TAP {
   }
 }
 
-export default (runner, writer) => {
-  const tap = new TAP(runner, writer);
-  return tap;
-};
+export default TAP;

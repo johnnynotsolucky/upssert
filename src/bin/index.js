@@ -1,5 +1,9 @@
 #!/usr/bin/env node
 /* eslint-disable no-console*/
+import 'babel-polyfill';
+import Runner from '../lib/runner';
+import TapReporter from '../lib/reporter/tap';
+import LogWriter from '../lib/writer/log';
 import readJsonFile from './readJsonFile';
 import optParser from './optionParser';
 import events from '../data/events.json';
@@ -11,7 +15,6 @@ const optionDefinitions = {
 };
 
 const minimist = require('minimist');
-
 
 let argv;
 try {
@@ -48,6 +51,9 @@ opts.files.forEach((file) => {
   data.push(json);
 });
 
-const upssert = new Upssert();
+const runner = new Runner();
+const writer = new LogWriter();
+const reporter = new TapReporter();
+const upssert = new Upssert(data, runner, reporter, writer);
 upssert.on(events.FAIL, () => { process.exitCode = 1; });
 upssert.execute(data);

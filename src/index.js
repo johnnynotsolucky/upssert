@@ -1,22 +1,24 @@
 import 'babel-polyfill';
 import { EventEmitter } from 'events';
-import Runner from './lib/runner';
-import tapReporter from './lib/reporter/tap';
-import LogWriter from './lib/writer/log';
 import events from './data/events.json';
 
 class Upssert extends EventEmitter {
-
-  execute(tests) {
-    if (!Array.isArray(tests)) {
-      tests = [tests];
-    }
-    const runner = new Runner(tests);
-    runner.on(events.FAIL, (obj, err) => {
+  constructor(suites, runner, reporter, writer) {
+    super();
+    this.suites = !Array.isArray(suites) ? [suites] : suites;
+    this.runner = runner;
+    this.writer = writer;
+    this.reporter = reporter;
+    this.runner.setSuites(this.suites);
+    this.reporter.setRunner(this.runner);
+    this.reporter.setWriter(this.writer);
+    this.runner.on(events.FAIL, (obj, err) => {
       this.emit(events.FAIL, obj, err);
     });
-    tapReporter(runner, new LogWriter());
-    runner.run();
+  }
+
+  execute() {
+    this.runner.run();
   }
 }
 

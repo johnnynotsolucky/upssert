@@ -3,12 +3,15 @@ import SuiteExecutor from './executor/suite';
 import events from '../data/events.json';
 
 class Runner extends EventEmitter {
-  constructor(suites) {
+  constructor() {
     super();
     this.bindEmitters();
-    this.suites = suites;
     this.executors = [];
     this.stopExecution = false;
+  }
+
+  setSuites(suites) {
+    this.suites = suites;
   }
 
   bindEmitters() {

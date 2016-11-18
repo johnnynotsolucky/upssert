@@ -29,19 +29,23 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var Runner = function (_EventEmitter) {
   _inherits(Runner, _EventEmitter);
 
-  function Runner(suites) {
+  function Runner() {
     _classCallCheck(this, Runner);
 
     var _this = _possibleConstructorReturn(this, (Runner.__proto__ || Object.getPrototypeOf(Runner)).call(this));
 
     _this.bindEmitters();
-    _this.suites = suites;
     _this.executors = [];
     _this.stopExecution = false;
     return _this;
   }
 
   _createClass(Runner, [{
+    key: 'setSuites',
+    value: function setSuites(suites) {
+      this.suites = suites;
+    }
+  }, {
     key: 'bindEmitters',
     value: function bindEmitters() {
       this.suiteStart = this.suiteStart.bind(this);

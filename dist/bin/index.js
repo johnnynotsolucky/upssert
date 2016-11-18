@@ -1,6 +1,20 @@
 #!/usr/bin/env node
 'use strict';
 
+require('babel-polyfill');
+
+var _runner = require('../lib/runner');
+
+var _runner2 = _interopRequireDefault(_runner);
+
+var _tap = require('../lib/reporter/tap');
+
+var _tap2 = _interopRequireDefault(_tap);
+
+var _log = require('../lib/writer/log');
+
+var _log2 = _interopRequireDefault(_log);
+
 var _readJsonFile = require('./readJsonFile');
 
 var _readJsonFile2 = _interopRequireDefault(_readJsonFile);
@@ -61,7 +75,10 @@ opts.files.forEach(function (file) {
   data.push(json);
 });
 
-var upssert = new _2.default();
+var runner = new _runner2.default();
+var writer = new _log2.default();
+var reporter = new _tap2.default();
+var upssert = new _2.default(data, runner, reporter, writer);
 upssert.on(_events2.default.FAIL, function () {
   process.exitCode = 1;
 });

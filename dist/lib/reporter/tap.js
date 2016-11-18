@@ -19,25 +19,34 @@ var name = function name(step) {
 };
 
 var TAP = function () {
-  function TAP(runner, writer) {
+  function TAP() {
     _classCallCheck(this, TAP);
 
-    this.writer = writer;
     this.stepCount = 0;
     this.assertionCount = 0;
     this.passes = 0;
     this.fails = 0;
-    this.tests = 1;
+    this.tests = 0;
     this.bail = false;
-    this.bindHandlers(runner);
   }
 
   _createClass(TAP, [{
+    key: 'setWriter',
+    value: function setWriter(writer) {
+      this.writer = writer;
+    }
+  }, {
+    key: 'setRunner',
+    value: function setRunner(runner) {
+      this.bindHandlers(runner);
+    }
+  }, {
     key: 'bindHandlers',
     value: function bindHandlers(runner) {
       runner.on(_events2.default.SUITE_STEP_COUNT, this.handleCount.bind(this));
       runner.on(_events2.default.SUITE_ASSERTION_COUNT, this.handleAssertCount.bind(this));
       runner.on(_events2.default.START, this.handleStart.bind(this));
+      runner.on(_events2.default.SUITE_STEP_START, this.handleStepStart.bind(this));
       runner.on(_events2.default.SUITE_STEP_PASS, this.handleStepPass.bind(this));
       runner.on(_events2.default.SUITE_STEP_FAIL, this.handleStepFail.bind(this));
       runner.on(_events2.default.SUITE_FAIL, this.handleSuiteFail.bind(this));
@@ -63,6 +72,11 @@ var TAP = function () {
       });
     }
   }, {
+    key: 'handleStepStart',
+    value: function handleStepStart() {
+      this.tests += 1;
+    }
+  }, {
     key: 'handleStepPass',
     value: function handleStepPass(step) {
       var _this2 = this;
@@ -79,10 +93,13 @@ var TAP = function () {
 
       this.fails += 1;
       this.runIfNotBailed(function () {
-        _this3.writer.out('not ok %d %s', _this3.tests, name(step));
+        var _writer;
+
+        var out = ['not ok ' + _this3.tests + ' ' + name(step)];
         if (err.stack) {
-          _this3.writer.out(err.stack.replace(/^/gm, '  '));
+          out.push(err.stack.replace(/^/gm, '  '));
         }
+        (_writer = _this3.writer).lines.apply(_writer, out);
       });
     }
   }, {
@@ -97,10 +114,10 @@ var TAP = function () {
       var _this4 = this;
 
       this.runIfNotBailed(function () {
-        var _writer;
+        var _writer2;
 
         var out = ['# tests ' + _this4.stepCount, '# pass ' + _this4.passes, '# fail ' + _this4.fails, '# assertions ' + _this4.assertionCount];
-        (_writer = _this4.writer).lines.apply(_writer, out);
+        (_writer2 = _this4.writer).lines.apply(_writer2, out);
       });
     }
   }, {
@@ -115,7 +132,4 @@ var TAP = function () {
   return TAP;
 }();
 
-exports.default = function (runner, writer) {
-  var tap = new TAP(runner, writer);
-  return tap;
-};
+exports.default = TAP;

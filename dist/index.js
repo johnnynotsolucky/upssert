@@ -10,18 +10,6 @@ require('babel-polyfill');
 
 var _events = require('events');
 
-var _runner = require('./lib/runner');
-
-var _runner2 = _interopRequireDefault(_runner);
-
-var _tap = require('./lib/reporter/tap');
-
-var _tap2 = _interopRequireDefault(_tap);
-
-var _log = require('./lib/writer/log');
-
-var _log2 = _interopRequireDefault(_log);
-
 var _events2 = require('./data/events.json');
 
 var _events3 = _interopRequireDefault(_events2);
@@ -37,26 +25,28 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var Upssert = function (_EventEmitter) {
   _inherits(Upssert, _EventEmitter);
 
-  function Upssert() {
+  function Upssert(suites, runner, reporter, writer) {
     _classCallCheck(this, Upssert);
 
-    return _possibleConstructorReturn(this, (Upssert.__proto__ || Object.getPrototypeOf(Upssert)).apply(this, arguments));
+    var _this = _possibleConstructorReturn(this, (Upssert.__proto__ || Object.getPrototypeOf(Upssert)).call(this));
+
+    _this.suites = !Array.isArray(suites) ? [suites] : suites;
+    _this.runner = runner;
+    _this.writer = writer;
+    _this.reporter = reporter;
+    _this.runner.setSuites(_this.suites);
+    _this.reporter.setRunner(_this.runner);
+    _this.reporter.setWriter(_this.writer);
+    _this.runner.on(_events3.default.FAIL, function (obj, err) {
+      _this.emit(_events3.default.FAIL, obj, err);
+    });
+    return _this;
   }
 
   _createClass(Upssert, [{
     key: 'execute',
-    value: function execute(tests) {
-      var _this2 = this;
-
-      if (!Array.isArray(tests)) {
-        tests = [tests];
-      }
-      var runner = new _runner2.default(tests);
-      runner.on(_events3.default.FAIL, function (obj, err) {
-        _this2.emit(_events3.default.FAIL, obj, err);
-      });
-      (0, _tap2.default)(runner, new _log2.default());
-      runner.run();
+    value: function execute() {
+      this.runner.run();
     }
   }]);
 

@@ -2,7 +2,7 @@
 import { assert } from 'chai';
 import sinon from 'sinon';
 import Runner from '../mocks/runner';
-import tapReporter from '../../../src/lib/reporter/tap';
+import TapReporter from '../../../src/lib/reporter/tap';
 import LogWriter from '../../../src/lib/writer/log';
 import events from '../../../src/data/events.json';
 
@@ -15,7 +15,9 @@ describe('TAP Reporter', () => {
   beforeEach(() => {
     runner = new Runner();
     writer = new LogWriter();
-    tap = tapReporter(runner, writer);
+    tap = new TapReporter();
+    tap.setRunner(runner);
+    tap.setWriter(writer);
     sinon.stub(writer, 'out');
     sinon.stub(writer, 'lines');
   });
@@ -60,6 +62,42 @@ describe('TAP Reporter', () => {
     runner.end();
   });
 
+  it('should report the stack trace when a step has failed', (done) => {
+    runner.on(events.SUITE_STEP_FAIL, () => {
+      sinon.assert.calledOnce(writer.lines);
+      const out = [
+        'not ok 1 foo',
+        '  foobar',
+      ];
+      sinon.assert.calledWith(writer.lines, ...out);
+      done();
+    });
+    runner.suiteStepStart();
+    runner.suiteStepFail({ name: 'foo' }, { message: 'bar', stack: 'foobar' });
+  });
+
+  it('should increment counts', (done) => {
+    runner.on(events.END, () => {
+      assert.equal(tap.tests, 6);
+      assert.equal(tap.stepCount, 6);
+      assert.equal(tap.assertionCount, 18);
+      assert.equal(tap.passes, 3);
+      assert.equal(tap.fails, 3);
+      done();
+    });
+    runner.suiteStepCount(6);
+    runner.suiteAssertionCount(6 * 3);
+    runner.start();
+    const step = { name: 'step' };
+    for (let i = 0; i < 3; i++) {
+      runner.suiteStepStart();
+      runner.suiteStepPass(step);
+      runner.suiteStepStart();
+      runner.suiteStepFail(step, { stack: '' });
+    }
+    runner.end();
+  });
+
   it('should output the correct counts when the runner ends', (done) => {
     runner.on(events.END, () => {
       sinon.assert.calledOnce(writer.lines);
@@ -72,14 +110,10 @@ describe('TAP Reporter', () => {
       sinon.assert.calledWith(writer.lines, ...out);
       done();
     });
-    runner.suiteStepCount(6);
-    runner.suiteAssertionCount(6 * 3);
-    runner.start();
-    const step = { name: 'step' };
-    for (let i = 0; i < 3; i++) {
-      runner.suiteStepPass(step);
-      runner.suiteStepFail(step, { stack: '' });
-    }
+    tap.stepCount = 6;
+    tap.assertionCount = 18;
+    tap.passes = 3;
+    tap.fails = 3;
     runner.end();
   });
 });

@@ -44,7 +44,7 @@ describe('AssertObject', () => {
     assert.strictEqual(result, false);
   });
 
-  it('returns true if no assertions passed for a property', () => {
+  it('returns true if no assertions provided for a property', () => {
     const object = { foo: 'bar' };
     const assertion = { foo: {} };
     const result = new AssertObject(object, [assertion]).assert();
