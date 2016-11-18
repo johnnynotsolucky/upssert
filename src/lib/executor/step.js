@@ -2,7 +2,7 @@ import { EventEmitter } from 'events';
 import falsy from 'falsy';
 import AssertObject from '../object/assert';
 import generateToken from '../util/generate-token';
-import HttpRequest from '../httpRequest';
+import { HttpRequest, makeRequest, httpStat } from '../http';
 import events from '../../data/events.json';
 
 class Step extends EventEmitter {
@@ -17,10 +17,11 @@ class Step extends EventEmitter {
     const trace = this.addTraceHeader();
     const data = this.extractRequiredData(resultset);
     const httpRequest = new HttpRequest(this.step, data);
-    const result = await httpRequest.execute();
+    const response = await makeRequest(httpRequest);
+    const stat = httpStat(response);
     let stepPassed = false;
-    if (result) {
-      const assertObject = new AssertObject(result, this.assertions);
+    if (stat) {
+      const assertObject = new AssertObject(stat, this.assertions);
       stepPassed = assertObject.assert((err) => {
         this.emit(events.SUITE_STEP_FAIL, this.step, err);
       });
@@ -33,7 +34,7 @@ class Step extends EventEmitter {
       trace,
       step: this.step,
       pass: stepPassed,
-      result,
+      result: stat,
     };
   }
 

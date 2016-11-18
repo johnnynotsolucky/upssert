@@ -1,5 +1,10 @@
 import camelcase from 'camelcase';
-import parserFactory from './parser/factory';
+import parserFactory from '../parser/factory';
+
+const getUrlProtocol = (url) => {
+  const protocol = url.protocol.replace(/:/, '');
+  return protocol;
+};
 
 const calculateResponseTimes = (times) => {
   const calculated = {
@@ -31,32 +36,32 @@ const calculateTlsResponseTimes = (times) => {
   return calculated;
 };
 
-export default (result) => {
-  const url = result.url;
-  url.protocol = url.protocol.replace(/:/, '');
-
+const calculateResponseTimesByProtocol = (protocol, times) => {
   let responseTimes;
-  switch (url.protocol) {
+  switch (protocol) {
     case 'https':
-      responseTimes = calculateTlsResponseTimes(result.time);
+      responseTimes = calculateTlsResponseTimes(times);
       break;
     case 'http':
     default:
-      responseTimes = calculateResponseTimes(result.time);
+      responseTimes = calculateResponseTimes(times);
   }
+  return responseTimes;
+};
 
+const populateHeaders = (responseHeaders) => {
   const headers = {};
-  const headerFields = [];
-  Object.keys(result.response.headers).forEach((field) => {
-    headers[camelcase(field)] = result.response.headers[field];
-    headerFields.push(field);
+  Object.keys(responseHeaders).forEach((field) => {
+    headers[camelcase(field)] = responseHeaders[field];
   });
+  return headers;
+};
 
+const getContentPropertiesIfApplicable = (headers) => {
   let contentType = '';
   if (headers.contentType) {
     contentType = headers.contentType;
   }
-
   let contentLength = 0;
   if (headers.contentLength) {
     contentLength = parseInt(headers.contentLength, 10);
@@ -64,7 +69,18 @@ export default (result) => {
       contentLength = 0;
     }
   }
+  return {
+    contentType,
+    contentLength,
+  };
+};
 
+export default (result) => {
+  const protocol = getUrlProtocol(result.url);
+  const responseTimes = calculateResponseTimesByProtocol(protocol, result.time);
+  const headers = populateHeaders(result.response.headers);
+  const contentProperties = getContentPropertiesIfApplicable(headers);
+  const { contentType, contentLength } = contentProperties;
   const parser = parserFactory(contentType);
   const body = parser(result.response.body);
 
@@ -74,7 +90,6 @@ export default (result) => {
     contentLength,
     timing: responseTimes,
     headers,
-    headerFields,
     body,
   };
 };

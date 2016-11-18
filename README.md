@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/upssert/upssert.svg?branch=master)](https://travis-ci.org/upssert/upssert)
 [![Coverage Status](https://coveralls.io/repos/github/upssert/upssert/badge.svg)](https://coveralls.io/github/upssert/upssert)
+[![Dependencies](https://david-dm.org/upssert/upssert.svg)](https://david-dm.org/upssert/upssert)
 
 Does more than just ping! Upssert is a simple and extensible language agnostic REST endpoint assertion framework.
 

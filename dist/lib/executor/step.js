@@ -22,9 +22,7 @@ var _generateToken = require('../util/generate-token');
 
 var _generateToken2 = _interopRequireDefault(_generateToken);
 
-var _httpRequest = require('../httpRequest');
-
-var _httpRequest2 = _interopRequireDefault(_httpRequest);
+var _http = require('../http');
 
 var _events2 = require('../../data/events.json');
 
@@ -61,7 +59,7 @@ var Step = function (_EventEmitter) {
       var _ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee(resultset) {
         var _this2 = this;
 
-        var trace, data, httpRequest, result, stepPassed, assertObject;
+        var trace, data, httpRequest, response, stat, stepPassed, assertObject;
         return regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
@@ -69,16 +67,17 @@ var Step = function (_EventEmitter) {
                 this.emit(_events3.default.SUITE_STEP_START, this.step);
                 trace = this.addTraceHeader();
                 data = this.extractRequiredData(resultset);
-                httpRequest = new _httpRequest2.default(this.step, data);
+                httpRequest = new _http.HttpRequest(this.step, data);
                 _context.next = 6;
-                return httpRequest.execute();
+                return (0, _http.makeRequest)(httpRequest);
 
               case 6:
-                result = _context.sent;
+                response = _context.sent;
+                stat = (0, _http.httpStat)(response);
                 stepPassed = false;
 
-                if (result) {
-                  assertObject = new _assert2.default(result, this.assertions);
+                if (stat) {
+                  assertObject = new _assert2.default(stat, this.assertions);
 
                   stepPassed = assertObject.assert(function (err) {
                     _this2.emit(_events3.default.SUITE_STEP_FAIL, _this2.step, err);
@@ -92,10 +91,10 @@ var Step = function (_EventEmitter) {
                   trace: trace,
                   step: this.step,
                   pass: stepPassed,
-                  result: result
+                  result: stat
                 });
 
-              case 11:
+              case 12:
               case 'end':
                 return _context.stop();
             }
