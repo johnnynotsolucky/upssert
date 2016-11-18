@@ -1,7 +1,7 @@
 import { EventEmitter } from 'events';
 import falsy from 'falsy';
 import AssertObject from '../object/assert';
-import generateToken from '../generateToken';
+import generateToken from '../util/generate-token';
 import HttpRequest from '../httpRequest';
 import events from '../../data/events.json';
 

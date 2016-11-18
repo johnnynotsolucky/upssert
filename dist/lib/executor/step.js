@@ -18,7 +18,7 @@ var _assert = require('../object/assert');
 
 var _assert2 = _interopRequireDefault(_assert);
 
-var _generateToken = require('../generateToken');
+var _generateToken = require('../util/generate-token');
 
 var _generateToken2 = _interopRequireDefault(_generateToken);
 
