@@ -4,7 +4,7 @@ import 'babel-polyfill';
 import Runner from '../lib/runner';
 import TapReporter from '../lib/reporter/tap';
 import LogWriter from '../lib/writer/log';
-import readJsonFile from './readJsonFile';
+import readJsonFile from './read-json-file';
 import optParser from './optionParser';
 import events from '../data/events.json';
 import pack from '../package.json'; // eslint-disable-line import/no-unresolved

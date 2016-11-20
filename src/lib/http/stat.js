@@ -2,7 +2,10 @@ import camelcase from 'camelcase';
 import parserFactory from '../parser/factory';
 
 const getUrlProtocol = (url) => {
-  const protocol = url.protocol.replace(/:/, '');
+  let protocol;
+  if(url && url.protocol) {
+    protocol = url.protocol.replace(/:/, '');
+  }
   return protocol;
 };
 
@@ -76,8 +79,9 @@ const getContentPropertiesIfApplicable = (headers) => {
 };
 
 export default (result) => {
+  const statusCode = result.response.statusCode;
   const protocol = getUrlProtocol(result.url);
-  const responseTimes = calculateResponseTimesByProtocol(protocol, result.time);
+  const timing = calculateResponseTimesByProtocol(protocol, result.time);
   const headers = populateHeaders(result.response.headers);
   const contentProperties = getContentPropertiesIfApplicable(headers);
   const { contentType, contentLength } = contentProperties;
@@ -85,10 +89,10 @@ export default (result) => {
   const body = parser(result.response.body);
 
   return {
-    statusCode: result.response.statusCode,
+    statusCode,
     contentType,
     contentLength,
-    timing: responseTimes,
+    timing,
     headers,
     body,
   };

@@ -1,0 +1,22 @@
+{
+	"url": {
+	  "protocol": "http:"
+	},
+	"response": {
+		"statusCode": 200,
+		"headers": {
+			"Content-Type": "application/json",
+			"Content-Length": "100",
+			"X-Foo-Bar": "foobar"
+		},
+		"body": "{\"foo\": \"bar\"}"
+	},
+	"time": {
+		"begin": 0,
+		"onLookup": 50,
+		"onConnect": 130,
+		"onSecureConnect": 0,
+		"onTransfer": 230,
+		"onTotal": 270
+	}
+}
