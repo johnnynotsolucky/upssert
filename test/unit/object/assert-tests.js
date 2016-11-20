@@ -30,7 +30,7 @@ describe('AssertObject', () => {
     const object = { foo: 'bar' };
     const assertion = { foo: { 'is-equal': 1 } };
     const result = new AssertObject(object, [assertion]).assert((err) => {
-      assert.strictEqual(err.message, 'is-equal is not a valid assertion');
+      assert.strictEqual(err.message, 'is-equal is not a valid assertion (foo)');
     });
     assert.strictEqual(result, false);
   });
@@ -39,7 +39,7 @@ describe('AssertObject', () => {
     const object = { foo: 'bar' };
     const assertion = { foo: { '': 1 } };
     const result = new AssertObject(object, [assertion]).assert((err) => {
-      assert.strictEqual(err.message, 'Invalid assertion');
+      assert.strictEqual(err.message, 'Invalid assertion (foo)');
     });
     assert.strictEqual(result, false);
   });

@@ -3,6 +3,7 @@
 import 'babel-polyfill';
 import Runner from '../lib/runner';
 import TapReporter from '../lib/reporter/tap';
+import ConsoleReporter from '../lib/reporter/console';
 import LogWriter from '../lib/writer/log';
 import readJsonFile from './read-json-file';
 import optParser from './optionParser';
@@ -65,9 +66,18 @@ if (opts.url) {
   });
 }
 
+let reporter;
+switch (opts.reporter) {
+  case 'tap':
+    reporter = new TapReporter();
+    break;
+  case 'console':
+  default:
+    reporter = new ConsoleReporter();
+}
+
 const runner = new Runner();
 const writer = new LogWriter();
-const reporter = new TapReporter();
 const upssert = new Upssert(data, runner, reporter, writer);
 upssert.on(events.FAIL, () => { process.exitCode = 1; });
 upssert.execute(data);

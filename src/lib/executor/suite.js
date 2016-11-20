@@ -35,6 +35,7 @@ class Suite extends EventEmitter {
     tv4.addSchema('test-schema', testSchema);
     const testValid = tv4.validate(this.testCase, suiteSchema);
     if (testValid) {
+      this.emit(events.SUITE_COUNT, 1);
       this.initializeSteps();
     } else {
       this.emit(events.SUITE_FAIL, this.testCase, tv4.error);

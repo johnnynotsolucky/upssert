@@ -106,6 +106,7 @@ var Suite = function (_EventEmitter) {
       _tv2.default.addSchema('test-schema', _test2.default);
       var testValid = _tv2.default.validate(this.testCase, _suite2.default);
       if (testValid) {
+        this.emit(_events3.default.SUITE_COUNT, 1);
         this.initializeSteps();
       } else {
         this.emit(_events3.default.SUITE_FAIL, this.testCase, _tv2.default.error);

@@ -24,6 +24,7 @@ var opts = function opts(argv) {
   var help = argv.help || argv.h;
   var version = argv.version;
   var url = argv.url;
+  var reporter = argv.reporter || argv.r || 'console';
 
   var files = [];
 
@@ -71,7 +72,8 @@ var opts = function opts(argv) {
     help: help,
     version: version,
     files: files,
-    url: url
+    url: url,
+    reporter: reporter
   };
 };
 

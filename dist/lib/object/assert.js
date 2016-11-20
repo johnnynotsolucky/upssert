@@ -73,7 +73,12 @@ var AssertObject = function () {
         (function () {
           var assertAgainst = propertyToAssert[propertyNameToAssert];
           Object.keys(propertyToAssert[propertyNameToAssert]).forEach(function (assertionMethod) {
-            assertValue(objectValue, assertAgainst, assertionMethod);
+            try {
+              assertValue(objectValue, assertAgainst, assertionMethod);
+            } catch (err) {
+              err.message = err.message + ' (' + propertyNameToAssert + ')';
+              throw err;
+            }
           });
         })();
       }

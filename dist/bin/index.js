@@ -11,6 +11,10 @@ var _tap = require('../lib/reporter/tap');
 
 var _tap2 = _interopRequireDefault(_tap);
 
+var _console = require('../lib/reporter/console');
+
+var _console2 = _interopRequireDefault(_console);
+
 var _log = require('../lib/writer/log');
 
 var _log2 = _interopRequireDefault(_log);
@@ -37,11 +41,10 @@ var _2 = _interopRequireDefault(_);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+/* eslint-disable no-console*/
 var optionDefinitions = {
   boolean: ['help', 'h']
 }; // eslint-disable-line import/no-unresolved
-
-/* eslint-disable no-console*/
 
 
 var minimist = require('minimist');
@@ -89,9 +92,18 @@ if (opts.url) {
   });
 }
 
+var reporter = void 0;
+switch (opts.reporter) {
+  case 'tap':
+    reporter = new _tap2.default();
+    break;
+  case 'console':
+  default:
+    reporter = new _console2.default();
+}
+
 var runner = new _runner2.default();
 var writer = new _log2.default();
-var reporter = new _tap2.default();
 var upssert = new _2.default(data, runner, reporter, writer);
 upssert.on(_events2.default.FAIL, function () {
   process.exitCode = 1;

@@ -48,6 +48,7 @@ var Runner = function (_EventEmitter) {
   }, {
     key: 'bindEmitters',
     value: function bindEmitters() {
+      this.suiteCount = this.suiteCount.bind(this);
       this.suiteStart = this.suiteStart.bind(this);
       this.suiteEnd = this.suiteEnd.bind(this);
       this.suiteFail = this.suiteFail.bind(this);
@@ -162,6 +163,7 @@ var Runner = function (_EventEmitter) {
 
       this.suites.forEach(function (suite) {
         var executor = new _suite2.default(suite);
+        executor.on(_events3.default.SUITE_COUNT, _this2.suiteCount);
         executor.on(_events3.default.SUITE_START, _this2.suiteStart);
         executor.on(_events3.default.SUITE_END, _this2.suiteEnd);
         executor.on(_events3.default.SUITE_FAIL, _this2.suiteFail);
@@ -174,6 +176,11 @@ var Runner = function (_EventEmitter) {
         executor.initialize();
         _this2.executors.push(executor);
       });
+    }
+  }, {
+    key: 'suiteCount',
+    value: function suiteCount(count) {
+      this.emit(_events3.default.SUITE_COUNT, count);
     }
   }, {
     key: 'suiteStart',

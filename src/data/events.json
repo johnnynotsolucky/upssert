@@ -9,6 +9,7 @@
   "SUITE_STEP_END": "suite.step.end",
   "SUITE_STEP_PASS": "suite.step.pass",
   "SUITE_STEP_FAIL": "suite.step.fail",
+  "SUITE_COUNT": "suite.count",
   "SUITE_STEP_COUNT": "suite.step.count",
   "SUITE_ASSERTION_COUNT": "suite.assertion.count"
 }

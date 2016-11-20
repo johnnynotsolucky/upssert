@@ -15,6 +15,7 @@ class Runner extends EventEmitter {
   }
 
   bindEmitters() {
+    this.suiteCount = this.suiteCount.bind(this);
     this.suiteStart = this.suiteStart.bind(this);
     this.suiteEnd = this.suiteEnd.bind(this);
     this.suiteFail = this.suiteFail.bind(this);
@@ -42,6 +43,7 @@ class Runner extends EventEmitter {
   initialize() {
     this.suites.forEach((suite) => {
       const executor = new SuiteExecutor(suite);
+      executor.on(events.SUITE_COUNT, this.suiteCount);
       executor.on(events.SUITE_START, this.suiteStart);
       executor.on(events.SUITE_END, this.suiteEnd);
       executor.on(events.SUITE_FAIL, this.suiteFail);
@@ -54,6 +56,10 @@ class Runner extends EventEmitter {
       executor.initialize();
       this.executors.push(executor);
     });
+  }
+
+  suiteCount(count) {
+    this.emit(events.SUITE_COUNT, count);
   }
 
   suiteStart(suite) {

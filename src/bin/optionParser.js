@@ -6,6 +6,7 @@ const opts = (argv) => {
   const help = argv.help || argv.h;
   const version = argv.version;
   const url = argv.url;
+  const reporter = argv.reporter || argv.r || 'console';
 
   const files = [];
 
@@ -54,6 +55,7 @@ const opts = (argv) => {
     version,
     files,
     url,
+    reporter,
   };
 };
 
