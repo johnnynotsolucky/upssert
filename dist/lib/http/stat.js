@@ -67,9 +67,11 @@ var calculateResponseTimesByProtocol = function calculateResponseTimesByProtocol
 
 var populateHeaders = function populateHeaders(responseHeaders) {
   var headers = {};
-  Object.keys(responseHeaders).forEach(function (field) {
-    headers[(0, _camelcase2.default)(field)] = responseHeaders[field];
-  });
+  if (responseHeaders) {
+    Object.keys(responseHeaders).forEach(function (field) {
+      headers[(0, _camelcase2.default)(field)] = responseHeaders[field];
+    });
+  }
   return headers;
 };
 

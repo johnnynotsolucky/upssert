@@ -54,9 +54,11 @@ const calculateResponseTimesByProtocol = (protocol, times) => {
 
 const populateHeaders = (responseHeaders) => {
   const headers = {};
-  Object.keys(responseHeaders).forEach((field) => {
-    headers[camelcase(field)] = responseHeaders[field];
-  });
+  if (responseHeaders) {
+    Object.keys(responseHeaders).forEach((field) => {
+      headers[camelcase(field)] = responseHeaders[field];
+    });
+  }
   return headers;
 };
 
