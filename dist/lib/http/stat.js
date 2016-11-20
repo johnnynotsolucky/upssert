@@ -82,9 +82,9 @@ var getContentPropertiesIfApplicable = function getContentPropertiesIfApplicable
   }
   var contentLength = 0;
   if (headers.contentLength) {
-    contentLength = parseInt(headers.contentLength, 10);
-    if (isNaN(contentLength)) {
-      contentLength = 0;
+    var value = parseInt(headers.contentLength, 10);
+    if (!isNaN(value)) {
+      contentLength = value;
     }
   }
   return {

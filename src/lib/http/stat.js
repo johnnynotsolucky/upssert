@@ -69,9 +69,9 @@ const getContentPropertiesIfApplicable = (headers) => {
   }
   let contentLength = 0;
   if (headers.contentLength) {
-    contentLength = parseInt(headers.contentLength, 10);
-    if (isNaN(contentLength)) {
-      contentLength = 0;
+    const value = parseInt(headers.contentLength, 10);
+    if (!isNaN(value)) {
+      contentLength = value;
     }
   }
   return {
