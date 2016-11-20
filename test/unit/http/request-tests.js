@@ -1,6 +1,6 @@
 /* eslint-disable no-undef, import/no-extraneous-dependencies */
 import { assert } from 'chai';
-import HttpRequest from '../../../src/lib/http/request';
+import { HttpRequest } from '../../../src/lib/http';
 
 describe('HttpRequest', () => {
   it('should create a valid object given just an URL', () => {

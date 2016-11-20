@@ -3,7 +3,7 @@ import parserFactory from '../parser/factory';
 
 const getUrlProtocol = (url) => {
   let protocol;
-  if(url && url.protocol) {
+  if (url && url.protocol) {
     protocol = url.protocol.replace(/:/, '');
   }
   return protocol;

@@ -1,7 +1,7 @@
 /* eslint-disable no-undef, import/no-extraneous-dependencies */
 import { assert } from 'chai';
-import stat from '../../../src/lib/http/stat';
-import readJsonFile from '../../../src/bin/read-json-file'
+import { stat } from '../../../src/lib/http';
+import readJsonFile from '../../../src/bin/read-json-file';
 
 const assertHttpStat = (statd) => {
   assert.isOk(statd);
@@ -26,7 +26,7 @@ const assertHttpStat = (statd) => {
   const body = statd.body;
   assert.isOk(body);
   assert.strictEqual(body.foo, 'bar');
-}
+};
 
 describe('stat', () => {
   it('should correctly calculate HTTP protocol timings and other meta data', () => {

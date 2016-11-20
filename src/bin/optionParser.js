@@ -1,6 +1,6 @@
 import glob from 'glob';
 import fs from 'fs';
-import readJsonFile from './readJsonFile';
+import readJsonFile from './read-json-file';
 
 const opts = (argv) => {
   const help = argv.help || argv.h;

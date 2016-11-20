@@ -15,7 +15,7 @@ var _log = require('../lib/writer/log');
 
 var _log2 = _interopRequireDefault(_log);
 
-var _readJsonFile = require('./readJsonFile');
+var _readJsonFile = require('./read-json-file');
 
 var _readJsonFile2 = _interopRequireDefault(_readJsonFile);
 

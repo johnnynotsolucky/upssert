@@ -15,7 +15,10 @@ var _factory2 = _interopRequireDefault(_factory);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var getUrlProtocol = function getUrlProtocol(url) {
-  var protocol = url.protocol.replace(/:/, '');
+  var protocol = void 0;
+  if (url && url.protocol) {
+    protocol = url.protocol.replace(/:/, '');
+  }
   return protocol;
 };
 
@@ -89,8 +92,9 @@ var getContentPropertiesIfApplicable = function getContentPropertiesIfApplicable
 };
 
 exports.default = function (result) {
+  var statusCode = result.response.statusCode;
   var protocol = getUrlProtocol(result.url);
-  var responseTimes = calculateResponseTimesByProtocol(protocol, result.time);
+  var timing = calculateResponseTimesByProtocol(protocol, result.time);
   var headers = populateHeaders(result.response.headers);
   var contentProperties = getContentPropertiesIfApplicable(headers);
   var contentType = contentProperties.contentType,
@@ -100,10 +104,10 @@ exports.default = function (result) {
   var body = parser(result.response.body);
 
   return {
-    statusCode: result.response.statusCode,
+    statusCode: statusCode,
     contentType: contentType,
     contentLength: contentLength,
-    timing: responseTimes,
+    timing: timing,
     headers: headers,
     body: body
   };

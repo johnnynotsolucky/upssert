@@ -12,7 +12,7 @@ var _fs = require('fs');
 
 var _fs2 = _interopRequireDefault(_fs);
 
-var _readJsonFile = require('./readJsonFile');
+var _readJsonFile = require('./read-json-file');
 
 var _readJsonFile2 = _interopRequireDefault(_readJsonFile);
 
