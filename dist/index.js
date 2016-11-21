@@ -3,12 +3,29 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.LogWriter = exports.ConsoleReporter = exports.TapReporter = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 require('babel-polyfill');
 
 var _events = require('events');
+
+var _tap = require('./lib/reporter/tap');
+
+var _tap2 = _interopRequireDefault(_tap);
+
+var _console = require('./lib/reporter/console');
+
+var _console2 = _interopRequireDefault(_console);
+
+var _runner = require('./lib/runner');
+
+var _runner2 = _interopRequireDefault(_runner);
+
+var _log = require('./lib/writer/log');
+
+var _log2 = _interopRequireDefault(_log);
 
 var _events2 = require('./data/events.json');
 
@@ -25,18 +42,22 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var Upssert = function (_EventEmitter) {
   _inherits(Upssert, _EventEmitter);
 
-  function Upssert(suites, runner, reporter, writer) {
+  function Upssert(suites, reporter) {
     _classCallCheck(this, Upssert);
 
     var _this = _possibleConstructorReturn(this, (Upssert.__proto__ || Object.getPrototypeOf(Upssert)).call(this));
 
+    if (typeof suites === 'string') {
+      suites = Upssert.createSuiteForUrl(suites);
+    }
     _this.suites = !Array.isArray(suites) ? [suites] : suites;
-    _this.runner = runner;
-    _this.writer = writer;
+    _this.runner = new _runner2.default();
+    if (!reporter) {
+      reporter = new _console2.default();
+    }
     _this.reporter = reporter;
     _this.runner.setSuites(_this.suites);
-    _this.reporter.setRunner(_this.runner);
-    _this.reporter.setWriter(_this.writer);
+    _this.reporter.setEventEmitter(_this.runner);
     _this.runner.on(_events3.default.FAIL, function (obj, err) {
       _this.emit(_events3.default.FAIL, obj, err);
     });
@@ -48,9 +69,26 @@ var Upssert = function (_EventEmitter) {
     value: function execute() {
       this.runner.run();
     }
+  }], [{
+    key: 'createSuiteForUrl',
+    value: function createSuiteForUrl(url) {
+      return {
+        name: 'Ping',
+        steps: [{
+          name: url,
+          request: {
+            url: url,
+            method: 'GET'
+          }
+        }]
+      };
+    }
   }]);
 
   return Upssert;
 }(_events.EventEmitter);
 
 exports.default = Upssert;
+exports.TapReporter = _tap2.default;
+exports.ConsoleReporter = _console2.default;
+exports.LogWriter = _log2.default;

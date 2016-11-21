@@ -20,21 +20,21 @@ class Console {
     this.writer = writer;
   }
 
-  setRunner(runner) {
-    this.bindHandlers(runner);
+  setEventEmitter(emitter) {
+    this.bindHandlers(emitter);
   }
 
-  bindHandlers(runner) {
-    runner.on(events.SUITE_COUNT, this::this.handleCount);
-    runner.on(events.SUITE_STEP_COUNT, this::this.handleStepCount);
-    runner.on(events.SUITE_ASSERTION_COUNT, this::this.handleAssertCount);
-    runner.on(events.START, this::this.handleStart);
-    runner.on(events.SUITE_START, this::this.handleSuiteStart);
-    runner.on(events.SUITE_STEP_START, this::this.handleStepStart);
-    runner.on(events.SUITE_STEP_PASS, this::this.handleStepPass);
-    runner.on(events.SUITE_STEP_FAIL, this::this.handleStepFail);
-    runner.on(events.SUITE_FAIL, this::this.handleSuiteFail);
-    runner.on(events.END, this::this.handleEnd);
+  bindHandlers(emitter) {
+    emitter.on(events.SUITE_COUNT, this::this.handleCount);
+    emitter.on(events.SUITE_STEP_COUNT, this::this.handleStepCount);
+    emitter.on(events.SUITE_ASSERTION_COUNT, this::this.handleAssertCount);
+    emitter.on(events.START, this::this.handleStart);
+    emitter.on(events.SUITE_START, this::this.handleSuiteStart);
+    emitter.on(events.SUITE_STEP_START, this::this.handleStepStart);
+    emitter.on(events.SUITE_STEP_PASS, this::this.handleStepPass);
+    emitter.on(events.SUITE_STEP_FAIL, this::this.handleStepFail);
+    emitter.on(events.SUITE_FAIL, this::this.handleSuiteFail);
+    emitter.on(events.END, this::this.handleEnd);
   }
 
   handleCount(count) {
@@ -91,9 +91,6 @@ class Console {
       `${symbols.error.red} ${suite.name.red}`,
       err.message,
     ];
-    if (err.stack) {
-      out.push(err.stack.replace(/^/gm, '  ').grey);
-    }
     this.writer.lines(...out);
   }
 
@@ -108,9 +105,6 @@ class Console {
             `  ${index + 1}) ${step.name.red}`,
             `  Error: ${error.message}`.white,
           ];
-          if (error.stack) {
-            errorOutput.push(error.stack.replace(/^/gm, '  ').grey);
-          }
           this.writer.lines(...errorOutput);
         });
       }

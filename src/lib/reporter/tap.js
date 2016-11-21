@@ -16,19 +16,19 @@ class TAP {
     this.writer = writer;
   }
 
-  setRunner(runner) {
-    this.bindHandlers(runner);
+  setEventEmitter(emitter) {
+    this.bindHandlers(emitter);
   }
 
-  bindHandlers(runner) {
-    runner.on(events.SUITE_STEP_COUNT, this::this.handleCount);
-    runner.on(events.SUITE_ASSERTION_COUNT, this::this.handleAssertCount);
-    runner.on(events.START, this::this.handleStart);
-    runner.on(events.SUITE_STEP_START, this::this.handleStepStart);
-    runner.on(events.SUITE_STEP_PASS, this::this.handleStepPass);
-    runner.on(events.SUITE_STEP_FAIL, this::this.handleStepFail);
-    runner.on(events.SUITE_FAIL, this::this.handleSuiteFail);
-    runner.on(events.END, this::this.handleEnd);
+  bindHandlers(emitter) {
+    emitter.on(events.SUITE_STEP_COUNT, this::this.handleCount);
+    emitter.on(events.SUITE_ASSERTION_COUNT, this::this.handleAssertCount);
+    emitter.on(events.START, this::this.handleStart);
+    emitter.on(events.SUITE_STEP_START, this::this.handleStepStart);
+    emitter.on(events.SUITE_STEP_PASS, this::this.handleStepPass);
+    emitter.on(events.SUITE_STEP_FAIL, this::this.handleStepFail);
+    emitter.on(events.SUITE_FAIL, this::this.handleSuiteFail);
+    emitter.on(events.END, this::this.handleEnd);
   }
 
   handleCount(count) {
@@ -61,10 +61,8 @@ class TAP {
     this.runIfNotBailed(() => {
       const out = [
         `not ok ${this.tests} ${name(step)}`,
+        `  Error: ${err.message}`,
       ];
-      if (err.stack) {
-        out.push(err.stack.replace(/^/gm, '  '));
-      }
       this.writer.lines(...out);
     });
   }

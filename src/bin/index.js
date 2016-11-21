@@ -1,15 +1,11 @@
 #!/usr/bin/env node
 /* eslint-disable no-console*/
 import 'babel-polyfill';
-import Runner from '../lib/runner';
-import TapReporter from '../lib/reporter/tap';
-import ConsoleReporter from '../lib/reporter/console';
-import LogWriter from '../lib/writer/log';
 import readJsonFile from './read-json-file';
-import optParser from './optionParser';
+import optParser from './option-parser';
 import events from '../data/events.json';
 import pack from '../package.json'; // eslint-disable-line import/no-unresolved
-import Upssert from '../';
+import Upssert, { TapReporter, ConsoleReporter, LogWriter } from '../';
 
 const optionDefinitions = {
   boolean: ['help', 'h'],
@@ -21,7 +17,7 @@ let argv;
 try {
   argv = minimist(process.argv.slice(2), optionDefinitions);
 } catch (err) {
-  console.log('Hmmm...');
+  console.log(err);
   process.exit(1);
 }
 
@@ -30,29 +26,29 @@ const opts = optParser(argv);
 const showHelp = () => {
   console.log(`
     ${pack.description}
-    Usage: upssert [options...]
+
+    Usage: upssert [options...] [glob]
+
+    Default glob searches in tests/api/**/*.js
+
+    upssert -r tap --url https://httpbin.org/get
+    upssert tests/api/**/*.json
+
     options:
-      -h, --help Show help
+      --url           Ping supplied URL
+      --reporter, -r  Set test reporter (tap, console)
+      --help,     -h  Show help
       --version
   `);
   process.exit(0);
 };
 
-const data = [];
+let data;
 
 if (opts.url) {
-  const ping = {
-    name: 'Ping',
-    steps: [{
-      name: opts.url,
-      request: {
-        url: opts.url,
-        method: 'GET',
-      },
-    }],
-  };
-  data.push(ping);
+  data = opts.url;
 } else {
+  data = [];
   if (opts.help) {
     showHelp();
   } else if (opts.version) {
@@ -75,9 +71,7 @@ switch (opts.reporter) {
   default:
     reporter = new ConsoleReporter();
 }
-
-const runner = new Runner();
-const writer = new LogWriter();
-const upssert = new Upssert(data, runner, reporter, writer);
+reporter.setWriter(new LogWriter());
+const upssert = new Upssert(data, reporter);
 upssert.on(events.FAIL, () => { process.exitCode = 1; });
-upssert.execute(data);
+upssert.execute();

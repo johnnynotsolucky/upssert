@@ -1,7 +1,7 @@
 {
   "name": "upssert",
-  "version": "0.0.1",
-  "description": "Simple REST endpoint test framework",
+  "version": "0.1.0",
+  "description": "Simple REST API assertion framework",
   "main": "./dist/index.js",
   "bin": "./dist/bin/index.js",
   "scripts": {

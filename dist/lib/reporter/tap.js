@@ -36,21 +36,21 @@ var TAP = function () {
       this.writer = writer;
     }
   }, {
-    key: 'setRunner',
-    value: function setRunner(runner) {
-      this.bindHandlers(runner);
+    key: 'setEventEmitter',
+    value: function setEventEmitter(emitter) {
+      this.bindHandlers(emitter);
     }
   }, {
     key: 'bindHandlers',
-    value: function bindHandlers(runner) {
-      runner.on(_events2.default.SUITE_STEP_COUNT, this.handleCount.bind(this));
-      runner.on(_events2.default.SUITE_ASSERTION_COUNT, this.handleAssertCount.bind(this));
-      runner.on(_events2.default.START, this.handleStart.bind(this));
-      runner.on(_events2.default.SUITE_STEP_START, this.handleStepStart.bind(this));
-      runner.on(_events2.default.SUITE_STEP_PASS, this.handleStepPass.bind(this));
-      runner.on(_events2.default.SUITE_STEP_FAIL, this.handleStepFail.bind(this));
-      runner.on(_events2.default.SUITE_FAIL, this.handleSuiteFail.bind(this));
-      runner.on(_events2.default.END, this.handleEnd.bind(this));
+    value: function bindHandlers(emitter) {
+      emitter.on(_events2.default.SUITE_STEP_COUNT, this.handleCount.bind(this));
+      emitter.on(_events2.default.SUITE_ASSERTION_COUNT, this.handleAssertCount.bind(this));
+      emitter.on(_events2.default.START, this.handleStart.bind(this));
+      emitter.on(_events2.default.SUITE_STEP_START, this.handleStepStart.bind(this));
+      emitter.on(_events2.default.SUITE_STEP_PASS, this.handleStepPass.bind(this));
+      emitter.on(_events2.default.SUITE_STEP_FAIL, this.handleStepFail.bind(this));
+      emitter.on(_events2.default.SUITE_FAIL, this.handleSuiteFail.bind(this));
+      emitter.on(_events2.default.END, this.handleEnd.bind(this));
     }
   }, {
     key: 'handleCount',
@@ -95,10 +95,7 @@ var TAP = function () {
       this.runIfNotBailed(function () {
         var _writer;
 
-        var out = ['not ok ' + _this3.tests + ' ' + name(step)];
-        if (err.stack) {
-          out.push(err.stack.replace(/^/gm, '  '));
-        }
+        var out = ['not ok ' + _this3.tests + ' ' + name(step), '  Error: ' + err.message];
         (_writer = _this3.writer).lines.apply(_writer, out);
       });
     }

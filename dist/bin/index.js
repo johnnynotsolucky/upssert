@@ -3,27 +3,11 @@
 
 require('babel-polyfill');
 
-var _runner = require('../lib/runner');
-
-var _runner2 = _interopRequireDefault(_runner);
-
-var _tap = require('../lib/reporter/tap');
-
-var _tap2 = _interopRequireDefault(_tap);
-
-var _console = require('../lib/reporter/console');
-
-var _console2 = _interopRequireDefault(_console);
-
-var _log = require('../lib/writer/log');
-
-var _log2 = _interopRequireDefault(_log);
-
 var _readJsonFile = require('./read-json-file');
 
 var _readJsonFile2 = _interopRequireDefault(_readJsonFile);
 
-var _optionParser = require('./optionParser');
+var _optionParser = require('./option-parser');
 
 var _optionParser2 = _interopRequireDefault(_optionParser);
 
@@ -53,32 +37,23 @@ var argv = void 0;
 try {
   argv = minimist(process.argv.slice(2), optionDefinitions);
 } catch (err) {
-  console.log('Hmmm...');
+  console.log(err);
   process.exit(1);
 }
 
 var opts = (0, _optionParser2.default)(argv);
 
 var showHelp = function showHelp() {
-  console.log('\n    ' + _package2.default.description + '\n    Usage: upssert [options...]\n    options:\n      -h, --help Show help\n      --version\n  ');
+  console.log('\n    ' + _package2.default.description + '\n\n    Usage: upssert [options...] [glob]\n\n    Default glob searches in tests/api/**/*.js\n\n    upssert -r tap --url https://httpbin.org/get\n    upssert tests/api/**/*.json\n\n    options:\n      --url           Ping supplied URL\n      --reporter, -r  Set test reporter (tap, console)\n      --help,     -h  Show help\n      --version\n  ');
   process.exit(0);
 };
 
-var data = [];
+var data = void 0;
 
 if (opts.url) {
-  var ping = {
-    name: 'Ping',
-    steps: [{
-      name: opts.url,
-      request: {
-        url: opts.url,
-        method: 'GET'
-      }
-    }]
-  };
-  data.push(ping);
+  data = opts.url;
 } else {
+  data = [];
   if (opts.help) {
     showHelp();
   } else if (opts.version) {
@@ -95,17 +70,15 @@ if (opts.url) {
 var reporter = void 0;
 switch (opts.reporter) {
   case 'tap':
-    reporter = new _tap2.default();
+    reporter = new _.TapReporter();
     break;
   case 'console':
   default:
-    reporter = new _console2.default();
+    reporter = new _.ConsoleReporter();
 }
-
-var runner = new _runner2.default();
-var writer = new _log2.default();
-var upssert = new _2.default(data, runner, reporter, writer);
+reporter.setWriter(new _.LogWriter());
+var upssert = new _2.default(data, reporter);
 upssert.on(_events2.default.FAIL, function () {
   process.exitCode = 1;
 });
-upssert.execute(data);
+upssert.execute();

@@ -16,7 +16,7 @@ describe('TAP Reporter', () => {
     runner = new Runner();
     writer = new LogWriter();
     tap = new TapReporter();
-    tap.setRunner(runner);
+    tap.setEventEmitter(runner);
     tap.setWriter(writer);
     sinon.stub(writer, 'out');
     sinon.stub(writer, 'lines');
@@ -62,18 +62,18 @@ describe('TAP Reporter', () => {
     runner.end();
   });
 
-  it('should report the stack trace when a step has failed', (done) => {
+  it('should report the error message when a step has failed', (done) => {
     runner.on(events.SUITE_STEP_FAIL, () => {
       sinon.assert.calledOnce(writer.lines);
       const out = [
         'not ok 1 foo',
-        '  foobar',
+        '  Error: bar',
       ];
       sinon.assert.calledWith(writer.lines, ...out);
       done();
     });
     runner.suiteStepStart();
-    runner.suiteStepFail({ name: 'foo' }, { message: 'bar', stack: 'foobar' });
+    runner.suiteStepFail({ name: 'foo' }, { message: 'bar' });
   });
 
   it('should increment counts', (done) => {

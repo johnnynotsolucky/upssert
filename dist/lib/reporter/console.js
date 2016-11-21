@@ -45,23 +45,23 @@ var Console = function () {
       this.writer = writer;
     }
   }, {
-    key: 'setRunner',
-    value: function setRunner(runner) {
-      this.bindHandlers(runner);
+    key: 'setEventEmitter',
+    value: function setEventEmitter(emitter) {
+      this.bindHandlers(emitter);
     }
   }, {
     key: 'bindHandlers',
-    value: function bindHandlers(runner) {
-      runner.on(_events2.default.SUITE_COUNT, this.handleCount.bind(this));
-      runner.on(_events2.default.SUITE_STEP_COUNT, this.handleStepCount.bind(this));
-      runner.on(_events2.default.SUITE_ASSERTION_COUNT, this.handleAssertCount.bind(this));
-      runner.on(_events2.default.START, this.handleStart.bind(this));
-      runner.on(_events2.default.SUITE_START, this.handleSuiteStart.bind(this));
-      runner.on(_events2.default.SUITE_STEP_START, this.handleStepStart.bind(this));
-      runner.on(_events2.default.SUITE_STEP_PASS, this.handleStepPass.bind(this));
-      runner.on(_events2.default.SUITE_STEP_FAIL, this.handleStepFail.bind(this));
-      runner.on(_events2.default.SUITE_FAIL, this.handleSuiteFail.bind(this));
-      runner.on(_events2.default.END, this.handleEnd.bind(this));
+    value: function bindHandlers(emitter) {
+      emitter.on(_events2.default.SUITE_COUNT, this.handleCount.bind(this));
+      emitter.on(_events2.default.SUITE_STEP_COUNT, this.handleStepCount.bind(this));
+      emitter.on(_events2.default.SUITE_ASSERTION_COUNT, this.handleAssertCount.bind(this));
+      emitter.on(_events2.default.START, this.handleStart.bind(this));
+      emitter.on(_events2.default.SUITE_START, this.handleSuiteStart.bind(this));
+      emitter.on(_events2.default.SUITE_STEP_START, this.handleStepStart.bind(this));
+      emitter.on(_events2.default.SUITE_STEP_PASS, this.handleStepPass.bind(this));
+      emitter.on(_events2.default.SUITE_STEP_FAIL, this.handleStepFail.bind(this));
+      emitter.on(_events2.default.SUITE_FAIL, this.handleSuiteFail.bind(this));
+      emitter.on(_events2.default.END, this.handleEnd.bind(this));
     }
   }, {
     key: 'handleCount',
@@ -134,9 +134,6 @@ var Console = function () {
 
       this.bail = true;
       var out = [_symbols2.default.error.red + ' ' + suite.name.red, err.message];
-      if (err.stack) {
-        out.push(err.stack.replace(/^/gm, '  ').grey);
-      }
       (_writer = this.writer).lines.apply(_writer, out);
     }
   }, {
@@ -157,9 +154,6 @@ var Console = function () {
                 error = _ref.error;
 
             var errorOutput = ['', '  ' + (index + 1) + ') ' + step.name.red, ('  Error: ' + error.message).white];
-            if (error.stack) {
-              errorOutput.push(error.stack.replace(/^/gm, '  ').grey);
-            }
             (_writer2 = _this5.writer).lines.apply(_writer2, errorOutput);
           });
         }
