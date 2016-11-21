@@ -12,14 +12,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/johnnynotsolucky/frigg.git"
+    "url": "git+https://github.com/upssert/upssert.git"
   },
   "author": "Tyrone Tudehope",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/johnnynotsolucky/frigg/issues"
+    "url": "https://github.com/upssert/upssert/issues"
   },
-  "homepage": "https://github.com/johnnynotsolucky/frigg#readme",
+  "homepage": "https://github.com/upssert/upssert#readme",
   "devDependencies": {
     "babel-cli": "^6.18.0",
     "babel-core": "^6.18.2",
