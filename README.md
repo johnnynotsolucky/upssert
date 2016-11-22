@@ -275,12 +275,4 @@ pass an event emitter into.
     const upssert = new Upssert('https://httpbin.org/get', new CustomReporter());
     upssert.execute();
 
-## Roadmap
-
- - [ ] More reporters
- - [ ] Prefer runcom over `package.json` config for better _agnosticism_
- - [ ] Refactor all the code; stop hacking
- - [ ] Better Chai support
- - [ ] Support for environment variables
-
-##### Inspired by the simplicity of [Ansible](https://www.ansible.com/)
+*Inspired by the simplicity of [Ansible](https://www.ansible.com/)*

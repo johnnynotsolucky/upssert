@@ -28,6 +28,10 @@ var _events2 = require('../../data/events.json');
 
 var _events3 = _interopRequireDefault(_events2);
 
+var _globals = require('../globals');
+
+var _globals2 = _interopRequireDefault(_globals);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -66,7 +70,7 @@ var Test = function (_EventEmitter) {
               case 0:
                 this.emit(_events3.default.SUITE_TEST_START, this.test);
                 trace = this.addTraceHeader();
-                data = this.extractRequiredData(resultset);
+                data = Object.assign(this.extractRequiredData(resultset), _globals2.default);
                 httpRequest = new _http.HttpRequest(this.test.request, data);
                 _context.next = 6;
                 return (0, _http.makeRequest)(httpRequest);
@@ -77,7 +81,7 @@ var Test = function (_EventEmitter) {
                 testPassed = false;
 
                 if (stat) {
-                  assertObject = new _assert2.default(stat, this.assertions);
+                  assertObject = new _assert2.default(stat, this.assertions, data);
 
                   testPassed = assertObject.assert(function (err) {
                     _this2.emit(_events3.default.SUITE_TEST_FAIL, _this2.test, err);

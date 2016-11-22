@@ -77,8 +77,7 @@ var Upssert = function (_EventEmitter) {
         tests: [{
           name: url,
           request: {
-            url: url,
-            method: 'GET'
+            url: url
           }
         }]
       };

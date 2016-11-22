@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /* eslint-disable no-console*/
 import 'babel-polyfill';
-import readJsonFile from './read-json-file';
+import readJsonFile from '../lib/read-json-file';
 import optParser from './option-parser';
 import events from '../data/events.json';
 import pack from '../package.json'; // eslint-disable-line import/no-unresolved

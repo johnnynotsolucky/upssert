@@ -1,7 +1,7 @@
 /* eslint-disable no-undef, import/no-extraneous-dependencies */
 import { assert } from 'chai';
 import { httpStat } from '../../../src/lib/http';
-import readJsonFile from '../../../src/bin/read-json-file';
+import readJsonFile from '../../../src/lib/read-json-file';
 
 describe('stat', () => {
   it('should correctly calculate HTTP protocol timings and other meta data', () => {

@@ -1,26 +1,13 @@
 import { assert } from 'chai';
 import camelcase from 'camelcase';
 import getObjectValue from './get-value';
-
-const assertValue = (value, assertAgainst, assertionMethodName) => {
-  const expectedValue = assertAgainst[assertionMethodName];
-  const assertionMethod = camelcase(assertionMethodName);
-  if (!assert[assertionMethod]) {
-    let message;
-    if (assertionMethodName.trim().length === 0) {
-      message = 'Invalid assertion';
-    } else {
-      message = `${assertionMethodName} is not a valid assertion`;
-    }
-    throw new Error(message);
-  }
-  assert[assertionMethod](value, expectedValue);
-};
+import render from '../util/render';
 
 class AssertObject {
-  constructor(object, assertions) {
+  constructor(object, assertions, model) {
     this.object = object;
     this.assertions = assertions;
+    this.model = model;
   }
 
   assert(errorCb) {
@@ -48,13 +35,39 @@ class AssertObject {
       Object.keys(propertyToAssert[propertyNameToAssert])
         .forEach((assertionMethod) => {
           try {
-            assertValue(objectValue, assertAgainst, assertionMethod);
+            this.assertValue(objectValue, assertAgainst, assertionMethod);
           } catch (err) {
             err.message = `${err.message} (${propertyNameToAssert})`;
             throw err;
           }
         });
     }
+  }
+
+  assertValue(value, assertAgainst, assertionMethodName) {
+    const expectedValue = assertAgainst[assertionMethodName];
+    const assertionMethod = camelcase(assertionMethodName);
+    if (!assert[assertionMethod]) {
+      let message;
+      if (assertionMethodName.trim().length === 0) {
+        message = 'Invalid assertion';
+      } else {
+        message = `${assertionMethodName} is not a valid assertion`;
+      }
+      throw new Error(message);
+    }
+
+    assert[assertionMethod](value, this.renderValue(expectedValue));
+  }
+
+  renderValue(value) {
+    let result;
+    if (typeof value === 'string') {
+      result = render(value, this.model);
+    } else {
+      result = value;
+    }
+    return result;
   }
 }
 

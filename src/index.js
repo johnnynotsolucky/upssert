@@ -32,7 +32,6 @@ class Upssert extends EventEmitter {
         name: url,
         request: {
           url,
-          method: 'GET',
         },
       }],
     };

@@ -3,7 +3,7 @@
 
 require('babel-polyfill');
 
-var _readJsonFile = require('./read-json-file');
+var _readJsonFile = require('../lib/read-json-file');
 
 var _readJsonFile2 = _interopRequireDefault(_readJsonFile);
 

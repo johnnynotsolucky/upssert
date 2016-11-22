@@ -16,31 +16,21 @@ var _getValue = require('./get-value');
 
 var _getValue2 = _interopRequireDefault(_getValue);
 
+var _render = require('../util/render');
+
+var _render2 = _interopRequireDefault(_render);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var assertValue = function assertValue(value, assertAgainst, assertionMethodName) {
-  var expectedValue = assertAgainst[assertionMethodName];
-  var assertionMethod = (0, _camelcase2.default)(assertionMethodName);
-  if (!_chai.assert[assertionMethod]) {
-    var message = void 0;
-    if (assertionMethodName.trim().length === 0) {
-      message = 'Invalid assertion';
-    } else {
-      message = assertionMethodName + ' is not a valid assertion';
-    }
-    throw new Error(message);
-  }
-  _chai.assert[assertionMethod](value, expectedValue);
-};
-
 var AssertObject = function () {
-  function AssertObject(object, assertions) {
+  function AssertObject(object, assertions, model) {
     _classCallCheck(this, AssertObject);
 
     this.object = object;
     this.assertions = assertions;
+    this.model = model;
   }
 
   _createClass(AssertObject, [{
@@ -65,6 +55,8 @@ var AssertObject = function () {
   }, {
     key: 'assertProperty',
     value: function assertProperty(propertyToAssert) {
+      var _this2 = this;
+
       var propertyNameToAssert = Object.keys(propertyToAssert)[0];
       var objectValue = (0, _getValue2.default)(this.object, propertyNameToAssert);
       if (objectValue === undefined) {
@@ -74,7 +66,7 @@ var AssertObject = function () {
           var assertAgainst = propertyToAssert[propertyNameToAssert];
           Object.keys(propertyToAssert[propertyNameToAssert]).forEach(function (assertionMethod) {
             try {
-              assertValue(objectValue, assertAgainst, assertionMethod);
+              _this2.assertValue(objectValue, assertAgainst, assertionMethod);
             } catch (err) {
               err.message = err.message + ' (' + propertyNameToAssert + ')';
               throw err;
@@ -82,6 +74,34 @@ var AssertObject = function () {
           });
         })();
       }
+    }
+  }, {
+    key: 'assertValue',
+    value: function assertValue(value, assertAgainst, assertionMethodName) {
+      var expectedValue = assertAgainst[assertionMethodName];
+      var assertionMethod = (0, _camelcase2.default)(assertionMethodName);
+      if (!_chai.assert[assertionMethod]) {
+        var message = void 0;
+        if (assertionMethodName.trim().length === 0) {
+          message = 'Invalid assertion';
+        } else {
+          message = assertionMethodName + ' is not a valid assertion';
+        }
+        throw new Error(message);
+      }
+
+      _chai.assert[assertionMethod](value, this.renderValue(expectedValue));
+    }
+  }, {
+    key: 'renderValue',
+    value: function renderValue(value) {
+      var result = void 0;
+      if (typeof value === 'string') {
+        result = (0, _render2.default)(value, this.model);
+      } else {
+        result = value;
+      }
+      return result;
     }
   }]);
 

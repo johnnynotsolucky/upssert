@@ -12,9 +12,9 @@ var _fs = require('fs');
 
 var _fs2 = _interopRequireDefault(_fs);
 
-var _readJsonFile = require('./read-json-file');
+var _config = require('../lib/config');
 
-var _readJsonFile2 = _interopRequireDefault(_readJsonFile);
+var _config2 = _interopRequireDefault(_config);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -28,29 +28,13 @@ var opts = function opts(argv) {
 
   var files = [];
 
-  var getClientPackage = function getClientPackage() {
-    var result = {};
-    var clientPackage = (0, _readJsonFile2.default)(process.cwd() + '/package.json');
-    if (clientPackage && clientPackage.upssert) {
-      result = clientPackage.upssert;
-    }
-    return result;
-  };
-
   var globPattern = function globPattern(pattern) {
-    var clientPackage = getClientPackage();
-    var globOptions = clientPackage.globOpts || [];
-    var globbed = _glob2.default.sync(pattern, globOptions);
+    var globbed = _glob2.default.sync(pattern, _config2.default.globOptions);
     files.push.apply(files, _toConsumableArray(globbed));
   };
 
   if (argv._.length === 0) {
-    var clientPackage = getClientPackage();
-    if (clientPackage.testDir) {
-      argv._.push(clientPackage.testDir);
-    } else {
-      argv._.push(process.cwd() + '/test/api/*.json');
-    }
+    argv._.push(_config2.default.testDir);
   }
   argv._.forEach(function (pattern) {
     if (!pattern.startsWith('/')) {

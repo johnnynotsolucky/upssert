@@ -1,6 +1,6 @@
 import glob from 'glob';
 import fs from 'fs';
-import readJsonFile from './read-json-file';
+import config from '../lib/config';
 
 const opts = (argv) => {
   const help = argv.help || argv.h;
@@ -10,29 +10,13 @@ const opts = (argv) => {
 
   const files = [];
 
-  const getClientPackage = () => {
-    let result = {};
-    const clientPackage = readJsonFile(`${process.cwd()}/package.json`);
-    if (clientPackage && clientPackage.upssert) {
-      result = clientPackage.upssert;
-    }
-    return result;
-  };
-
   const globPattern = (pattern) => {
-    const clientPackage = getClientPackage();
-    const globOptions = clientPackage.globOpts || [];
-    const globbed = glob.sync(pattern, globOptions);
+    const globbed = glob.sync(pattern, config.globOptions);
     files.push(...globbed);
   };
 
   if (argv._.length === 0) {
-    const clientPackage = getClientPackage();
-    if (clientPackage.testDir) {
-      argv._.push(clientPackage.testDir);
-    } else {
-      argv._.push(`${process.cwd()}/test/api/*.json`);
-    }
+    argv._.push(config.testDir);
   }
   argv._.forEach((pattern) => {
     if (!pattern.startsWith('/')) {

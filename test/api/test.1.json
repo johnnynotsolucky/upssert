@@ -4,8 +4,7 @@
     {
       "name": "/get",
       "request": {
-        "url": "https://httpbin.org/get?foo=bar",
-        "method": "GET"
+        "url": "https://httpbin.org/get?foo=bar"
       },
       "response": {
         "content-type": "application/json",
@@ -31,6 +30,9 @@
           {
             "key": "out",
             "value": "{{test1.body.args.foo}}"
+          }, {
+            "key": "foobar",
+            "value": "{{env.FOO_BAR}}"
           }
         ]
       },
@@ -45,7 +47,8 @@
         "timing.total": {
           "is-below": 500
         },
-        "body.form.out": "bar"
+        "body.form.out": "bar",
+        "body.form.foobar": "{{env.FOO_BAR}}"
       }
     }, {
       "name": "/post raw data",

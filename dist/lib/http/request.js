@@ -25,11 +25,31 @@ var HttpRequest = function () {
   _createClass(HttpRequest, [{
     key: 'initialize',
     value: function initialize(request) {
-      this.url = request.url;
-      this.method = request.method || 'GET';
+      this.url = this.renderUrl(request.url);
+      this.method = this.renderRequestMethod(request.method);
       this.form = this.renderFormData(request);
       this.data = this.renderData(request);
       this.headers = this.renderRequestHeaders(request);
+    }
+  }, {
+    key: 'renderUrl',
+    value: function renderUrl(url) {
+      var result = void 0;
+      if (url) {
+        result = (0, _render2.default)(url, this.model);
+      }
+      return result;
+    }
+  }, {
+    key: 'renderRequestMethod',
+    value: function renderRequestMethod(method) {
+      var result = void 0;
+      if (method) {
+        result = (0, _render2.default)(method, this.model);
+      } else {
+        return 'GET';
+      }
+      return result;
     }
   }, {
     key: 'renderFormData',

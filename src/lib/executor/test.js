@@ -4,6 +4,7 @@ import AssertObject from '../object/assert';
 import generateToken from '../util/generate-token';
 import { HttpRequest, makeRequest, httpStat } from '../http';
 import events from '../../data/events.json';
+import globals from '../globals';
 
 class Test extends EventEmitter {
   constructor(test) {
@@ -15,13 +16,13 @@ class Test extends EventEmitter {
   async execute(resultset) {
     this.emit(events.SUITE_TEST_START, this.test);
     const trace = this.addTraceHeader();
-    const data = this.extractRequiredData(resultset);
+    const data = Object.assign(this.extractRequiredData(resultset), globals);
     const httpRequest = new HttpRequest(this.test.request, data);
     const response = await makeRequest(httpRequest);
     const stat = httpStat(response);
     let testPassed = false;
     if (stat) {
-      const assertObject = new AssertObject(stat, this.assertions);
+      const assertObject = new AssertObject(stat, this.assertions, data);
       testPassed = assertObject.assert((err) => {
         this.emit(events.SUITE_TEST_FAIL, this.test, err);
       });

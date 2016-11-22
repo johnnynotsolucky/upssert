@@ -27,5 +27,5 @@
 			"items": { "$ref": "formdata-schema" }
 		}
 	},
-	"required": ["url", "method"]
+	"required": ["url"]
 }

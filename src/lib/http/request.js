@@ -7,11 +7,29 @@ class HttpRequest {
   }
 
   initialize(request) {
-    this.url = request.url;
-    this.method = request.method || 'GET';
+    this.url = this.renderUrl(request.url);
+    this.method = this.renderRequestMethod(request.method);
     this.form = this.renderFormData(request);
     this.data = this.renderData(request);
     this.headers = this.renderRequestHeaders(request);
+  }
+
+  renderUrl(url) {
+    let result;
+    if (url) {
+      result = render(url, this.model);
+    }
+    return result;
+  }
+
+  renderRequestMethod(method) {
+    let result;
+    if (method) {
+      result = render(method, this.model);
+    } else {
+      return 'GET';
+    }
+    return result;
   }
 
   renderFormData(request) {
