@@ -14,15 +14,15 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var name = function name(step) {
-  return step.name.replace(/#/g, '_');
+var name = function name(test) {
+  return test.name.replace(/#/g, '_');
 };
 
 var TAP = function () {
   function TAP() {
     _classCallCheck(this, TAP);
 
-    this.stepCount = 0;
+    this.testCount = 0;
     this.assertionCount = 0;
     this.passes = 0;
     this.fails = 0;
@@ -43,19 +43,19 @@ var TAP = function () {
   }, {
     key: 'bindHandlers',
     value: function bindHandlers(emitter) {
-      emitter.on(_events2.default.SUITE_STEP_COUNT, this.handleCount.bind(this));
+      emitter.on(_events2.default.SUITE_TEST_COUNT, this.handleCount.bind(this));
       emitter.on(_events2.default.SUITE_ASSERTION_COUNT, this.handleAssertCount.bind(this));
       emitter.on(_events2.default.START, this.handleStart.bind(this));
-      emitter.on(_events2.default.SUITE_STEP_START, this.handleStepStart.bind(this));
-      emitter.on(_events2.default.SUITE_STEP_PASS, this.handleStepPass.bind(this));
-      emitter.on(_events2.default.SUITE_STEP_FAIL, this.handleStepFail.bind(this));
+      emitter.on(_events2.default.SUITE_TEST_START, this.handleStepStart.bind(this));
+      emitter.on(_events2.default.SUITE_TEST_PASS, this.handleStepPass.bind(this));
+      emitter.on(_events2.default.SUITE_TEST_FAIL, this.handleStepFail.bind(this));
       emitter.on(_events2.default.SUITE_FAIL, this.handleSuiteFail.bind(this));
       emitter.on(_events2.default.END, this.handleEnd.bind(this));
     }
   }, {
     key: 'handleCount',
     value: function handleCount(count) {
-      this.stepCount += count;
+      this.testCount += count;
     }
   }, {
     key: 'handleAssertCount',
@@ -68,7 +68,7 @@ var TAP = function () {
       var _this = this;
 
       this.runIfNotBailed(function () {
-        _this.writer.out('%d..%d', 1, _this.stepCount);
+        _this.writer.out('%d..%d', 1, _this.testCount);
       });
     }
   }, {
@@ -78,24 +78,24 @@ var TAP = function () {
     }
   }, {
     key: 'handleStepPass',
-    value: function handleStepPass(step) {
+    value: function handleStepPass(test) {
       var _this2 = this;
 
       this.passes += 1;
       this.runIfNotBailed(function () {
-        _this2.writer.out('ok %d %s', _this2.tests, name(step));
+        _this2.writer.out('ok %d %s', _this2.tests, name(test));
       });
     }
   }, {
     key: 'handleStepFail',
-    value: function handleStepFail(step, err) {
+    value: function handleStepFail(test, err) {
       var _this3 = this;
 
       this.fails += 1;
       this.runIfNotBailed(function () {
         var _writer;
 
-        var out = ['not ok ' + _this3.tests + ' ' + name(step), '  Error: ' + err.message];
+        var out = ['not ok ' + _this3.tests + ' ' + name(test), '  Error: ' + err.message];
         (_writer = _this3.writer).lines.apply(_writer, out);
       });
     }
@@ -113,7 +113,7 @@ var TAP = function () {
       this.runIfNotBailed(function () {
         var _writer2;
 
-        var out = ['# tests ' + _this4.stepCount, '# pass ' + _this4.passes, '# fail ' + _this4.fails, '# assertions ' + _this4.assertionCount];
+        var out = ['# tests ' + _this4.testCount, '# pass ' + _this4.passes, '# fail ' + _this4.fails, '# assertions ' + _this4.assertionCount];
         (_writer2 = _this4.writer).lines.apply(_writer2, out);
       });
     }

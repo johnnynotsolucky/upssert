@@ -53,7 +53,7 @@ var AssertObject = function () {
         });
         result = true;
       } catch (err) {
-        this.emit(_events2.default.SUITE_STEP_FAIL, this.step, err);
+        this.emit(_events2.default.SUITE_TEST_FAIL, this.step, err);
         result = false;
       }
       return result;

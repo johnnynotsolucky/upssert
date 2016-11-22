@@ -29,7 +29,7 @@ var Console = function () {
     _classCallCheck(this, Console);
 
     this.suiteCount = 0;
-    this.stepCount = 0;
+    this.testCount = 0;
     this.assertionCount = 0;
     this.passes = 0;
     this.fails = 0;
@@ -53,13 +53,13 @@ var Console = function () {
     key: 'bindHandlers',
     value: function bindHandlers(emitter) {
       emitter.on(_events2.default.SUITE_COUNT, this.handleCount.bind(this));
-      emitter.on(_events2.default.SUITE_STEP_COUNT, this.handleStepCount.bind(this));
+      emitter.on(_events2.default.SUITE_TEST_COUNT, this.handleStepCount.bind(this));
       emitter.on(_events2.default.SUITE_ASSERTION_COUNT, this.handleAssertCount.bind(this));
       emitter.on(_events2.default.START, this.handleStart.bind(this));
       emitter.on(_events2.default.SUITE_START, this.handleSuiteStart.bind(this));
-      emitter.on(_events2.default.SUITE_STEP_START, this.handleStepStart.bind(this));
-      emitter.on(_events2.default.SUITE_STEP_PASS, this.handleStepPass.bind(this));
-      emitter.on(_events2.default.SUITE_STEP_FAIL, this.handleStepFail.bind(this));
+      emitter.on(_events2.default.SUITE_TEST_START, this.handleStepStart.bind(this));
+      emitter.on(_events2.default.SUITE_TEST_PASS, this.handleStepPass.bind(this));
+      emitter.on(_events2.default.SUITE_TEST_FAIL, this.handleStepFail.bind(this));
       emitter.on(_events2.default.SUITE_FAIL, this.handleSuiteFail.bind(this));
       emitter.on(_events2.default.END, this.handleEnd.bind(this));
     }
@@ -71,7 +71,7 @@ var Console = function () {
   }, {
     key: 'handleStepCount',
     value: function handleStepCount(count) {
-      this.stepCount += count;
+      this.testCount += count;
     }
   }, {
     key: 'handleAssertCount',
@@ -106,24 +106,24 @@ var Console = function () {
     }
   }, {
     key: 'handleStepPass',
-    value: function handleStepPass(step) {
+    value: function handleStepPass(test) {
       var _this3 = this;
 
       this.passes += 1;
       this.runIfNotBailed(function () {
-        var out = '    ' + _symbols2.default.ok.green + ' ' + step.name.grey;
+        var out = '    ' + _symbols2.default.ok.green + ' ' + test.name.grey;
         _this3.writer.out(out);
       });
     }
   }, {
     key: 'handleStepFail',
-    value: function handleStepFail(step, err) {
+    value: function handleStepFail(test, err) {
       var _this4 = this;
 
       this.fails += 1;
       this.runIfNotBailed(function () {
-        _this4.failLog.push({ step: step, error: err });
-        var out = '    ' + _symbols2.default.error.red + ' ' + step.name.red;
+        _this4.failLog.push({ test: test, error: err });
+        var out = '    ' + _symbols2.default.error.red + ' ' + test.name.red;
         _this4.writer.out(out);
       });
     }
@@ -150,10 +150,10 @@ var Console = function () {
           _this5.failLog.forEach(function (_ref, index) {
             var _writer2;
 
-            var step = _ref.step,
+            var test = _ref.test,
                 error = _ref.error;
 
-            var errorOutput = ['', '  ' + (index + 1) + ') ' + step.name.red, ('  Error: ' + error.message).white];
+            var errorOutput = ['', '  ' + (index + 1) + ') ' + test.name.red, ('  Error: ' + error.message).white];
             (_writer2 = _this5.writer).lines.apply(_writer2, errorOutput);
           });
         }

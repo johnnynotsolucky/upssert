@@ -28,9 +28,9 @@ var _suite = require('../../data/schema/suite.json');
 
 var _suite2 = _interopRequireDefault(_suite);
 
-var _step4 = require('./step');
+var _test3 = require('./test');
 
-var _step5 = _interopRequireDefault(_step4);
+var _test4 = _interopRequireDefault(_test3);
 
 var _events2 = require('../../data/events.json');
 
@@ -56,17 +56,17 @@ var Suite = function (_EventEmitter) {
 
     _this.bindEmitters();
     _this.testCase = testCase;
-    _this.stepExecutors = [];
+    _this.testExecutors = [];
     return _this;
   }
 
   _createClass(Suite, [{
     key: 'bindEmitters',
     value: function bindEmitters() {
-      this.stepStart = this.stepStart.bind(this);
-      this.stepEnd = this.stepEnd.bind(this);
-      this.stepPass = this.stepPass.bind(this);
-      this.stepFail = this.stepFail.bind(this);
+      this.testStart = this.testStart.bind(this);
+      this.testEnd = this.testEnd.bind(this);
+      this.testPass = this.testPass.bind(this);
+      this.testFail = this.testFail.bind(this);
       this.assertionCount = this.assertionCount.bind(this);
     }
   }, {
@@ -79,7 +79,7 @@ var Suite = function (_EventEmitter) {
               case 0:
                 this.emit(_events3.default.SUITE_START, this.testCase);
                 _context.next = 3;
-                return this.executeStepsInOrder();
+                return this.executeTestsInOrder();
 
               case 3:
                 this.emit(_events3.default.SUITE_END, this.testCase);
@@ -107,35 +107,35 @@ var Suite = function (_EventEmitter) {
       var testValid = _tv2.default.validate(this.testCase, _suite2.default);
       if (testValid) {
         this.emit(_events3.default.SUITE_COUNT, 1);
-        this.initializeSteps();
+        this.initializeTests();
       } else {
         this.emit(_events3.default.SUITE_FAIL, this.testCase, _tv2.default.error);
       }
     }
   }, {
-    key: 'initializeSteps',
-    value: function initializeSteps() {
+    key: 'initializeTests',
+    value: function initializeTests() {
       var i = 1;
       var _iteratorNormalCompletion = true;
       var _didIteratorError = false;
       var _iteratorError = undefined;
 
       try {
-        for (var _iterator = this.testCase.steps[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-          var _step2 = _step.value;
+        for (var _iterator = this.testCase.tests[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var test = _step.value;
 
-          if (!_step2.id) {
-            _step2.id = 'step' + i;
+          if (!test.id) {
+            test.id = 'test' + i;
             i += 1;
           }
-          var executor = new _step5.default(_step2);
-          executor.on(_events3.default.SUITE_STEP_START, this.stepStart);
-          executor.on(_events3.default.SUITE_STEP_END, this.stepEnd);
-          executor.on(_events3.default.SUITE_STEP_PASS, this.stepPass);
-          executor.on(_events3.default.SUITE_STEP_FAIL, this.stepFail);
+          var executor = new _test4.default(test);
+          executor.on(_events3.default.SUITE_TEST_START, this.testStart);
+          executor.on(_events3.default.SUITE_TEST_END, this.testEnd);
+          executor.on(_events3.default.SUITE_TEST_PASS, this.testPass);
+          executor.on(_events3.default.SUITE_TEST_FAIL, this.testFail);
           executor.on(_events3.default.SUITE_ASSERTION_COUNT, this.assertionCount);
           executor.initialize();
-          this.stepExecutors.push(executor);
+          this.testExecutors.push(executor);
         }
       } catch (err) {
         _didIteratorError = true;
@@ -152,13 +152,13 @@ var Suite = function (_EventEmitter) {
         }
       }
 
-      this.emit(_events3.default.SUITE_STEP_COUNT, this.testCase.steps.length);
+      this.emit(_events3.default.SUITE_TEST_COUNT, this.testCase.tests.length);
     }
   }, {
-    key: 'executeStepsInOrder',
+    key: 'executeTestsInOrder',
     value: function () {
       var _ref2 = _asyncToGenerator(regeneratorRuntime.mark(function _callee2() {
-        var results, _iteratorNormalCompletion2, _didIteratorError2, _iteratorError2, _iterator2, _step3, executor, result;
+        var results, _iteratorNormalCompletion2, _didIteratorError2, _iteratorError2, _iterator2, _step2, executor, result;
 
         return regeneratorRuntime.wrap(function _callee2$(_context2) {
           while (1) {
@@ -169,22 +169,22 @@ var Suite = function (_EventEmitter) {
                 _didIteratorError2 = false;
                 _iteratorError2 = undefined;
                 _context2.prev = 4;
-                _iterator2 = this.stepExecutors[Symbol.iterator]();
+                _iterator2 = this.testExecutors[Symbol.iterator]();
 
               case 6:
-                if (_iteratorNormalCompletion2 = (_step3 = _iterator2.next()).done) {
+                if (_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done) {
                   _context2.next = 15;
                   break;
                 }
 
-                executor = _step3.value;
+                executor = _step2.value;
                 _context2.next = 10;
                 return executor.execute(results);
 
               case 10:
                 result = _context2.sent;
 
-                results[result.step.id] = result;
+                results[result.test.id] = result;
 
               case 12:
                 _iteratorNormalCompletion2 = true;
@@ -233,31 +233,31 @@ var Suite = function (_EventEmitter) {
         }, _callee2, this, [[4, 17, 21, 29], [22,, 24, 28]]);
       }));
 
-      function executeStepsInOrder() {
+      function executeTestsInOrder() {
         return _ref2.apply(this, arguments);
       }
 
-      return executeStepsInOrder;
+      return executeTestsInOrder;
     }()
   }, {
-    key: 'stepStart',
-    value: function stepStart(step) {
-      this.emit(_events3.default.SUITE_STEP_START, step);
+    key: 'testStart',
+    value: function testStart(test) {
+      this.emit(_events3.default.SUITE_TEST_START, test);
     }
   }, {
-    key: 'stepEnd',
-    value: function stepEnd(step) {
-      this.emit(_events3.default.SUITE_STEP_END, step);
+    key: 'testEnd',
+    value: function testEnd(test) {
+      this.emit(_events3.default.SUITE_TEST_END, test);
     }
   }, {
-    key: 'stepPass',
-    value: function stepPass(step) {
-      this.emit(_events3.default.SUITE_STEP_PASS, step);
+    key: 'testPass',
+    value: function testPass(test) {
+      this.emit(_events3.default.SUITE_TEST_PASS, test);
     }
   }, {
-    key: 'stepFail',
-    value: function stepFail(step, err) {
-      this.emit(_events3.default.SUITE_STEP_FAIL, step, err);
+    key: 'testFail',
+    value: function testFail(test, err) {
+      this.emit(_events3.default.SUITE_TEST_FAIL, test, err);
     }
   }, {
     key: 'assertionCount',

@@ -31,10 +31,10 @@ describe('TAP Reporter', () => {
     runner.on(events.START, () => {
       sinon.assert.calledOnce(writer.out);
       sinon.assert.calledWith(writer.out, '%d..%d', 1, 9);
-      assert.equal(tap.stepCount, 9);
+      assert.equal(tap.testCount, 9);
       done();
     });
-    runner.suiteStepCount(9);
+    runner.suiteTestCount(9);
     runner.start();
   });
 
@@ -57,13 +57,13 @@ describe('TAP Reporter', () => {
     });
     runner.suiteFail(null, { message: '' });
     runner.start();
-    runner.suiteStepPass();
-    runner.suiteStepFail();
+    runner.suiteTestPass();
+    runner.suiteTestFail();
     runner.end();
   });
 
-  it('should report the error message when a step has failed', (done) => {
-    runner.on(events.SUITE_STEP_FAIL, () => {
+  it('should report the error message when a test has failed', (done) => {
+    runner.on(events.SUITE_TEST_FAIL, () => {
       sinon.assert.calledOnce(writer.lines);
       const out = [
         'not ok 1 foo',
@@ -72,28 +72,28 @@ describe('TAP Reporter', () => {
       sinon.assert.calledWith(writer.lines, ...out);
       done();
     });
-    runner.suiteStepStart();
-    runner.suiteStepFail({ name: 'foo' }, { message: 'bar' });
+    runner.suiteTestStart();
+    runner.suiteTestFail({ name: 'foo' }, { message: 'bar' });
   });
 
   it('should increment counts', (done) => {
     runner.on(events.END, () => {
       assert.equal(tap.tests, 6);
-      assert.equal(tap.stepCount, 6);
+      assert.equal(tap.testCount, 6);
       assert.equal(tap.assertionCount, 18);
       assert.equal(tap.passes, 3);
       assert.equal(tap.fails, 3);
       done();
     });
-    runner.suiteStepCount(6);
+    runner.suiteTestCount(6);
     runner.suiteAssertionCount(6 * 3);
     runner.start();
-    const step = { name: 'step' };
+    const test = { name: 'test' };
     for (let i = 0; i < 3; i++) {
-      runner.suiteStepStart();
-      runner.suiteStepPass(step);
-      runner.suiteStepStart();
-      runner.suiteStepFail(step, { stack: '' });
+      runner.suiteTestStart();
+      runner.suiteTestPass(test);
+      runner.suiteTestStart();
+      runner.suiteTestFail(test, { stack: '' });
     }
     runner.end();
   });
@@ -110,7 +110,7 @@ describe('TAP Reporter', () => {
       sinon.assert.calledWith(writer.lines, ...out);
       done();
     });
-    tap.stepCount = 6;
+    tap.testCount = 6;
     tap.assertionCount = 18;
     tap.passes = 3;
     tap.fails = 3;

@@ -167,12 +167,12 @@ var Runner = function (_EventEmitter) {
         executor.on(_events3.default.SUITE_START, _this2.suiteStart);
         executor.on(_events3.default.SUITE_END, _this2.suiteEnd);
         executor.on(_events3.default.SUITE_FAIL, _this2.suiteFail);
-        executor.on(_events3.default.SUITE_STEP_START, _this2.suiteStepStart);
-        executor.on(_events3.default.SUITE_STEP_END, _this2.suiteStepEnd);
-        executor.on(_events3.default.SUITE_STEP_PASS, _this2.suiteStepPass);
-        executor.on(_events3.default.SUITE_STEP_FAIL, _this2.suiteStepFail);
+        executor.on(_events3.default.SUITE_TEST_START, _this2.suiteStepStart);
+        executor.on(_events3.default.SUITE_TEST_END, _this2.suiteStepEnd);
+        executor.on(_events3.default.SUITE_TEST_PASS, _this2.suiteStepPass);
+        executor.on(_events3.default.SUITE_TEST_FAIL, _this2.suiteStepFail);
         executor.on(_events3.default.SUITE_ASSERTION_COUNT, _this2.suiteAssertionCount);
-        executor.on(_events3.default.SUITE_STEP_COUNT, _this2.suiteStepCount);
+        executor.on(_events3.default.SUITE_TEST_COUNT, _this2.suiteStepCount);
         executor.initialize();
         _this2.executors.push(executor);
       });
@@ -201,24 +201,24 @@ var Runner = function (_EventEmitter) {
     }
   }, {
     key: 'suiteStepStart',
-    value: function suiteStepStart(step) {
-      this.emit(_events3.default.SUITE_STEP_START, step);
+    value: function suiteStepStart(test) {
+      this.emit(_events3.default.SUITE_TEST_START, test);
     }
   }, {
     key: 'suiteStepEnd',
-    value: function suiteStepEnd(step) {
-      this.emit(_events3.default.SUITE_STEP_END, step);
+    value: function suiteStepEnd(test) {
+      this.emit(_events3.default.SUITE_TEST_END, test);
     }
   }, {
     key: 'suiteStepPass',
-    value: function suiteStepPass(step) {
-      this.emit(_events3.default.SUITE_STEP_PASS, step);
+    value: function suiteStepPass(test) {
+      this.emit(_events3.default.SUITE_TEST_PASS, test);
     }
   }, {
     key: 'suiteStepFail',
-    value: function suiteStepFail(step, err) {
-      this.emit(_events3.default.FAIL, step, err);
-      this.emit(_events3.default.SUITE_STEP_FAIL, step, err);
+    value: function suiteStepFail(test, err) {
+      this.emit(_events3.default.FAIL, test, err);
+      this.emit(_events3.default.SUITE_TEST_FAIL, test, err);
     }
   }, {
     key: 'suiteAssertionCount',
@@ -228,7 +228,7 @@ var Runner = function (_EventEmitter) {
   }, {
     key: 'suiteStepCount',
     value: function suiteStepCount(count) {
-      this.emit(_events3.default.SUITE_STEP_COUNT, count);
+      this.emit(_events3.default.SUITE_TEST_COUNT, count);
     }
   }]);
 

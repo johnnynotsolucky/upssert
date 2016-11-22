@@ -5,11 +5,11 @@
   "SUITE_START": "suite.start",
   "SUITE_END": "suite.end",
   "SUITE_FAIL": "suite.fail",
-  "SUITE_STEP_START": "suite.step.start",
-  "SUITE_STEP_END": "suite.step.end",
-  "SUITE_STEP_PASS": "suite.step.pass",
-  "SUITE_STEP_FAIL": "suite.step.fail",
+  "SUITE_TEST_START": "suite.test.start",
+  "SUITE_TEST_END": "suite.test.end",
+  "SUITE_TEST_PASS": "suite.test.pass",
+  "SUITE_TEST_FAIL": "suite.test.fail",
   "SUITE_COUNT": "suite.count",
-  "SUITE_STEP_COUNT": "suite.step.count",
+  "SUITE_TEST_COUNT": "suite.test.count",
   "SUITE_ASSERTION_COUNT": "suite.assertion.count"
 }

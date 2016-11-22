@@ -47,12 +47,12 @@ class Runner extends EventEmitter {
       executor.on(events.SUITE_START, this.suiteStart);
       executor.on(events.SUITE_END, this.suiteEnd);
       executor.on(events.SUITE_FAIL, this.suiteFail);
-      executor.on(events.SUITE_STEP_START, this.suiteStepStart);
-      executor.on(events.SUITE_STEP_END, this.suiteStepEnd);
-      executor.on(events.SUITE_STEP_PASS, this.suiteStepPass);
-      executor.on(events.SUITE_STEP_FAIL, this.suiteStepFail);
+      executor.on(events.SUITE_TEST_START, this.suiteStepStart);
+      executor.on(events.SUITE_TEST_END, this.suiteStepEnd);
+      executor.on(events.SUITE_TEST_PASS, this.suiteStepPass);
+      executor.on(events.SUITE_TEST_FAIL, this.suiteStepFail);
       executor.on(events.SUITE_ASSERTION_COUNT, this.suiteAssertionCount);
-      executor.on(events.SUITE_STEP_COUNT, this.suiteStepCount);
+      executor.on(events.SUITE_TEST_COUNT, this.suiteStepCount);
       executor.initialize();
       this.executors.push(executor);
     });
@@ -76,21 +76,21 @@ class Runner extends EventEmitter {
     this.emit(events.SUITE_FAIL, suite, err);
   }
 
-  suiteStepStart(step) {
-    this.emit(events.SUITE_STEP_START, step);
+  suiteStepStart(test) {
+    this.emit(events.SUITE_TEST_START, test);
   }
 
-  suiteStepEnd(step) {
-    this.emit(events.SUITE_STEP_END, step);
+  suiteStepEnd(test) {
+    this.emit(events.SUITE_TEST_END, test);
   }
 
-  suiteStepPass(step) {
-    this.emit(events.SUITE_STEP_PASS, step);
+  suiteStepPass(test) {
+    this.emit(events.SUITE_TEST_PASS, test);
   }
 
-  suiteStepFail(step, err) {
-    this.emit(events.FAIL, step, err);
-    this.emit(events.SUITE_STEP_FAIL, step, err);
+  suiteStepFail(test, err) {
+    this.emit(events.FAIL, test, err);
+    this.emit(events.SUITE_TEST_FAIL, test, err);
   }
 
   suiteAssertionCount(count) {
@@ -98,7 +98,7 @@ class Runner extends EventEmitter {
   }
 
   suiteStepCount(count) {
-    this.emit(events.SUITE_STEP_COUNT, count);
+    this.emit(events.SUITE_TEST_COUNT, count);
   }
 }
 

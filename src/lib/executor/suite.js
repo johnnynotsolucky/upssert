@@ -4,7 +4,7 @@ import formdataSchema from '../../data/schema/formdata.json';
 import requestSchema from '../../data/schema/request.json';
 import testSchema from '../../data/schema/test.json';
 import suiteSchema from '../../data/schema/suite.json';
-import StepExecutor from './step';
+import TestExecutor from './test';
 import events from '../../data/events.json';
 
 class Suite extends EventEmitter {
@@ -12,20 +12,20 @@ class Suite extends EventEmitter {
     super();
     this.bindEmitters();
     this.testCase = testCase;
-    this.stepExecutors = [];
+    this.testExecutors = [];
   }
 
   bindEmitters() {
-    this.stepStart = this.stepStart.bind(this);
-    this.stepEnd = this.stepEnd.bind(this);
-    this.stepPass = this.stepPass.bind(this);
-    this.stepFail = this.stepFail.bind(this);
+    this.testStart = this.testStart.bind(this);
+    this.testEnd = this.testEnd.bind(this);
+    this.testPass = this.testPass.bind(this);
+    this.testFail = this.testFail.bind(this);
     this.assertionCount = this.assertionCount.bind(this);
   }
 
   async execute() {
     this.emit(events.SUITE_START, this.testCase);
-    await this.executeStepsInOrder();
+    await this.executeTestsInOrder();
     this.emit(events.SUITE_END, this.testCase);
   }
 
@@ -36,53 +36,53 @@ class Suite extends EventEmitter {
     const testValid = tv4.validate(this.testCase, suiteSchema);
     if (testValid) {
       this.emit(events.SUITE_COUNT, 1);
-      this.initializeSteps();
+      this.initializeTests();
     } else {
       this.emit(events.SUITE_FAIL, this.testCase, tv4.error);
     }
   }
 
-  initializeSteps() {
+  initializeTests() {
     let i = 1;
-    for (const step of this.testCase.steps) {
-      if (!step.id) {
-        step.id = `step${i}`;
+    for (const test of this.testCase.tests) {
+      if (!test.id) {
+        test.id = `test${i}`;
         i += 1;
       }
-      const executor = new StepExecutor(step);
-      executor.on(events.SUITE_STEP_START, this.stepStart);
-      executor.on(events.SUITE_STEP_END, this.stepEnd);
-      executor.on(events.SUITE_STEP_PASS, this.stepPass);
-      executor.on(events.SUITE_STEP_FAIL, this.stepFail);
+      const executor = new TestExecutor(test);
+      executor.on(events.SUITE_TEST_START, this.testStart);
+      executor.on(events.SUITE_TEST_END, this.testEnd);
+      executor.on(events.SUITE_TEST_PASS, this.testPass);
+      executor.on(events.SUITE_TEST_FAIL, this.testFail);
       executor.on(events.SUITE_ASSERTION_COUNT, this.assertionCount);
       executor.initialize();
-      this.stepExecutors.push(executor);
+      this.testExecutors.push(executor);
     }
-    this.emit(events.SUITE_STEP_COUNT, this.testCase.steps.length);
+    this.emit(events.SUITE_TEST_COUNT, this.testCase.tests.length);
   }
 
-  async executeStepsInOrder() {
+  async executeTestsInOrder() {
     const results = {};
-    for (const executor of this.stepExecutors) {
+    for (const executor of this.testExecutors) {
       const result = await executor.execute(results);
-      results[result.step.id] = result;
+      results[result.test.id] = result;
     }
   }
 
-  stepStart(step) {
-    this.emit(events.SUITE_STEP_START, step);
+  testStart(test) {
+    this.emit(events.SUITE_TEST_START, test);
   }
 
-  stepEnd(step) {
-    this.emit(events.SUITE_STEP_END, step);
+  testEnd(test) {
+    this.emit(events.SUITE_TEST_END, test);
   }
 
-  stepPass(step) {
-    this.emit(events.SUITE_STEP_PASS, step);
+  testPass(test) {
+    this.emit(events.SUITE_TEST_PASS, test);
   }
 
-  stepFail(step, err) {
-    this.emit(events.SUITE_STEP_FAIL, step, err);
+  testFail(test, err) {
+    this.emit(events.SUITE_TEST_FAIL, test, err);
   }
 
   assertionCount(count) {

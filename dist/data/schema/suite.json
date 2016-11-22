@@ -8,7 +8,7 @@
 		"base-url": {
 			"type": "string"
 		},
-		"steps": {
+		"tests": {
 			"type": "array",
 			"items": { "$ref": "test-schema" }
 		}

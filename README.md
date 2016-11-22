@@ -95,7 +95,7 @@ Test suites are defined as JSON files
     $ cat << EOF > ping.json
     {
       "name": "Ping httpbin.org",
-      "steps": [
+      "tests": [
         {
           "name": "Successfully pings httpbin.org",
           "request": {
@@ -114,7 +114,7 @@ A more complex example
     $ cat << EOF > workflow.json
     {
       "name": "Test against httpbin",
-      "steps": [
+      "tests": [
         {
           "name": "/get",
           "request": {
@@ -136,14 +136,14 @@ A more complex example
           }
         }, {
           "name": "/post formdata",
-          "requires": ["step1"],
+          "requires": ["test1"],
           "request": {
             "url": "https://httpbin.org/post",
             "method": "POST",
             "form": [
               {
                 "key": "out",
-                "value": "{{step1.body.args.foo}}"
+                "value": "{{test1.body.args.foo}}"
               }
             ]
           },
@@ -162,14 +162,14 @@ A more complex example
           }
         }, {
           "name": "/post raw data",
-          "requires": ["step1", "step2"],
+          "requires": ["test1", "test2"],
           "request": {
             "url": "https://httpbin.org/post",
             "method": "POST",
             "headers": {
               "Content-Type": "application/x-www-form-urlencoded"
             },
-            "data": "step1-data={{step1.body.args.foo}}&step2-data={{step2.body.form.out}}"
+            "data": "test1-data={{test1.body.args.foo}}&test2-data={{test2.body.form.out}}"
           },
           "response": {
             "content-type": "application/json",
@@ -182,8 +182,8 @@ A more complex example
             "timing.total": {
               "is-below": 500
             },
-            "body.form[step1-data]": "bar",
-            "body.form[step2-data]": "bar"
+            "body.form[test1-data]": "bar",
+            "body.form[test2-data]": "bar"
           }
         }
       ]
@@ -197,7 +197,7 @@ A more complex example
     import Upssert from 'upssert';
     const ping = {
       name: 'Ping httpbin.org',
-      steps: [
+      tests: [
         {
           name: 'Successfully pings httpbin.org',
           request: {
@@ -244,17 +244,17 @@ report.
 
 The following is an exhaustive list of events which are emitted
 
- - `suite.assertion.count (count)` emits `count` assertions for each step
- - `suite.step.count (count)` emits `count` steps for each suite
+ - `suite.assertion.count (count)` emits `count` assertions for each test
+ - `suite.test.count (count)` emits `count` tests for each suite
  - `suite.count (count)` emits `count` for each suite, which is usually `1`
  - `start` emitted when the test runner starts
  - `suite.start` emitted when a suite starts
  - `suite.fail` emitted if a suite fails and cannot continue. Generally for invalid test suite configuration.
- - `suite.step.start` emitted when a step starts
- - `suite.step.pass` emitted if none of the steps assertions fail
- - `suite.step.fail` emitted if any of the steps assertions fail
- - `suite.step.end` emitted when a step ends
- - `fail` emitted for every failure (`suite.step.fail`, `suite.fail`). Useful for marking a test run as failed.
+ - `suite.test.start` emitted when a test starts
+ - `suite.test.pass` emitted if none of the tests assertions fail
+ - `suite.test.fail` emitted if any of the tests assertions fail
+ - `suite.test.end` emitted when a test ends
+ - `fail` emitted for every failure (`suite.test.fail`, `suite.fail`). Useful for marking a test run as failed.
  - `suite.end` emitted when a suite ends
  - `end` emitted when the test runner stops
 

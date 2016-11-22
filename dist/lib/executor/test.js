@@ -40,57 +40,57 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var Step = function (_EventEmitter) {
-  _inherits(Step, _EventEmitter);
+var Test = function (_EventEmitter) {
+  _inherits(Test, _EventEmitter);
 
-  function Step(step) {
-    _classCallCheck(this, Step);
+  function Test(test) {
+    _classCallCheck(this, Test);
 
-    var _this = _possibleConstructorReturn(this, (Step.__proto__ || Object.getPrototypeOf(Step)).call(this));
+    var _this = _possibleConstructorReturn(this, (Test.__proto__ || Object.getPrototypeOf(Test)).call(this));
 
-    _this.step = step;
+    _this.test = test;
     _this.assertions = [];
     return _this;
   }
 
-  _createClass(Step, [{
+  _createClass(Test, [{
     key: 'execute',
     value: function () {
       var _ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee(resultset) {
         var _this2 = this;
 
-        var trace, data, httpRequest, response, stat, stepPassed, assertObject;
+        var trace, data, httpRequest, response, stat, testPassed, assertObject;
         return regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                this.emit(_events3.default.SUITE_TEST_START, this.step);
+                this.emit(_events3.default.SUITE_TEST_START, this.test);
                 trace = this.addTraceHeader();
                 data = this.extractRequiredData(resultset);
-                httpRequest = new _http.HttpRequest(this.step.request, data);
+                httpRequest = new _http.HttpRequest(this.test.request, data);
                 _context.next = 6;
                 return (0, _http.makeRequest)(httpRequest);
 
               case 6:
                 response = _context.sent;
                 stat = (0, _http.httpStat)(response);
-                stepPassed = false;
+                testPassed = false;
 
                 if (stat) {
                   assertObject = new _assert2.default(stat, this.assertions);
 
-                  stepPassed = assertObject.assert(function (err) {
-                    _this2.emit(_events3.default.SUITE_TEST_FAIL, _this2.step, err);
+                  testPassed = assertObject.assert(function (err) {
+                    _this2.emit(_events3.default.SUITE_TEST_FAIL, _this2.test, err);
                   });
-                  if (stepPassed) {
-                    this.emit(_events3.default.SUITE_TEST_PASS, this.step);
+                  if (testPassed) {
+                    this.emit(_events3.default.SUITE_TEST_PASS, this.test);
                   }
                 }
-                this.emit(_events3.default.SUITE_TEST_END, this.step);
+                this.emit(_events3.default.SUITE_TEST_END, this.test);
                 return _context.abrupt('return', {
                   trace: trace,
-                  step: this.step,
-                  pass: stepPassed,
+                  test: this.test,
+                  pass: testPassed,
                   result: stat
                 });
 
@@ -111,19 +111,19 @@ var Step = function (_EventEmitter) {
   }, {
     key: 'addTraceHeader',
     value: function addTraceHeader() {
-      if (!this.step.request.headers) {
-        this.step.request.headers = {};
+      if (!this.test.request.headers) {
+        this.test.request.headers = {};
       }
       var token = (0, _generateToken2.default)();
-      this.step.request.headers['X-Upssert-Trace'] = token;
+      this.test.request.headers['X-Upssert-Trace'] = token;
       return token;
     }
   }, {
     key: 'extractRequiredData',
     value: function extractRequiredData(results) {
       var data = {};
-      if (this.step.requires) {
-        this.step.requires.forEach(function (id) {
+      if (this.test.requires) {
+        this.test.requires.forEach(function (id) {
           data[id] = results[id].result;
         });
       }
@@ -132,7 +132,7 @@ var Step = function (_EventEmitter) {
   }, {
     key: 'initialize',
     value: function initialize() {
-      var responseSet = !(0, _falsy2.default)(this.step.response);
+      var responseSet = !(0, _falsy2.default)(this.test.response);
       this.addAssertionsIfReponseIsSet(responseSet);
       this.addDefaultPingAssertions(responseSet);
     }
@@ -142,8 +142,8 @@ var Step = function (_EventEmitter) {
       var _this3 = this;
 
       if (responseSet) {
-        Object.keys(this.step.response).forEach(function (key) {
-          var assertion = _this3.step.response[key];
+        Object.keys(this.test.response).forEach(function (key) {
+          var assertion = _this3.test.response[key];
           _this3.addEqualAssertionIfString(assertion, key);
           _this3.addAssertionsIfObject(assertion, key);
         });
@@ -182,7 +182,7 @@ var Step = function (_EventEmitter) {
     }
   }]);
 
-  return Step;
+  return Test;
 }(_events.EventEmitter);
 
-exports.default = Step;
+exports.default = Test;

@@ -1,6 +1,6 @@
 {
   "name": "Test httpbin/get",
-  "steps": [
+  "tests": [
     {
       "name": "Returns with args `a: b`",
       "request": {
@@ -23,7 +23,7 @@
       }
     }, {
       "name": "Something else",
-      "needs-previous-step": false,
+      "needs-previous-test": false,
       "request": {
         "url": "https://httpbin.org/get?a=b",
         "method": "GET"

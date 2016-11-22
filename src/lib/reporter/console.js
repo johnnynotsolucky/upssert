@@ -6,7 +6,7 @@ import events from '../../data/events.json';
 class Console {
   constructor() {
     this.suiteCount = 0;
-    this.stepCount = 0;
+    this.testCount = 0;
     this.assertionCount = 0;
     this.passes = 0;
     this.fails = 0;
@@ -26,13 +26,13 @@ class Console {
 
   bindHandlers(emitter) {
     emitter.on(events.SUITE_COUNT, this::this.handleCount);
-    emitter.on(events.SUITE_STEP_COUNT, this::this.handleStepCount);
+    emitter.on(events.SUITE_TEST_COUNT, this::this.handleStepCount);
     emitter.on(events.SUITE_ASSERTION_COUNT, this::this.handleAssertCount);
     emitter.on(events.START, this::this.handleStart);
     emitter.on(events.SUITE_START, this::this.handleSuiteStart);
-    emitter.on(events.SUITE_STEP_START, this::this.handleStepStart);
-    emitter.on(events.SUITE_STEP_PASS, this::this.handleStepPass);
-    emitter.on(events.SUITE_STEP_FAIL, this::this.handleStepFail);
+    emitter.on(events.SUITE_TEST_START, this::this.handleStepStart);
+    emitter.on(events.SUITE_TEST_PASS, this::this.handleStepPass);
+    emitter.on(events.SUITE_TEST_FAIL, this::this.handleStepFail);
     emitter.on(events.SUITE_FAIL, this::this.handleSuiteFail);
     emitter.on(events.END, this::this.handleEnd);
   }
@@ -42,7 +42,7 @@ class Console {
   }
 
   handleStepCount(count) {
-    this.stepCount += count;
+    this.testCount += count;
   }
 
   handleAssertCount(count) {
@@ -68,19 +68,19 @@ class Console {
     this.tests += 1;
   }
 
-  handleStepPass(step) {
+  handleStepPass(test) {
     this.passes += 1;
     this.runIfNotBailed(() => {
-      const out = `    ${symbols.ok.green} ${step.name.grey}`;
+      const out = `    ${symbols.ok.green} ${test.name.grey}`;
       this.writer.out(out);
     });
   }
 
-  handleStepFail(step, err) {
+  handleStepFail(test, err) {
     this.fails += 1;
     this.runIfNotBailed(() => {
-      this.failLog.push({ step, error: err });
-      const out = `    ${symbols.error.red} ${step.name.red}`;
+      this.failLog.push({ test, error: err });
+      const out = `    ${symbols.error.red} ${test.name.red}`;
       this.writer.out(out);
     });
   }
@@ -99,10 +99,10 @@ class Console {
       const duration = time(Date.now() - this.startTime);
 
       if (this.failLog.length > 0) {
-        this.failLog.forEach(({ step, error }, index) => {
+        this.failLog.forEach(({ test, error }, index) => {
           const errorOutput = [
             '',
-            `  ${index + 1}) ${step.name.red}`,
+            `  ${index + 1}) ${test.name.red}`,
             `  Error: ${error.message}`.white,
           ];
           this.writer.lines(...errorOutput);

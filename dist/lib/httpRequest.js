@@ -64,7 +64,7 @@ var HttpRequest = function () {
                 _context.prev = 11;
                 _context.t0 = _context['catch'](1);
 
-                this.emit(_events2.default.SUITE_STEP_FAIL, this.step, _context.t0);
+                this.emit(_events2.default.SUITE_TEST_FAIL, this.step, _context.t0);
                 result = false;
 
               case 15:

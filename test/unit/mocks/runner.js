@@ -26,28 +26,28 @@ class Runner extends EventEmitter {
     this.emit(events.SUITE_FAIL, suite, err);
   }
 
-  suiteStepStart(step) {
-    this.emit(events.SUITE_STEP_START, step);
+  suiteTestStart(test) {
+    this.emit(events.SUITE_TEST_START, test);
   }
 
-  suiteStepEnd(step) {
-    this.emit(events.SUITE_STEP_END, step);
+  suiteTestEnd(test) {
+    this.emit(events.SUITE_TEST_END, test);
   }
 
-  suiteStepPass(step) {
-    this.emit(events.SUITE_STEP_PASS, step);
+  suiteTestPass(test) {
+    this.emit(events.SUITE_TEST_PASS, test);
   }
 
-  suiteStepFail(step, err) {
-    this.emit(events.SUITE_STEP_FAIL, step, err);
+  suiteTestFail(test, err) {
+    this.emit(events.SUITE_TEST_FAIL, test, err);
   }
 
   suiteAssertionCount(count) {
     this.emit(events.SUITE_ASSERTION_COUNT, count);
   }
 
-  suiteStepCount(count) {
-    this.emit(events.SUITE_STEP_COUNT, count);
+  suiteTestCount(count) {
+    this.emit(events.SUITE_TEST_COUNT, count);
   }
 }
 

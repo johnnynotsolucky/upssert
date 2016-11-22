@@ -28,7 +28,7 @@ class Upssert extends EventEmitter {
   static createSuiteForUrl(url) {
     return {
       name: 'Ping',
-      steps: [{
+      tests: [{
         name: url,
         request: {
           url,

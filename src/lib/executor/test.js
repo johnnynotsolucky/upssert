@@ -5,52 +5,52 @@ import generateToken from '../util/generate-token';
 import { HttpRequest, makeRequest, httpStat } from '../http';
 import events from '../../data/events.json';
 
-class Step extends EventEmitter {
-  constructor(step) {
+class Test extends EventEmitter {
+  constructor(test) {
     super();
-    this.step = step;
+    this.test = test;
     this.assertions = [];
   }
 
   async execute(resultset) {
-    this.emit(events.SUITE_STEP_START, this.step);
+    this.emit(events.SUITE_TEST_START, this.test);
     const trace = this.addTraceHeader();
     const data = this.extractRequiredData(resultset);
-    const httpRequest = new HttpRequest(this.step.request, data);
+    const httpRequest = new HttpRequest(this.test.request, data);
     const response = await makeRequest(httpRequest);
     const stat = httpStat(response);
-    let stepPassed = false;
+    let testPassed = false;
     if (stat) {
       const assertObject = new AssertObject(stat, this.assertions);
-      stepPassed = assertObject.assert((err) => {
-        this.emit(events.SUITE_STEP_FAIL, this.step, err);
+      testPassed = assertObject.assert((err) => {
+        this.emit(events.SUITE_TEST_FAIL, this.test, err);
       });
-      if (stepPassed) {
-        this.emit(events.SUITE_STEP_PASS, this.step);
+      if (testPassed) {
+        this.emit(events.SUITE_TEST_PASS, this.test);
       }
     }
-    this.emit(events.SUITE_STEP_END, this.step);
+    this.emit(events.SUITE_TEST_END, this.test);
     return {
       trace,
-      step: this.step,
-      pass: stepPassed,
+      test: this.test,
+      pass: testPassed,
       result: stat,
     };
   }
 
   addTraceHeader() {
-    if (!this.step.request.headers) {
-      this.step.request.headers = {};
+    if (!this.test.request.headers) {
+      this.test.request.headers = {};
     }
     const token = generateToken();
-    this.step.request.headers['X-Upssert-Trace'] = token;
+    this.test.request.headers['X-Upssert-Trace'] = token;
     return token;
   }
 
   extractRequiredData(results) {
     const data = {};
-    if (this.step.requires) {
-      this.step.requires.forEach((id) => {
+    if (this.test.requires) {
+      this.test.requires.forEach((id) => {
         data[id] = results[id].result;
       });
     }
@@ -58,15 +58,15 @@ class Step extends EventEmitter {
   }
 
   initialize() {
-    const responseSet = !falsy(this.step.response);
+    const responseSet = !falsy(this.test.response);
     this.addAssertionsIfReponseIsSet(responseSet);
     this.addDefaultPingAssertions(responseSet);
   }
 
   addAssertionsIfReponseIsSet(responseSet) {
     if (responseSet) {
-      Object.keys(this.step.response).forEach((key) => {
-        const assertion = this.step.response[key];
+      Object.keys(this.test.response).forEach((key) => {
+        const assertion = this.test.response[key];
         this.addEqualAssertionIfString(assertion, key);
         this.addAssertionsIfObject(assertion, key);
       });
@@ -106,4 +106,4 @@ class Step extends EventEmitter {
   }
 }
 
-export default Step;
+export default Test;

@@ -74,7 +74,7 @@ var Upssert = function (_EventEmitter) {
     value: function createSuiteForUrl(url) {
       return {
         name: 'Ping',
-        steps: [{
+        tests: [{
           name: url,
           request: {
             url: url,

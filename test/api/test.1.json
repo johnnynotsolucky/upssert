@@ -1,6 +1,6 @@
 {
   "name": "Test against httpbin",
-  "steps": [
+  "tests": [
     {
       "name": "/get",
       "request": {
@@ -23,14 +23,14 @@
       }
     }, {
       "name": "/post formdata",
-      "requires": ["step1"],
+      "requires": ["test1"],
       "request": {
         "url": "https://httpbin.org/post",
         "method": "POST",
         "form": [
           {
             "key": "out",
-            "value": "{{step1.body.args.foo}}"
+            "value": "{{test1.body.args.foo}}"
           }
         ]
       },
@@ -49,14 +49,14 @@
       }
     }, {
       "name": "/post raw data",
-      "requires": ["step1", "step2"],
+      "requires": ["test1", "test2"],
       "request": {
         "url": "https://httpbin.org/post",
         "method": "POST",
         "headers": {
           "Content-Type": "application/x-www-form-urlencoded"
         },
-        "data": "step1-data={{step1.body.args.foo}}&step2-data={{step2.body.form.out}}"
+        "data": "test1-data={{test1.body.args.foo}}&test2-data={{test2.body.form.out}}"
       },
       "response": {
         "content-type": "application/json",
@@ -69,8 +69,8 @@
         "timing.total": {
           "is-below": 500
         },
-        "body.form[step1-data]": "bar",
-        "body.form[step2-data]": "bar"
+        "body.form[test1-data]": "bar",
+        "body.form[test2-data]": "bar"
       }
     }
   ]
