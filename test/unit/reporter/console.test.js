@@ -42,6 +42,15 @@ describe('Console Reporter', () => {
     runner.start();
   });
 
+  it('should output suite name when the suite starts', (done) => {
+    runner.on(events.SUITE_START, () => {
+      sinon.assert.calledOnce(writer.out);
+      sinon.assert.calledWith(writer.out, '\n  foobar'.white);
+      done();
+    });
+    runner.suiteStart({ name: 'foobar' });
+  });
+
   it('should output suite name and error message when a suite fails', (done) => {
     runner.on(events.SUITE_FAIL, () => {
       sinon.assert.calledOnce(writer.lines);

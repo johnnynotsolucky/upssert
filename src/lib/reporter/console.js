@@ -60,7 +60,7 @@ class Console {
 
   handleSuiteStart(suite) {
     this.runIfNotBailed(() => {
-      this.writer.out(`\n  ${suite.name.white}`);
+      this.writer.out(`\n  ${suite.name}`.white);
     });
   }
 
