@@ -1,3 +1,11 @@
+<br><br>
+<p align="center">
+  <img src="https://cdn.rawgit.com/upssert/upssert/master/media/alvak.svg"
+    style="background: transparent; width: 200px; height: 200px;"
+    alt="Upssert REST API assertion framework"/>
+</p>
+<br><br>
+
 # Upssert
 
 [![Build Status](https://travis-ci.org/upssert/upssert.svg?branch=master)](https://travis-ci.org/upssert/upssert)
@@ -276,3 +284,7 @@ pass an event emitter into.
     upssert.execute();
 
 *Inspired by the simplicity of [Ansible](https://www.ansible.com/)*
+
+## License
+
+[Apache 2.0](LICENSE)
