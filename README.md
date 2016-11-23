@@ -1,6 +1,6 @@
 <br><br>
 <p align="center">
-  <img src="https://cdn.rawgit.com/upssert/upssert/master/media/alvak.svg"
+  <img src="https://cdn.rawgit.com/upssert/upssert/master/media/arvakr.svg"
     style="background: transparent; width: 200px; height: 200px;"
     alt="Upssert REST API assertion framework"/>
 </p>
