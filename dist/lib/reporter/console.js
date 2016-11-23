@@ -53,13 +53,13 @@ var Console = function () {
     key: 'bindHandlers',
     value: function bindHandlers(emitter) {
       emitter.on(_events2.default.SUITE_COUNT, this.handleCount.bind(this));
-      emitter.on(_events2.default.SUITE_TEST_COUNT, this.handleStepCount.bind(this));
+      emitter.on(_events2.default.SUITE_TEST_COUNT, this.handleTestCount.bind(this));
       emitter.on(_events2.default.SUITE_ASSERTION_COUNT, this.handleAssertCount.bind(this));
       emitter.on(_events2.default.START, this.handleStart.bind(this));
       emitter.on(_events2.default.SUITE_START, this.handleSuiteStart.bind(this));
-      emitter.on(_events2.default.SUITE_TEST_START, this.handleStepStart.bind(this));
-      emitter.on(_events2.default.SUITE_TEST_PASS, this.handleStepPass.bind(this));
-      emitter.on(_events2.default.SUITE_TEST_FAIL, this.handleStepFail.bind(this));
+      emitter.on(_events2.default.SUITE_TEST_START, this.handleTestStart.bind(this));
+      emitter.on(_events2.default.SUITE_TEST_PASS, this.handleTestPass.bind(this));
+      emitter.on(_events2.default.SUITE_TEST_FAIL, this.handleTestFail.bind(this));
       emitter.on(_events2.default.SUITE_FAIL, this.handleSuiteFail.bind(this));
       emitter.on(_events2.default.END, this.handleEnd.bind(this));
     }
@@ -69,8 +69,8 @@ var Console = function () {
       this.suiteCount += count;
     }
   }, {
-    key: 'handleStepCount',
-    value: function handleStepCount(count) {
+    key: 'handleTestCount',
+    value: function handleTestCount(count) {
       this.testCount += count;
     }
   }, {
@@ -100,13 +100,13 @@ var Console = function () {
       });
     }
   }, {
-    key: 'handleStepStart',
-    value: function handleStepStart() {
+    key: 'handleTestStart',
+    value: function handleTestStart() {
       this.tests += 1;
     }
   }, {
-    key: 'handleStepPass',
-    value: function handleStepPass(test) {
+    key: 'handleTestPass',
+    value: function handleTestPass(test) {
       var _this3 = this;
 
       this.passes += 1;
@@ -116,14 +116,14 @@ var Console = function () {
       });
     }
   }, {
-    key: 'handleStepFail',
-    value: function handleStepFail(test, err) {
+    key: 'handleTestFail',
+    value: function handleTestFail(test, err) {
       var _this4 = this;
 
       this.fails += 1;
       this.runIfNotBailed(function () {
         _this4.failLog.push({ test: test, error: err });
-        var out = '    ' + _symbols2.default.error.red + ' ' + test.name.red;
+        var out = ('    ' + _symbols2.default.error + ' ' + test.name).red;
         _this4.writer.out(out);
       });
     }
@@ -133,7 +133,7 @@ var Console = function () {
       var _writer;
 
       this.bail = true;
-      var out = [_symbols2.default.error.red + ' ' + suite.name.red, err.message];
+      var out = [(_symbols2.default.error + ' ' + suite.name).red, err.message];
       (_writer = this.writer).lines.apply(_writer, out);
     }
   }, {
@@ -146,20 +146,18 @@ var Console = function () {
 
         var duration = (0, _time2.default)(Date.now() - _this5.startTime);
 
-        if (_this5.failLog.length > 0) {
-          _this5.failLog.forEach(function (_ref, index) {
-            var _writer2;
+        _this5.failLog.forEach(function (_ref, index) {
+          var _writer2;
 
-            var test = _ref.test,
-                error = _ref.error;
+          var test = _ref.test,
+              error = _ref.error;
 
-            var errorOutput = ['', '  ' + (index + 1) + ') ' + test.name.red, ('  Error: ' + error.message).white];
-            (_writer2 = _this5.writer).lines.apply(_writer2, errorOutput);
-          });
-        }
+          var errorOutput = ['', '  ' + (index + 1) + ') ' + test.name.red, ('  Error: ' + error.message).white];
+          (_writer2 = _this5.writer).lines.apply(_writer2, errorOutput);
+        });
         var out = ['', '  ' + (_this5.passes + ' passing').green + ' ' + ('(' + duration + ')').grey, ''];
         if (_this5.fails > 0) {
-          out.splice(2, 0, '  ' + (_this5.fails + ' failing').red);
+          out.splice(2, 0, ('  ' + _this5.fails + ' failing').red);
         }
         (_writer3 = _this5.writer).lines.apply(_writer3, out);
       });

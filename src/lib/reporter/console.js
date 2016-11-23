@@ -26,13 +26,13 @@ class Console {
 
   bindHandlers(emitter) {
     emitter.on(events.SUITE_COUNT, this::this.handleCount);
-    emitter.on(events.SUITE_TEST_COUNT, this::this.handleStepCount);
+    emitter.on(events.SUITE_TEST_COUNT, this::this.handleTestCount);
     emitter.on(events.SUITE_ASSERTION_COUNT, this::this.handleAssertCount);
     emitter.on(events.START, this::this.handleStart);
     emitter.on(events.SUITE_START, this::this.handleSuiteStart);
-    emitter.on(events.SUITE_TEST_START, this::this.handleStepStart);
-    emitter.on(events.SUITE_TEST_PASS, this::this.handleStepPass);
-    emitter.on(events.SUITE_TEST_FAIL, this::this.handleStepFail);
+    emitter.on(events.SUITE_TEST_START, this::this.handleTestStart);
+    emitter.on(events.SUITE_TEST_PASS, this::this.handleTestPass);
+    emitter.on(events.SUITE_TEST_FAIL, this::this.handleTestFail);
     emitter.on(events.SUITE_FAIL, this::this.handleSuiteFail);
     emitter.on(events.END, this::this.handleEnd);
   }
@@ -41,7 +41,7 @@ class Console {
     this.suiteCount += count;
   }
 
-  handleStepCount(count) {
+  handleTestCount(count) {
     this.testCount += count;
   }
 
@@ -64,11 +64,11 @@ class Console {
     });
   }
 
-  handleStepStart() {
+  handleTestStart() {
     this.tests += 1;
   }
 
-  handleStepPass(test) {
+  handleTestPass(test) {
     this.passes += 1;
     this.runIfNotBailed(() => {
       const out = `    ${symbols.ok.green} ${test.name.grey}`;
@@ -76,11 +76,11 @@ class Console {
     });
   }
 
-  handleStepFail(test, err) {
+  handleTestFail(test, err) {
     this.fails += 1;
     this.runIfNotBailed(() => {
       this.failLog.push({ test, error: err });
-      const out = `    ${symbols.error.red} ${test.name.red}`;
+      const out = `    ${symbols.error} ${test.name}`.red;
       this.writer.out(out);
     });
   }
@@ -88,7 +88,7 @@ class Console {
   handleSuiteFail(suite, err) {
     this.bail = true;
     const out = [
-      `${symbols.error.red} ${suite.name.red}`,
+      `${symbols.error} ${suite.name}`.red,
       err.message,
     ];
     this.writer.lines(...out);
@@ -98,23 +98,21 @@ class Console {
     this.runIfNotBailed(() => {
       const duration = time(Date.now() - this.startTime);
 
-      if (this.failLog.length > 0) {
-        this.failLog.forEach(({ test, error }, index) => {
-          const errorOutput = [
-            '',
-            `  ${index + 1}) ${test.name.red}`,
-            `  Error: ${error.message}`.white,
-          ];
-          this.writer.lines(...errorOutput);
-        });
-      }
+      this.failLog.forEach(({ test, error }, index) => {
+        const errorOutput = [
+          '',
+          `  ${index + 1}) ${test.name.red}`,
+          `  Error: ${error.message}`.white,
+        ];
+        this.writer.lines(...errorOutput);
+      });
       const out = [
         '',
         `  ${`${this.passes} passing`.green} ${`(${duration})`.grey}`,
         '',
       ];
       if (this.fails > 0) {
-        out.splice(2, 0, `  ${`${this.fails} failing`.red}`);
+        out.splice(2, 0, `  ${this.fails} failing`.red);
       }
       this.writer.lines(...out);
     });

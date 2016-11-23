@@ -14,6 +14,10 @@ class Runner extends EventEmitter {
     this.emit(events.END);
   }
 
+  suiteCount(count) {
+    this.emit(events.SUITE_COUNT, count);
+  }
+
   suiteStart(suite) {
     this.emit(events.SUITE_START, suite);
   }
