@@ -4,11 +4,16 @@ class Config {
   constructor() {
     let config;
     try {
-      const clientPackage = readJsonFile(`${process.cwd()}/package.json`);
-      if (clientPackage && clientPackage.upssert) {
-        config = clientPackage.upssert;
+      const runcom = readJsonFile(`${process.cwd()}/.upssertrc`);
+      if (runcom) {
+        config = runcom;
       } else {
-        config = {};
+        const clientPackage = readJsonFile(`${process.cwd()}/package.json`);
+        if (clientPackage && clientPackage.upssert) {
+          config = clientPackage.upssert;
+        } else {
+          config = {};
+        }
       }
     } catch (err) {
       config = {};

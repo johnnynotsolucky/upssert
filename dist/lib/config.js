@@ -17,11 +17,16 @@ var Config = function Config() {
 
   var config = void 0;
   try {
-    var clientPackage = (0, _readJsonFile2.default)(process.cwd() + '/package.json');
-    if (clientPackage && clientPackage.upssert) {
-      config = clientPackage.upssert;
+    var runcom = (0, _readJsonFile2.default)(process.cwd() + '/.upssertrc');
+    if (runcom) {
+      config = runcom;
     } else {
-      config = {};
+      var clientPackage = (0, _readJsonFile2.default)(process.cwd() + '/package.json');
+      if (clientPackage && clientPackage.upssert) {
+        config = clientPackage.upssert;
+      } else {
+        config = {};
+      }
     }
   } catch (err) {
     config = {};
