@@ -13,8 +13,7 @@
 [![Dependencies](https://david-dm.org/upssert/upssert.svg)](https://david-dm.org/upssert/upssert)
 
 Upssert is an extremely simple REST API assertion framework which makes it easier to monitor and test your API.
-Without writing any scripts, it is possible to test your API against its responsiveness and any combination of parameters.
-Test suites can be used in development right through to production.
+Without writing any code, test your API against its responsiveness and any combination of parameters.
 
 ## Principles
 
