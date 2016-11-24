@@ -105,7 +105,7 @@ exports.default = function (result) {
   var parser = (0, _factory2.default)(contentType);
   var body = parser(result.response.body);
 
-  return {
+  var transposed = {
     statusCode: statusCode,
     contentType: contentType,
     contentLength: contentLength,
@@ -113,4 +113,5 @@ exports.default = function (result) {
     headers: headers,
     body: body
   };
+  return transposed;
 };

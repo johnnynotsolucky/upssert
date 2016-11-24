@@ -3,7 +3,7 @@ import falsy from 'falsy';
 
 const getValueFromBracketNotation = (object, property, bracketNotation) => {
   const parentProperty = property.substr(0, property.match(/\[/).index);
-  let newObject = object[camelcase(parentProperty)];
+  let newObject = object[camelcase(parentProperty)] || object[parentProperty];
   for (const part of bracketNotation) {
     newObject = newObject[part.replace('[', '').replace(']', '')];
   }
@@ -22,7 +22,7 @@ const getObjectValue = (object, key) => {
       if (bracketNotation) {
         value = getValueFromBracketNotation(value, property, bracketNotation);
       } else {
-        value = value[camelcase(property)];
+        value = value[camelcase(property)] || value[property];
       }
     }
     return value;

@@ -16,7 +16,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var getValueFromBracketNotation = function getValueFromBracketNotation(object, property, bracketNotation) {
   var parentProperty = property.substr(0, property.match(/\[/).index);
-  var newObject = object[(0, _camelcase2.default)(parentProperty)];
+  var newObject = object[(0, _camelcase2.default)(parentProperty)] || object[parentProperty];
   var _iteratorNormalCompletion = true;
   var _didIteratorError = false;
   var _iteratorError = undefined;
@@ -64,7 +64,7 @@ var getObjectValue = function getObjectValue(object, key) {
         if (bracketNotation) {
           value = getValueFromBracketNotation(value, property, bracketNotation);
         } else {
-          value = value[(0, _camelcase2.default)(property)];
+          value = value[(0, _camelcase2.default)(property)] || value[property];
         }
       }
     } catch (err) {

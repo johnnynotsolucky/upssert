@@ -90,7 +90,7 @@ export default (result) => {
   const parser = parserFactory(contentType);
   const body = parser(result.response.body);
 
-  return {
+  const transposed = {
     statusCode,
     contentType,
     contentLength,
@@ -98,4 +98,5 @@ export default (result) => {
     headers,
     body,
   };
+  return transposed;
 };
