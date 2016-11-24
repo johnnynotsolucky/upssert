@@ -96,7 +96,7 @@ var Console = function () {
       var _this2 = this;
 
       this.runIfNotBailed(function () {
-        _this2.writer.out('\n  ' + suite.name.white);
+        _this2.writer.out(('\n  ' + suite.name).white);
       });
     }
   }, {
