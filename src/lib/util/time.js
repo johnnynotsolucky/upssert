@@ -10,7 +10,7 @@ export default (milliseconds) => {
   } else if (seconds >= 1) {
     result = `${seconds.toFixed(3)}s`;
   } else {
-    result = `${milliseconds.toFixed(3)}ms`;
+    result = `${milliseconds}ms`;
   }
   return result;
 };

@@ -27,7 +27,7 @@ class HttpRequest {
     if (method) {
       result = render(method, this.model);
     } else {
-      return 'GET';
+      result = 'GET';
     }
     return result;
   }

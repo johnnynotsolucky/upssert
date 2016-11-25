@@ -47,7 +47,7 @@ var HttpRequest = function () {
       if (method) {
         result = (0, _render2.default)(method, this.model);
       } else {
-        return 'GET';
+        result = 'GET';
       }
       return result;
     }

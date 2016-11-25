@@ -43,6 +43,12 @@ describe('HttpRequest', () => {
     assert.strictEqual(request.headers[1], 'Content-Type: application/json');
   });
 
+  it('renders request method from template', () => {
+    const model = { method: 'POST' };
+    const request = new HttpRequest({ method: '{{method}}' }, model);
+    assert.strictEqual(request.method, 'POST');
+  });
+
   it('should render valid form content', () => {
     const model = {
       foo: {
