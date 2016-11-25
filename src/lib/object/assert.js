@@ -2,6 +2,7 @@ import { assert } from 'chai';
 import camelcase from 'camelcase';
 import getObjectValue from './get-value';
 import render from '../util/render';
+import config from '../config';
 
 class AssertObject {
   constructor(object, assertions, model) {
@@ -63,7 +64,7 @@ class AssertObject {
   renderValue(value) {
     let result;
     if (typeof value === 'string') {
-      result = render(value, this.model);
+      result = render(value, this.model, config.unescape);
     } else {
       result = value;
     }

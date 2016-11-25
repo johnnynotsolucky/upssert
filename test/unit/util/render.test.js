@@ -55,4 +55,14 @@ describe('render', () => {
     assert.throws(() => { render(false, {}); },
       Error, /^Invalid template! Template should be a "string" but "boolean"/);
   });
+
+  it('renders special characters as plain text', () => {
+    const rendered = render('{{value}}', { value: 'http://' }, true);
+    assert.strictEqual(rendered, 'http://');
+  });
+
+  it('renders special characters as html entities', () => {
+    const rendered = render('{{value}}', { value: 'http://' });
+    assert.strictEqual(rendered, 'http:&#x2F;&#x2F;');
+  });
 });

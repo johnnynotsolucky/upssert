@@ -10,6 +10,10 @@ var _render = require('../util/render');
 
 var _render2 = _interopRequireDefault(_render);
 
+var _config = require('../config');
+
+var _config2 = _interopRequireDefault(_config);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -36,7 +40,7 @@ var HttpRequest = function () {
     value: function renderUrl(url) {
       var result = void 0;
       if (url) {
-        result = (0, _render2.default)(url, this.model);
+        result = (0, _render2.default)(url, this.model, _config2.default.unescape);
       }
       return result;
     }
@@ -45,7 +49,7 @@ var HttpRequest = function () {
     value: function renderRequestMethod(method) {
       var result = void 0;
       if (method) {
-        result = (0, _render2.default)(method, this.model);
+        result = (0, _render2.default)(method, this.model, _config2.default.unescape);
       } else {
         result = 'GET';
       }
@@ -60,8 +64,8 @@ var HttpRequest = function () {
       if (request.form) {
         form = [];
         request.form.forEach(function (item) {
-          var renderedKey = (0, _render2.default)(item.key, _this.model);
-          var renderedValue = (0, _render2.default)(item.value, _this.model);
+          var renderedKey = (0, _render2.default)(item.key, _this.model, _config2.default.unescape);
+          var renderedValue = (0, _render2.default)(item.value, _this.model, _config2.default.unescape);
           var formItem = renderedKey + '=' + renderedValue;
           form.push(formItem);
         });
@@ -73,7 +77,7 @@ var HttpRequest = function () {
     value: function renderData(request) {
       var data = void 0;
       if (request.data) {
-        data = (0, _render2.default)(request.data, this.model);
+        data = (0, _render2.default)(request.data, this.model, _config2.default.unescape);
       }
       return data;
     }
@@ -86,7 +90,7 @@ var HttpRequest = function () {
       if (request.headers) {
         Object.keys(request.headers).forEach(function (key) {
           var value = request.headers[key];
-          var concatenated = key + ': ' + (0, _render2.default)(value, _this2.model);
+          var concatenated = key + ': ' + (0, _render2.default)(value, _this2.model, _config2.default.unescape);
           headers.push(concatenated);
         });
       }
