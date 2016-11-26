@@ -4,17 +4,35 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _events = require('events');
 
-var _suite = require('./executor/suite');
+var _http = require('./http');
 
-var _suite2 = _interopRequireDefault(_suite);
+var _assert = require('./object/assert');
+
+var _assert2 = _interopRequireDefault(_assert);
+
+var _suite2 = require('./suite');
+
+var _suite3 = _interopRequireDefault(_suite2);
 
 var _events2 = require('../data/events.json');
 
 var _events3 = _interopRequireDefault(_events2);
+
+var _globals = require('./globals');
+
+var _globals2 = _interopRequireDefault(_globals);
+
+var _validateSuite = require('./validate-suite');
+
+var _validateSuite2 = _interopRequireDefault(_validateSuite);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -34,201 +52,320 @@ var Runner = function (_EventEmitter) {
 
     var _this = _possibleConstructorReturn(this, (Runner.__proto__ || Object.getPrototypeOf(Runner)).call(this));
 
-    _this.bindEmitters();
-    _this.executors = [];
+    _this.suiteCount = 0;
+    _this.testCount = 0;
+    _this.assertionCount = 0;
     _this.stopExecution = false;
     return _this;
   }
 
   _createClass(Runner, [{
-    key: 'setSuites',
-    value: function setSuites(suites) {
-      this.suites = suites;
-    }
-  }, {
-    key: 'bindEmitters',
-    value: function bindEmitters() {
-      this.suiteCount = this.suiteCount.bind(this);
-      this.suiteStart = this.suiteStart.bind(this);
-      this.suiteEnd = this.suiteEnd.bind(this);
-      this.suiteFail = this.suiteFail.bind(this);
-      this.suiteStepStart = this.suiteStepStart.bind(this);
-      this.suiteStepEnd = this.suiteStepEnd.bind(this);
-      this.suiteStepPass = this.suiteStepPass.bind(this);
-      this.suiteStepFail = this.suiteStepFail.bind(this);
-      this.suiteAssertionCount = this.suiteAssertionCount.bind(this);
-      this.suiteStepCount = this.suiteStepCount.bind(this);
-    }
-  }, {
     key: 'run',
     value: function () {
-      var _ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee() {
-        var _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, executor;
+      var _ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee(suites) {
+        var _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, _step$value, index, value, validation, suite, _iteratorNormalCompletion2, _didIteratorError2, _iteratorError2, _iterator2, _step2, _suite;
 
         return regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                this.initialize();
-                this.emit(_events3.default.START);
                 _iteratorNormalCompletion = true;
                 _didIteratorError = false;
                 _iteratorError = undefined;
-                _context.prev = 5;
-                _iterator = this.executors[Symbol.iterator]();
+                _context.prev = 3;
+
+                for (_iterator = suites.entries()[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                  _step$value = _slicedToArray(_step.value, 2), index = _step$value[0], value = _step$value[1];
+                  validation = (0, _validateSuite2.default)(value);
+
+                  if (validation === true) {
+                    suite = new _suite3.default(value);
+
+                    this.testCount += suite.tests.length;
+                    this.assertionCount += suite.assertionCount;
+                    suites[index] = suite;
+                  } else {
+                    this.stopExecution = true;
+                    this.emit(_events3.default.FAIL, value, validation);
+                    this.emit(_events3.default.SUITE_FAIL, value, validation);
+                  }
+                }
+                _context.next = 11;
+                break;
 
               case 7:
-                if (_iteratorNormalCompletion = (_step = _iterator.next()).done) {
-                  _context.next = 18;
-                  break;
-                }
-
-                executor = _step.value;
-
-                if (this.stopExecution) {
-                  _context.next = 14;
-                  break;
-                }
-
-                _context.next = 12;
-                return executor.execute();
-
-              case 12:
-                _context.next = 15;
-                break;
-
-              case 14:
-                return _context.abrupt('break', 18);
-
-              case 15:
-                _iteratorNormalCompletion = true;
-                _context.next = 7;
-                break;
-
-              case 18:
-                _context.next = 24;
-                break;
-
-              case 20:
-                _context.prev = 20;
-                _context.t0 = _context['catch'](5);
+                _context.prev = 7;
+                _context.t0 = _context['catch'](3);
                 _didIteratorError = true;
                 _iteratorError = _context.t0;
 
-              case 24:
-                _context.prev = 24;
-                _context.prev = 25;
+              case 11:
+                _context.prev = 11;
+                _context.prev = 12;
 
                 if (!_iteratorNormalCompletion && _iterator.return) {
                   _iterator.return();
                 }
 
-              case 27:
-                _context.prev = 27;
+              case 14:
+                _context.prev = 14;
 
                 if (!_didIteratorError) {
-                  _context.next = 30;
+                  _context.next = 17;
                   break;
                 }
 
                 throw _iteratorError;
 
-              case 30:
-                return _context.finish(27);
+              case 17:
+                return _context.finish(14);
 
-              case 31:
-                return _context.finish(24);
+              case 18:
+                return _context.finish(11);
 
-              case 32:
+              case 19:
+                this.suiteCount = suites.length;
+                this.emit(_events3.default.SUITE_COUNT, this.suiteCount);
+                this.emit(_events3.default.TEST_COUNT, this.testCount);
+                this.emit(_events3.default.ASSERTION_COUNT, this.assertionCount);
+                this.emit(_events3.default.START);
+                _iteratorNormalCompletion2 = true;
+                _didIteratorError2 = false;
+                _iteratorError2 = undefined;
+                _context.prev = 27;
+                _iterator2 = suites[Symbol.iterator]();
+
+              case 29:
+                if (_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done) {
+                  _context.next = 42;
+                  break;
+                }
+
+                _suite = _step2.value;
+
+                if (this.stopExecution) {
+                  _context.next = 38;
+                  break;
+                }
+
+                this.emit(_events3.default.SUITE_START, _suite);
+                _context.next = 35;
+                return this.executeTestsInOrder(_suite);
+
+              case 35:
+                this.emit(_events3.default.SUITE_END, _suite);
+                _context.next = 39;
+                break;
+
+              case 38:
+                return _context.abrupt('break', 42);
+
+              case 39:
+                _iteratorNormalCompletion2 = true;
+                _context.next = 29;
+                break;
+
+              case 42:
+                _context.next = 48;
+                break;
+
+              case 44:
+                _context.prev = 44;
+                _context.t1 = _context['catch'](27);
+                _didIteratorError2 = true;
+                _iteratorError2 = _context.t1;
+
+              case 48:
+                _context.prev = 48;
+                _context.prev = 49;
+
+                if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                  _iterator2.return();
+                }
+
+              case 51:
+                _context.prev = 51;
+
+                if (!_didIteratorError2) {
+                  _context.next = 54;
+                  break;
+                }
+
+                throw _iteratorError2;
+
+              case 54:
+                return _context.finish(51);
+
+              case 55:
+                return _context.finish(48);
+
+              case 56:
                 this.emit(_events3.default.END);
 
-              case 33:
+              case 57:
               case 'end':
                 return _context.stop();
             }
           }
-        }, _callee, this, [[5, 20, 24, 32], [25,, 27, 31]]);
+        }, _callee, this, [[3, 7, 11, 19], [12,, 14, 18], [27, 44, 48, 56], [49,, 51, 55]]);
       }));
 
-      function run() {
+      function run(_x) {
         return _ref.apply(this, arguments);
       }
 
       return run;
     }()
   }, {
-    key: 'initialize',
-    value: function initialize() {
-      var _this2 = this;
+    key: 'executeTestsInOrder',
+    value: function () {
+      var _ref2 = _asyncToGenerator(regeneratorRuntime.mark(function _callee2(suite) {
+        var results, _iteratorNormalCompletion3, _didIteratorError3, _iteratorError3, _iterator3, _step3, test, result;
 
-      this.suites.forEach(function (suite) {
-        var executor = new _suite2.default(suite);
-        executor.on(_events3.default.SUITE_COUNT, _this2.suiteCount);
-        executor.on(_events3.default.SUITE_START, _this2.suiteStart);
-        executor.on(_events3.default.SUITE_END, _this2.suiteEnd);
-        executor.on(_events3.default.SUITE_FAIL, _this2.suiteFail);
-        executor.on(_events3.default.SUITE_TEST_START, _this2.suiteStepStart);
-        executor.on(_events3.default.SUITE_TEST_END, _this2.suiteStepEnd);
-        executor.on(_events3.default.SUITE_TEST_PASS, _this2.suiteStepPass);
-        executor.on(_events3.default.SUITE_TEST_FAIL, _this2.suiteStepFail);
-        executor.on(_events3.default.SUITE_ASSERTION_COUNT, _this2.suiteAssertionCount);
-        executor.on(_events3.default.SUITE_TEST_COUNT, _this2.suiteStepCount);
-        executor.initialize();
-        _this2.executors.push(executor);
-      });
-    }
+        return regeneratorRuntime.wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                results = {};
+                _iteratorNormalCompletion3 = true;
+                _didIteratorError3 = false;
+                _iteratorError3 = undefined;
+                _context2.prev = 4;
+                _iterator3 = suite.tests[Symbol.iterator]();
+
+              case 6:
+                if (_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done) {
+                  _context2.next = 15;
+                  break;
+                }
+
+                test = _step3.value;
+                _context2.next = 10;
+                return this.executeTest(test, results);
+
+              case 10:
+                result = _context2.sent;
+
+                results[result.test.id] = result;
+
+              case 12:
+                _iteratorNormalCompletion3 = true;
+                _context2.next = 6;
+                break;
+
+              case 15:
+                _context2.next = 21;
+                break;
+
+              case 17:
+                _context2.prev = 17;
+                _context2.t0 = _context2['catch'](4);
+                _didIteratorError3 = true;
+                _iteratorError3 = _context2.t0;
+
+              case 21:
+                _context2.prev = 21;
+                _context2.prev = 22;
+
+                if (!_iteratorNormalCompletion3 && _iterator3.return) {
+                  _iterator3.return();
+                }
+
+              case 24:
+                _context2.prev = 24;
+
+                if (!_didIteratorError3) {
+                  _context2.next = 27;
+                  break;
+                }
+
+                throw _iteratorError3;
+
+              case 27:
+                return _context2.finish(24);
+
+              case 28:
+                return _context2.finish(21);
+
+              case 29:
+              case 'end':
+                return _context2.stop();
+            }
+          }
+        }, _callee2, this, [[4, 17, 21, 29], [22,, 24, 28]]);
+      }));
+
+      function executeTestsInOrder(_x2) {
+        return _ref2.apply(this, arguments);
+      }
+
+      return executeTestsInOrder;
+    }()
   }, {
-    key: 'suiteCount',
-    value: function suiteCount(count) {
-      this.emit(_events3.default.SUITE_COUNT, count);
-    }
-  }, {
-    key: 'suiteStart',
-    value: function suiteStart(suite) {
-      this.emit(_events3.default.SUITE_START, suite);
-    }
-  }, {
-    key: 'suiteEnd',
-    value: function suiteEnd(suite) {
-      this.emit(_events3.default.SUITE_END, suite);
-    }
-  }, {
-    key: 'suiteFail',
-    value: function suiteFail(suite, err) {
-      this.stopExecution = true;
-      this.emit(_events3.default.FAIL, suite, err);
-      this.emit(_events3.default.SUITE_FAIL, suite, err);
-    }
-  }, {
-    key: 'suiteStepStart',
-    value: function suiteStepStart(test) {
-      this.emit(_events3.default.SUITE_TEST_START, test);
-    }
-  }, {
-    key: 'suiteStepEnd',
-    value: function suiteStepEnd(test) {
-      this.emit(_events3.default.SUITE_TEST_END, test);
-    }
-  }, {
-    key: 'suiteStepPass',
-    value: function suiteStepPass(test) {
-      this.emit(_events3.default.SUITE_TEST_PASS, test);
-    }
-  }, {
-    key: 'suiteStepFail',
-    value: function suiteStepFail(test, err) {
-      this.emit(_events3.default.FAIL, test, err);
-      this.emit(_events3.default.SUITE_TEST_FAIL, test, err);
-    }
-  }, {
-    key: 'suiteAssertionCount',
-    value: function suiteAssertionCount(count) {
-      this.emit(_events3.default.SUITE_ASSERTION_COUNT, count);
-    }
-  }, {
-    key: 'suiteStepCount',
-    value: function suiteStepCount(count) {
-      this.emit(_events3.default.SUITE_TEST_COUNT, count);
+    key: 'executeTest',
+    value: function () {
+      var _ref3 = _asyncToGenerator(regeneratorRuntime.mark(function _callee3(test, resultset) {
+        var _this2 = this;
+
+        var requiredData, data, httpRequest, response, stat, testPassed, assertObject;
+        return regeneratorRuntime.wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                this.emit(_events3.default.SUITE_TEST_START, test);
+                requiredData = Runner.extractRequiredData(test, resultset);
+                data = _extends({}, requiredData, _globals2.default);
+                httpRequest = new _http.HttpRequest(test.request, data);
+                _context3.next = 6;
+                return (0, _http.makeRequest)(httpRequest);
+
+              case 6:
+                response = _context3.sent;
+                stat = (0, _http.httpStat)(response);
+                testPassed = false;
+
+                if (stat) {
+                  assertObject = new _assert2.default(stat, test.assertions, data);
+
+                  testPassed = assertObject.assert(function (err) {
+                    _this2.emit(_events3.default.SUITE_TEST_FAIL, test, err);
+                  });
+                  if (testPassed) {
+                    this.emit(_events3.default.SUITE_TEST_PASS, test);
+                  }
+                }
+                this.emit(_events3.default.SUITE_TEST_END, test);
+                return _context3.abrupt('return', {
+                  trace: httpRequest.trace,
+                  test: test,
+                  pass: testPassed,
+                  result: stat
+                });
+
+              case 12:
+              case 'end':
+                return _context3.stop();
+            }
+          }
+        }, _callee3, this);
+      }));
+
+      function executeTest(_x3, _x4) {
+        return _ref3.apply(this, arguments);
+      }
+
+      return executeTest;
+    }()
+  }], [{
+    key: 'extractRequiredData',
+    value: function extractRequiredData(test, results) {
+      var data = {};
+      if (test.requires && results) {
+        test.requires.forEach(function (id) {
+          data[id] = results[id].result;
+        });
+      }
+      return data;
     }
   }]);
 

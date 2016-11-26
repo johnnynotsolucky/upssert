@@ -18,7 +18,6 @@ class Upssert extends EventEmitter {
       reporter = new ConsoleReporter();
     }
     this.reporter = reporter;
-    this.runner.setSuites(this.suites);
     this.reporter.setEventEmitter(this.runner);
     this.runner.on(events.FAIL, (obj, err) => {
       this.emit(events.FAIL, obj, err);
@@ -38,7 +37,7 @@ class Upssert extends EventEmitter {
   }
 
   execute() {
-    this.runner.run();
+    this.runner.run(this.suites);
   }
 }
 

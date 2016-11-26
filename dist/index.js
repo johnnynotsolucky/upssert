@@ -56,7 +56,6 @@ var Upssert = function (_EventEmitter) {
       reporter = new _console2.default();
     }
     _this.reporter = reporter;
-    _this.runner.setSuites(_this.suites);
     _this.reporter.setEventEmitter(_this.runner);
     _this.runner.on(_events3.default.FAIL, function (obj, err) {
       _this.emit(_events3.default.FAIL, obj, err);
@@ -67,7 +66,7 @@ var Upssert = function (_EventEmitter) {
   _createClass(Upssert, [{
     key: 'execute',
     value: function execute() {
-      this.runner.run();
+      this.runner.run(this.suites);
     }
   }], [{
     key: 'createSuiteForUrl',

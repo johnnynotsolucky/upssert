@@ -1,4 +1,5 @@
 import render from '../util/render';
+import generateToken from '../util/generate-token';
 import config from '../config';
 
 class HttpRequest {
@@ -13,6 +14,7 @@ class HttpRequest {
     this.form = this.renderFormData(request);
     this.data = this.renderData(request);
     this.headers = this.renderRequestHeaders(request);
+    this.trace = this.addTraceHeader();
   }
 
   renderUrl(url) {
@@ -65,6 +67,12 @@ class HttpRequest {
       });
     }
     return headers;
+  }
+
+  addTraceHeader() {
+    const token = generateToken();
+    this.headers.push(`X-Upssert-Trace: ${token}`);
+    return token;
   }
 }
 

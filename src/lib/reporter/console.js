@@ -26,8 +26,8 @@ class Console {
 
   bindHandlers(emitter) {
     emitter.on(events.SUITE_COUNT, this::this.handleCount);
-    emitter.on(events.SUITE_TEST_COUNT, this::this.handleTestCount);
-    emitter.on(events.SUITE_ASSERTION_COUNT, this::this.handleAssertCount);
+    emitter.on(events.TEST_COUNT, this::this.handleTestCount);
+    emitter.on(events.ASSERTION_COUNT, this::this.handleAssertCount);
     emitter.on(events.START, this::this.handleStart);
     emitter.on(events.SUITE_START, this::this.handleSuiteStart);
     emitter.on(events.SUITE_TEST_START, this::this.handleTestStart);

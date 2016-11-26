@@ -1,38 +1,44 @@
 import { EventEmitter } from 'events';
-import SuiteExecutor from './executor/suite';
+import { HttpRequest, makeRequest, httpStat } from './http';
+import AssertObject from './object/assert';
+import Suite from './suite';
 import events from '../data/events.json';
+import globals from './globals';
+import validateSuite from './validate-suite';
 
 class Runner extends EventEmitter {
   constructor() {
     super();
-    this.bindEmitters();
-    this.executors = [];
+    this.suiteCount = 0;
+    this.testCount = 0;
+    this.assertionCount = 0;
     this.stopExecution = false;
   }
 
-  setSuites(suites) {
-    this.suites = suites;
-  }
-
-  bindEmitters() {
-    this.suiteCount = this.suiteCount.bind(this);
-    this.suiteStart = this.suiteStart.bind(this);
-    this.suiteEnd = this.suiteEnd.bind(this);
-    this.suiteFail = this.suiteFail.bind(this);
-    this.suiteStepStart = this.suiteStepStart.bind(this);
-    this.suiteStepEnd = this.suiteStepEnd.bind(this);
-    this.suiteStepPass = this.suiteStepPass.bind(this);
-    this.suiteStepFail = this.suiteStepFail.bind(this);
-    this.suiteAssertionCount = this.suiteAssertionCount.bind(this);
-    this.suiteStepCount = this.suiteStepCount.bind(this);
-  }
-
-  async run() {
-    this.initialize();
+  async run(suites) {
+    for (const [index, value] of suites.entries()) {
+      const validation = validateSuite(value);
+      if (validation === true) {
+        const suite = new Suite(value);
+        this.testCount += suite.tests.length;
+        this.assertionCount += suite.assertionCount;
+        suites[index] = suite;
+      } else {
+        this.stopExecution = true;
+        this.emit(events.FAIL, value, validation);
+        this.emit(events.SUITE_FAIL, value, validation);
+      }
+    }
+    this.suiteCount = suites.length;
+    this.emit(events.SUITE_COUNT, this.suiteCount);
+    this.emit(events.TEST_COUNT, this.testCount);
+    this.emit(events.ASSERTION_COUNT, this.assertionCount);
     this.emit(events.START);
-    for (const executor of this.executors) {
+    for (const suite of suites) {
       if (!this.stopExecution) {
-        await executor.execute();
+        this.emit(events.SUITE_START, suite);
+        await this.executeTestsInOrder(suite);
+        this.emit(events.SUITE_END, suite);
       } else {
         break;
       }
@@ -40,65 +46,48 @@ class Runner extends EventEmitter {
     this.emit(events.END);
   }
 
-  initialize() {
-    this.suites.forEach((suite) => {
-      const executor = new SuiteExecutor(suite);
-      executor.on(events.SUITE_COUNT, this.suiteCount);
-      executor.on(events.SUITE_START, this.suiteStart);
-      executor.on(events.SUITE_END, this.suiteEnd);
-      executor.on(events.SUITE_FAIL, this.suiteFail);
-      executor.on(events.SUITE_TEST_START, this.suiteStepStart);
-      executor.on(events.SUITE_TEST_END, this.suiteStepEnd);
-      executor.on(events.SUITE_TEST_PASS, this.suiteStepPass);
-      executor.on(events.SUITE_TEST_FAIL, this.suiteStepFail);
-      executor.on(events.SUITE_ASSERTION_COUNT, this.suiteAssertionCount);
-      executor.on(events.SUITE_TEST_COUNT, this.suiteStepCount);
-      executor.initialize();
-      this.executors.push(executor);
-    });
+  async executeTestsInOrder(suite) {
+    const results = {};
+    for (const test of suite.tests) {
+      const result = await this.executeTest(test, results);
+      results[result.test.id] = result;
+    }
   }
 
-  suiteCount(count) {
-    this.emit(events.SUITE_COUNT, count);
-  }
-
-  suiteStart(suite) {
-    this.emit(events.SUITE_START, suite);
-  }
-
-  suiteEnd(suite) {
-    this.emit(events.SUITE_END, suite);
-  }
-
-  suiteFail(suite, err) {
-    this.stopExecution = true;
-    this.emit(events.FAIL, suite, err);
-    this.emit(events.SUITE_FAIL, suite, err);
-  }
-
-  suiteStepStart(test) {
+  async executeTest(test, resultset) {
     this.emit(events.SUITE_TEST_START, test);
-  }
-
-  suiteStepEnd(test) {
+    const requiredData = Runner.extractRequiredData(test, resultset);
+    const data = { ...requiredData, ...globals };
+    const httpRequest = new HttpRequest(test.request, data);
+    const response = await makeRequest(httpRequest);
+    const stat = httpStat(response);
+    let testPassed = false;
+    if (stat) {
+      const assertObject = new AssertObject(stat, test.assertions, data);
+      testPassed = assertObject.assert((err) => {
+        this.emit(events.SUITE_TEST_FAIL, test, err);
+      });
+      if (testPassed) {
+        this.emit(events.SUITE_TEST_PASS, test);
+      }
+    }
     this.emit(events.SUITE_TEST_END, test);
+    return {
+      trace: httpRequest.trace,
+      test,
+      pass: testPassed,
+      result: stat,
+    };
   }
 
-  suiteStepPass(test) {
-    this.emit(events.SUITE_TEST_PASS, test);
-  }
-
-  suiteStepFail(test, err) {
-    this.emit(events.FAIL, test, err);
-    this.emit(events.SUITE_TEST_FAIL, test, err);
-  }
-
-  suiteAssertionCount(count) {
-    this.emit(events.SUITE_ASSERTION_COUNT, count);
-  }
-
-  suiteStepCount(count) {
-    this.emit(events.SUITE_TEST_COUNT, count);
+  static extractRequiredData(test, results) {
+    const data = {};
+    if (test.requires && results) {
+      test.requires.forEach((id) => {
+        data[id] = results[id].result;
+      });
+    }
+    return data;
   }
 }
 

@@ -10,6 +10,10 @@ var _render = require('../util/render');
 
 var _render2 = _interopRequireDefault(_render);
 
+var _generateToken = require('../util/generate-token');
+
+var _generateToken2 = _interopRequireDefault(_generateToken);
+
 var _config = require('../config');
 
 var _config2 = _interopRequireDefault(_config);
@@ -34,6 +38,7 @@ var HttpRequest = function () {
       this.form = this.renderFormData(request);
       this.data = this.renderData(request);
       this.headers = this.renderRequestHeaders(request);
+      this.trace = this.addTraceHeader();
     }
   }, {
     key: 'renderUrl',
@@ -95,6 +100,13 @@ var HttpRequest = function () {
         });
       }
       return headers;
+    }
+  }, {
+    key: 'addTraceHeader',
+    value: function addTraceHeader() {
+      var token = (0, _generateToken2.default)();
+      this.headers.push('X-Upssert-Trace: ' + token);
+      return token;
     }
   }]);
 

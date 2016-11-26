@@ -33,7 +33,7 @@ describe('TAP Reporter', () => {
       assert.equal(tap.testCount, 9);
       done();
     });
-    runner.suiteTestCount(9);
+    runner.testCount(9);
     runner.start();
   });
 
@@ -84,8 +84,8 @@ describe('TAP Reporter', () => {
       assert.equal(tap.fails, 3);
       done();
     });
-    runner.suiteTestCount(6);
-    runner.suiteAssertionCount(6 * 3);
+    runner.testCount(6);
+    runner.assertionCount(6 * 3);
     runner.start();
     const test = { name: 'test' };
     for (let i = 0; i < 3; i++) {

@@ -53,8 +53,8 @@ var Console = function () {
     key: 'bindHandlers',
     value: function bindHandlers(emitter) {
       emitter.on(_events2.default.SUITE_COUNT, this.handleCount.bind(this));
-      emitter.on(_events2.default.SUITE_TEST_COUNT, this.handleTestCount.bind(this));
-      emitter.on(_events2.default.SUITE_ASSERTION_COUNT, this.handleAssertCount.bind(this));
+      emitter.on(_events2.default.TEST_COUNT, this.handleTestCount.bind(this));
+      emitter.on(_events2.default.ASSERTION_COUNT, this.handleAssertCount.bind(this));
       emitter.on(_events2.default.START, this.handleStart.bind(this));
       emitter.on(_events2.default.SUITE_START, this.handleSuiteStart.bind(this));
       emitter.on(_events2.default.SUITE_TEST_START, this.handleTestStart.bind(this));

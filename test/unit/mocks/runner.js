@@ -46,12 +46,12 @@ class Runner extends EventEmitter {
     this.emit(events.SUITE_TEST_FAIL, test, err);
   }
 
-  suiteAssertionCount(count) {
-    this.emit(events.SUITE_ASSERTION_COUNT, count);
+  assertionCount(count) {
+    this.emit(events.ASSERTION_COUNT, count);
   }
 
-  suiteTestCount(count) {
-    this.emit(events.SUITE_TEST_COUNT, count);
+  testCount(count) {
+    this.emit(events.TEST_COUNT, count);
   }
 }
 

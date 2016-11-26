@@ -10,6 +10,6 @@
   "SUITE_TEST_PASS": "suite.test.pass",
   "SUITE_TEST_FAIL": "suite.test.fail",
   "SUITE_COUNT": "suite.count",
-  "SUITE_TEST_COUNT": "suite.test.count",
-  "SUITE_ASSERTION_COUNT": "suite.assertion.count"
+  "TEST_COUNT": "suite.test.count",
+  "ASSERTION_COUNT": "suite.assertion.count"
 }

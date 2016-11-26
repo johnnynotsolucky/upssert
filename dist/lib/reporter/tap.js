@@ -43,8 +43,8 @@ var TAP = function () {
   }, {
     key: 'bindHandlers',
     value: function bindHandlers(emitter) {
-      emitter.on(_events2.default.SUITE_TEST_COUNT, this.handleCount.bind(this));
-      emitter.on(_events2.default.SUITE_ASSERTION_COUNT, this.handleAssertCount.bind(this));
+      emitter.on(_events2.default.TEST_COUNT, this.handleCount.bind(this));
+      emitter.on(_events2.default.ASSERTION_COUNT, this.handleAssertCount.bind(this));
       emitter.on(_events2.default.START, this.handleStart.bind(this));
       emitter.on(_events2.default.SUITE_TEST_START, this.handleStepStart.bind(this));
       emitter.on(_events2.default.SUITE_TEST_PASS, this.handleStepPass.bind(this));

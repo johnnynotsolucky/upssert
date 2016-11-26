@@ -2,6 +2,13 @@ import { assert } from 'chai';
 import { HttpRequest } from '../../../src/lib/http';
 
 describe('HttpRequest', () => {
+  it('adds a trace header to every request', () => {
+    const request = new HttpRequest({});
+    assert.isOk(request);
+    assert.isTrue(Array.isArray(request.headers));
+    assert.equal(request.headers.length, 1);
+  });
+
   it('should create a valid object given just an URL', () => {
     const request = new HttpRequest({ url: 'http://localhost' });
     assert.isOk(request);
@@ -10,7 +17,7 @@ describe('HttpRequest', () => {
     assert.isNotOk(request.form);
     assert.isNotOk(request.data);
     assert.isTrue(Array.isArray(request.headers));
-    assert.equal(request.headers.length, 0);
+    assert.equal(request.headers.length, 1);
   });
 
   it('should render raw data from a model', () => {
@@ -37,7 +44,7 @@ describe('HttpRequest', () => {
       'Content-Type': '{{& contentType}}',
     };
     const request = new HttpRequest({ headers }, model);
-    assert.strictEqual(request.headers.length, 2);
+    assert.strictEqual(request.headers.length, 3);
     assert.strictEqual(request.headers[0], 'Content-Length: 123');
     assert.strictEqual(request.headers[1], 'Content-Type: application/json');
   });

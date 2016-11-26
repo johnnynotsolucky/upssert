@@ -37,7 +37,7 @@ describe('Console Reporter', () => {
       done();
     });
     runner.suiteCount(3);
-    runner.suiteAssertionCount(9);
+    runner.assertionCount(9);
     runner.start();
   });
 
@@ -94,8 +94,8 @@ describe('Console Reporter', () => {
       assert.equal(console.fails, 3);
       done();
     });
-    runner.suiteTestCount(6);
-    runner.suiteAssertionCount(6 * 3);
+    runner.testCount(6);
+    runner.assertionCount(6 * 3);
     runner.start();
     const test = { name: 'test' };
     for (let i = 0; i < 3; i++) {
