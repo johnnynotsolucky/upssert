@@ -1,4 +1,3 @@
-/* eslint-disable no-undef, import/no-extraneous-dependencies */
 import { assert } from 'chai';
 import { httpStat } from '../../../src/lib/http';
 import readJsonFile from '../../../src/lib/read-json-file';

@@ -1,9 +1,4 @@
 import { EventEmitter } from 'events';
-import tv4 from 'tv4';
-import formdataSchema from '../../data/schema/formdata.json';
-import requestSchema from '../../data/schema/request.json';
-import testSchema from '../../data/schema/test.json';
-import suiteSchema from '../../data/schema/suite.json';
 import TestExecutor from './test';
 import events from '../../data/events.json';
 
@@ -30,16 +25,16 @@ class Suite extends EventEmitter {
   }
 
   initialize() {
-    tv4.addSchema('formdata-schema', formdataSchema);
-    tv4.addSchema('request-schema', requestSchema);
-    tv4.addSchema('test-schema', testSchema);
-    const testValid = tv4.validate(this.testCase, suiteSchema);
-    if (testValid) {
-      this.emit(events.SUITE_COUNT, 1);
-      this.initializeTests();
-    } else {
-      this.emit(events.SUITE_FAIL, this.testCase, tv4.error);
-    }
+    // tv4.addSchema('formdata-schema', formdataSchema);
+    // tv4.addSchema('request-schema', requestSchema);
+    // tv4.addSchema('test-schema', testSchema);
+    // const testValid = tv4.validate(this.testCase, suiteSchema);
+    // if (testValid) {
+    //   this.emit(events.SUITE_COUNT, 1);
+    //   this.initializeTests();
+    // } else {
+    //   this.emit(events.SUITE_FAIL, this.testCase, tv4.error);
+    // }
   }
 
   initializeTests() {

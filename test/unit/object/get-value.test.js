@@ -1,4 +1,3 @@
-/* eslint-disable no-undef, import/no-extraneous-dependencies */
 import { assert } from 'chai';
 import getObjectValue from '../../../src/lib/object/get-value';
 

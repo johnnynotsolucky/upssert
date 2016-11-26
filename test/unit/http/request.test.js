@@ -1,4 +1,3 @@
-/* eslint-disable no-undef, import/no-extraneous-dependencies */
 import { assert } from 'chai';
 import { HttpRequest } from '../../../src/lib/http';
 
