@@ -7,8 +7,9 @@ import LogWriter from './lib/writer/log';
 import events from './data/events.json';
 
 class Upssert extends EventEmitter {
-  constructor(suites, reporter) {
+  constructor(options) {
     super();
+    let { suites, reporter } = options;
     if (typeof suites === 'string') {
       suites = Upssert.createSuiteForUrl(suites);
     }

@@ -42,10 +42,13 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var Upssert = function (_EventEmitter) {
   _inherits(Upssert, _EventEmitter);
 
-  function Upssert(suites, reporter) {
+  function Upssert(options) {
     _classCallCheck(this, Upssert);
 
     var _this = _possibleConstructorReturn(this, (Upssert.__proto__ || Object.getPrototypeOf(Upssert)).call(this));
+
+    var suites = options.suites,
+        reporter = options.reporter;
 
     if (typeof suites === 'string') {
       suites = Upssert.createSuiteForUrl(suites);

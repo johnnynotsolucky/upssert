@@ -77,7 +77,10 @@ switch (opts.reporter) {
     reporter = new _.ConsoleReporter();
 }
 reporter.setWriter(new _.LogWriter());
-var upssert = new _2.default(data, reporter);
+var upssert = new _2.default({
+  suites: data,
+  reporter: reporter
+});
 upssert.on(_events2.default.FAIL, function () {
   process.exitCode = 1;
 });

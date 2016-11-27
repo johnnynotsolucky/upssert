@@ -72,6 +72,9 @@ switch (opts.reporter) {
     reporter = new ConsoleReporter();
 }
 reporter.setWriter(new LogWriter());
-const upssert = new Upssert(data, reporter);
+const upssert = new Upssert({
+  suites: data,
+  reporter,
+});
 upssert.on(events.FAIL, () => { process.exitCode = 1; });
 upssert.execute();
