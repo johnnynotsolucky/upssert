@@ -11,11 +11,11 @@ class Test {
 
   addAssertionsIfReponseIsSet(responseSet) {
     if (responseSet) {
-      Object.keys(this.response).forEach((key) => {
+      for (const key of Object.keys(this.response)) {
         const assertion = this.response[key];
         this.addEqualAssertionIfString(assertion, key);
         this.addAssertionsIfObject(assertion, key);
-      });
+      }
     }
   }
 

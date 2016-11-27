@@ -4,15 +4,19 @@ class Suite {
   constructor(suite) {
     Object.assign(this, suite);
     this.assertionCount = 0;
-    let i = 1;
+    this.tests = this.tests || [];
     for (const [index, value] of this.tests.entries()) {
-      if (!value.id) {
-        value.id = `test${i}`;
-        i += 1;
-      }
+      Suite.setIdIfNotSet(value, index + 1);
       this.tests[index] = new Test(value);
       this.assertionCount += this.tests[index].assertions.length;
     }
+  }
+
+  static setIdIfNotSet(object, index) {
+    if (!object.id) {
+      object.id = `test${index}`;
+    }
+    return object;
   }
 }
 
