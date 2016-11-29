@@ -1,8 +1,8 @@
 import Mustache from 'mustache';
 
-export default (view, model, unescape) => {
+export default (view, model, unescaped) => {
   let rendered = Mustache.render(view, model);
-  if (unescape) {
+  if (unescaped) {
     const escaped = rendered.match(/&#x[a-fA-F0-9][a-fA-F0-9];/g);
     if (escaped) {
       const hexes = escaped.map(m => m.replace(/&#/, '0').replace(/;/, ''));

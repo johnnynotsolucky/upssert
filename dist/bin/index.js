@@ -19,16 +19,21 @@ var _package = require('../package.json');
 
 var _package2 = _interopRequireDefault(_package);
 
+var _config = require('../lib/config');
+
+var _config2 = _interopRequireDefault(_config);
+
 var _ = require('../');
 
 var _2 = _interopRequireDefault(_);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-/* eslint-disable no-console*/
+// eslint-disable-line import/no-unresolved
 var optionDefinitions = {
   boolean: ['help', 'h']
-}; // eslint-disable-line import/no-unresolved
+};
+/* eslint-disable no-console*/
 
 
 var minimist = require('minimist');
@@ -79,7 +84,8 @@ switch (opts.reporter) {
 reporter.setWriter(new _.LogWriter());
 var upssert = new _2.default({
   suites: data,
-  reporter: reporter
+  reporter: reporter,
+  config: new _config2.default()
 });
 upssert.on(_events2.default.FAIL, function () {
   process.exitCode = 1;

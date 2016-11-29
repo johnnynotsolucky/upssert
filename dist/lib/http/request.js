@@ -14,20 +14,17 @@ var _generateToken = require('../util/generate-token');
 
 var _generateToken2 = _interopRequireDefault(_generateToken);
 
-var _config = require('../config');
-
-var _config2 = _interopRequireDefault(_config);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var HttpRequest = function () {
-  function HttpRequest(request, model) {
+  function HttpRequest(request, model, config) {
     _classCallCheck(this, HttpRequest);
 
     this.model = model;
     this.initialize(request);
+    this.unescaped = config && config.unescaped;
   }
 
   _createClass(HttpRequest, [{
@@ -45,7 +42,7 @@ var HttpRequest = function () {
     value: function renderUrl(url) {
       var result = void 0;
       if (url) {
-        result = (0, _render2.default)(url, this.model, _config2.default.unescape);
+        result = (0, _render2.default)(url, this.model, this.unescaped);
       }
       return result;
     }
@@ -54,7 +51,7 @@ var HttpRequest = function () {
     value: function renderRequestMethod(method) {
       var result = void 0;
       if (method) {
-        result = (0, _render2.default)(method, this.model, _config2.default.unescape);
+        result = (0, _render2.default)(method, this.model, this.unescaped);
       } else {
         result = 'GET';
       }
@@ -69,8 +66,8 @@ var HttpRequest = function () {
       if (request.form) {
         form = [];
         request.form.forEach(function (item) {
-          var renderedKey = (0, _render2.default)(item.key, _this.model, _config2.default.unescape);
-          var renderedValue = (0, _render2.default)(item.value, _this.model, _config2.default.unescape);
+          var renderedKey = (0, _render2.default)(item.key, _this.model, _this.unescaped);
+          var renderedValue = (0, _render2.default)(item.value, _this.model, _this.unescaped);
           var formItem = renderedKey + '=' + renderedValue;
           form.push(formItem);
         });
@@ -82,7 +79,7 @@ var HttpRequest = function () {
     value: function renderData(request) {
       var data = void 0;
       if (request.data) {
-        data = (0, _render2.default)(request.data, this.model, _config2.default.unescape);
+        data = (0, _render2.default)(request.data, this.model, this.unescaped);
       }
       return data;
     }
@@ -95,7 +92,7 @@ var HttpRequest = function () {
       if (request.headers) {
         Object.keys(request.headers).forEach(function (key) {
           var value = request.headers[key];
-          var concatenated = key + ': ' + (0, _render2.default)(value, _this2.model, _config2.default.unescape);
+          var concatenated = key + ': ' + (0, _render2.default)(value, _this2.model, _this2.unescaped);
           headers.push(concatenated);
         });
       }

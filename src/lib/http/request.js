@@ -1,11 +1,11 @@
 import render from '../util/render';
 import generateToken from '../util/generate-token';
-import config from '../config';
 
 class HttpRequest {
-  constructor(request, model) {
+  constructor(request, model, config) {
     this.model = model;
     this.initialize(request);
+    this.unescaped = config && config.unescaped;
   }
 
   initialize(request) {
@@ -20,7 +20,7 @@ class HttpRequest {
   renderUrl(url) {
     let result;
     if (url) {
-      result = render(url, this.model, config.unescape);
+      result = render(url, this.model, this.unescaped);
     }
     return result;
   }
@@ -28,7 +28,7 @@ class HttpRequest {
   renderRequestMethod(method) {
     let result;
     if (method) {
-      result = render(method, this.model, config.unescape);
+      result = render(method, this.model, this.unescaped);
     } else {
       result = 'GET';
     }
@@ -40,8 +40,8 @@ class HttpRequest {
     if (request.form) {
       form = [];
       request.form.forEach((item) => {
-        const renderedKey = render(item.key, this.model, config.unescape);
-        const renderedValue = render(item.value, this.model, config.unescape);
+        const renderedKey = render(item.key, this.model, this.unescaped);
+        const renderedValue = render(item.value, this.model, this.unescaped);
         const formItem = `${renderedKey}=${renderedValue}`;
         form.push(formItem);
       });
@@ -52,7 +52,7 @@ class HttpRequest {
   renderData(request) {
     let data;
     if (request.data) {
-      data = render(request.data, this.model, config.unescape);
+      data = render(request.data, this.model, this.unescaped);
     }
     return data;
   }
@@ -62,7 +62,7 @@ class HttpRequest {
     if (request.headers) {
       Object.keys(request.headers).forEach((key) => {
         const value = request.headers[key];
-        const concatenated = `${key}: ${render(value, this.model, config.unescape)}`;
+        const concatenated = `${key}: ${render(value, this.model, this.unescaped)}`;
         headers.push(concatenated);
       });
     }

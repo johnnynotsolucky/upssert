@@ -9,12 +9,13 @@ import events from './data/events.json';
 class Upssert extends EventEmitter {
   constructor(options) {
     super();
+    const { config } = options;
     let { suites, reporter } = options;
     if (typeof suites === 'string') {
       suites = Upssert.createSuiteForUrl(suites);
     }
     this.suites = !Array.isArray(suites) ? [suites] : suites;
-    this.runner = new Runner();
+    this.runner = new Runner(config);
     if (!reporter) {
       reporter = new ConsoleReporter();
     }

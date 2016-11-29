@@ -47,11 +47,12 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var Runner = function (_EventEmitter) {
   _inherits(Runner, _EventEmitter);
 
-  function Runner() {
+  function Runner(options) {
     _classCallCheck(this, Runner);
 
     var _this = _possibleConstructorReturn(this, (Runner.__proto__ || Object.getPrototypeOf(Runner)).call(this));
 
+    _this.config = options.config;
     _this.suiteCount = 0;
     _this.testCount = 0;
     _this.assertionCount = 0;
@@ -315,7 +316,7 @@ var Runner = function (_EventEmitter) {
                 this.emit(_events3.default.SUITE_TEST_START, test);
                 requiredData = Runner.extractRequiredData(test, resultset);
                 data = _extends({}, requiredData, _globals2.default);
-                httpRequest = new _http.HttpRequest(test.request, data);
+                httpRequest = new _http.HttpRequest(test.request, data, this.config);
                 _context3.next = 6;
                 return (0, _http.makeRequest)(httpRequest);
 
@@ -325,7 +326,7 @@ var Runner = function (_EventEmitter) {
                 testPassed = false;
 
                 if (stat) {
-                  assertObject = new _assert2.default(stat, test.assertions, data);
+                  assertObject = new _assert2.default(stat, test.assertions, data, this.config);
 
                   testPassed = assertObject.assert(function (err) {
                     _this2.emit(_events3.default.SUITE_TEST_FAIL, test, err);

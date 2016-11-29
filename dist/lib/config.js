@@ -35,7 +35,7 @@ var Config = function Config() {
   this.globOptions = config.globOpts || [];
   this.testDir = config.testDir || process.cwd() + '/test/api/**/*.json';
   this.envPrefix = config.envPrefix || false;
-  this.unescape = config.unescape || false;
+  this.unescaped = config.unescaped || false;
 };
 
-exports.default = new Config();
+exports.default = Config;

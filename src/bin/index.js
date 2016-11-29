@@ -5,6 +5,7 @@ import readJsonFile from '../lib/read-json-file';
 import optParser from './option-parser';
 import events from '../data/events.json';
 import pack from '../package.json'; // eslint-disable-line import/no-unresolved
+import Config from '../lib/config';
 import Upssert, { TapReporter, ConsoleReporter, LogWriter } from '../';
 
 const optionDefinitions = {
@@ -75,6 +76,7 @@ reporter.setWriter(new LogWriter());
 const upssert = new Upssert({
   suites: data,
   reporter,
+  config: new Config(),
 });
 upssert.on(events.FAIL, () => { process.exitCode = 1; });
 upssert.execute();

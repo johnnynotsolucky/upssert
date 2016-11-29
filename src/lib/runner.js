@@ -7,8 +7,9 @@ import globals from './globals';
 import validateSuite from './validate-suite';
 
 class Runner extends EventEmitter {
-  constructor() {
+  constructor(options) {
     super();
+    this.config = options.config;
     this.suiteCount = 0;
     this.testCount = 0;
     this.assertionCount = 0;
@@ -58,12 +59,13 @@ class Runner extends EventEmitter {
     this.emit(events.SUITE_TEST_START, test);
     const requiredData = Runner.extractRequiredData(test, resultset);
     const data = { ...requiredData, ...globals };
-    const httpRequest = new HttpRequest(test.request, data);
+    const httpRequest = new HttpRequest(test.request, data, this.config);
     const response = await makeRequest(httpRequest);
     const stat = httpStat(response);
     let testPassed = false;
     if (stat) {
-      const assertObject = new AssertObject(stat, test.assertions, data);
+      const assertObject =
+        new AssertObject(stat, test.assertions, data, this.config);
       testPassed = assertObject.assert((err) => {
         this.emit(events.SUITE_TEST_FAIL, test, err);
       });

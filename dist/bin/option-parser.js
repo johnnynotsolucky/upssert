@@ -21,6 +21,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 var opts = function opts(argv) {
+  var config = new _config2.default();
   var help = argv.help || argv.h;
   var version = argv.version;
   var url = argv.url;
@@ -29,12 +30,12 @@ var opts = function opts(argv) {
   var files = [];
 
   var globPattern = function globPattern(pattern) {
-    var globbed = _glob2.default.sync(pattern, _config2.default.globOptions);
+    var globbed = _glob2.default.sync(pattern, config.globOptions);
     files.push.apply(files, _toConsumableArray(globbed));
   };
 
   if (argv._.length === 0) {
-    argv._.push(_config2.default.testDir);
+    argv._.push(config.testDir);
   }
   argv._.forEach(function (pattern) {
     if (!pattern.startsWith('/')) {

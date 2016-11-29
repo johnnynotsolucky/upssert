@@ -22,8 +22,8 @@ class Config {
     this.globOptions = config.globOpts || [];
     this.testDir = config.testDir || `${process.cwd()}/test/api/**/*.json`;
     this.envPrefix = config.envPrefix || false;
-    this.unescape = config.unescape || false;
+    this.unescaped = config.unescaped || false;
   }
 }
 
-export default new Config();
+export default Config;

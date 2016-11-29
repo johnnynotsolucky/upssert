@@ -10,9 +10,9 @@ var _mustache2 = _interopRequireDefault(_mustache);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-exports.default = function (view, model, unescape) {
+exports.default = function (view, model, unescaped) {
   var rendered = _mustache2.default.render(view, model);
-  if (unescape) {
+  if (unescaped) {
     var escaped = rendered.match(/&#x[a-fA-F0-9][a-fA-F0-9];/g);
     if (escaped) {
       (function () {

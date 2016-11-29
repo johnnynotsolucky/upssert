@@ -47,6 +47,7 @@ var Upssert = function (_EventEmitter) {
 
     var _this = _possibleConstructorReturn(this, (Upssert.__proto__ || Object.getPrototypeOf(Upssert)).call(this));
 
+    var config = options.config;
     var suites = options.suites,
         reporter = options.reporter;
 
@@ -54,7 +55,7 @@ var Upssert = function (_EventEmitter) {
       suites = Upssert.createSuiteForUrl(suites);
     }
     _this.suites = !Array.isArray(suites) ? [suites] : suites;
-    _this.runner = new _runner2.default();
+    _this.runner = new _runner2.default(config);
     if (!reporter) {
       reporter = new _console2.default();
     }
