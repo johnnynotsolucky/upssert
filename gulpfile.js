@@ -31,5 +31,5 @@ gulp.task('lint', (cb) => {
 });
 
 gulp.task('watch', () => {
-  return gulp.watch('./src/**/*', ['default']);
+  return gulp.watch(['package.json', './src/**/*'], ['default']);
 });
