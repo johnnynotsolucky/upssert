@@ -308,7 +308,7 @@ var Runner = function (_EventEmitter) {
       var _ref3 = _asyncToGenerator(regeneratorRuntime.mark(function _callee3(test, resultset) {
         var _this2 = this;
 
-        var requiredData, data, httpRequest, response, stat, testPassed, assertObject;
+        var requiredData, data, httpRequest, testPassed, stat, result, response, assertObject;
         return regeneratorRuntime.wrap(function _callee3$(_context3) {
           while (1) {
             switch (_context3.prev = _context3.next) {
@@ -317,14 +317,21 @@ var Runner = function (_EventEmitter) {
                 requiredData = Runner.extractRequiredData(test, resultset);
                 data = _extends({}, requiredData, _globals2.default);
                 httpRequest = new _http.HttpRequest(test.request, data, this.config);
-                _context3.next = 6;
+                testPassed = false;
+                stat = void 0;
+                result = {
+                  trace: httpRequest.trace,
+                  test: test
+                };
+                _context3.prev = 7;
+                _context3.next = 10;
                 return (0, _http.makeRequest)(httpRequest);
 
-              case 6:
+              case 10:
                 response = _context3.sent;
+
                 stat = (0, _http.httpStat)(response);
                 testPassed = false;
-
                 if (stat) {
                   assertObject = new _assert2.default(stat, test.assertions, data, this.config);
 
@@ -336,19 +343,26 @@ var Runner = function (_EventEmitter) {
                   }
                 }
                 this.emit(_events3.default.SUITE_TEST_END, test);
-                return _context3.abrupt('return', {
-                  trace: httpRequest.trace,
-                  test: test,
-                  pass: testPassed,
-                  result: stat
-                });
+                result.result = stat;
+                _context3.next = 21;
+                break;
 
-              case 12:
+              case 18:
+                _context3.prev = 18;
+                _context3.t0 = _context3['catch'](7);
+
+                this.emit(_events3.default.SUITE_TEST_FAIL, test, _context3.t0);
+
+              case 21:
+                result.pass = testPassed;
+                return _context3.abrupt('return', result);
+
+              case 23:
               case 'end':
                 return _context3.stop();
             }
           }
-        }, _callee3, this);
+        }, _callee3, this, [[7, 18]]);
       }));
 
       function executeTest(_x3, _x4) {

@@ -60,26 +60,33 @@ class Runner extends EventEmitter {
     const requiredData = Runner.extractRequiredData(test, resultset);
     const data = { ...requiredData, ...globals };
     const httpRequest = new HttpRequest(test.request, data, this.config);
-    const response = await makeRequest(httpRequest);
-    const stat = httpStat(response);
     let testPassed = false;
-    if (stat) {
-      const assertObject =
-        new AssertObject(stat, test.assertions, data, this.config);
-      testPassed = assertObject.assert((err) => {
-        this.emit(events.SUITE_TEST_FAIL, test, err);
-      });
-      if (testPassed) {
-        this.emit(events.SUITE_TEST_PASS, test);
-      }
-    }
-    this.emit(events.SUITE_TEST_END, test);
-    return {
+    let stat;
+    const result = {
       trace: httpRequest.trace,
       test,
-      pass: testPassed,
-      result: stat,
     };
+    try {
+      const response = await makeRequest(httpRequest);
+      stat = httpStat(response);
+      testPassed = false;
+      if (stat) {
+        const assertObject =
+          new AssertObject(stat, test.assertions, data, this.config);
+        testPassed = assertObject.assert((err) => {
+          this.emit(events.SUITE_TEST_FAIL, test, err);
+        });
+        if (testPassed) {
+          this.emit(events.SUITE_TEST_PASS, test);
+        }
+      }
+      this.emit(events.SUITE_TEST_END, test);
+      result.result = stat;
+    } catch (err) {
+      this.emit(events.SUITE_TEST_FAIL, test, err);
+    }
+    result.pass = testPassed;
+    return result;
   }
 
   static extractRequiredData(test, results) {
