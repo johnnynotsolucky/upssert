@@ -16,43 +16,57 @@ class Runner extends EventEmitter {
     this.stopExecution = false;
   }
 
-  async run(suites) {
-    for (const [index, value] of suites.entries()) {
-      const validation = validateSuite(value);
-      if (validation === true) {
-        const suite = new Suite(value);
-        this.testCount += suite.tests.length;
-        this.assertionCount += suite.assertionCount;
-        suites[index] = suite;
-      } else {
-        this.stopExecution = true;
-        this.emit(events.FAIL, value, validation);
-        this.emit(events.SUITE_FAIL, value, validation);
-      }
-    }
-    this.suiteCount = suites.length;
-    this.emit(events.SUITE_COUNT, this.suiteCount);
-    this.emit(events.TEST_COUNT, this.testCount);
-    this.emit(events.ASSERTION_COUNT, this.assertionCount);
-    this.emit(events.START);
-    for (const suite of suites) {
-      if (!this.stopExecution) {
-        this.emit(events.SUITE_START, suite);
-        await this.executeTestsInOrder(suite);
-        this.emit(events.SUITE_END, suite);
-      } else {
-        break;
-      }
-    }
-    this.emit(events.END);
+  async run(definitions) {
+    let suites = this.suitesFromDefinitions(definitions);
+    suites = this.startExecutionIfValid(suites);
+    return suites;
   }
 
-  async executeTestsInOrder(suite) {
+  suitesFromDefinitions(definitions) {
+    const suites = [];
+    let result = suites;
+    while (definitions.length > 0 && !this.stopExecution) {
+      const definition = definitions.shift();
+      const validation = validateSuite(definition);
+      if (validation === true) {
+        const suite = new Suite(definition);
+        this.testCount += suite.tests.length;
+        this.assertionCount += suite.assertionCount;
+        suites.push(suite);
+      } else {
+        this.stopExecution = true;
+        this.emit(events.FAIL, definition, validation);
+        this.emit(events.SUITE_FAIL, definition, validation);
+        result = false;
+      }
+    }
+    return result;
+  }
+
+  async startExecutionIfValid(suites) {
+    if (suites !== false) {
+      this.suiteCount = suites.length;
+      this.emit(events.SUITE_COUNT, this.suiteCount);
+      this.emit(events.TEST_COUNT, this.testCount);
+      this.emit(events.ASSERTION_COUNT, this.assertionCount);
+      this.emit(events.START);
+      for (const suite of suites) {
+        suite.results = await this.executeSuite(suite);
+      }
+      this.emit(events.END);
+    }
+    return suites;
+  }
+
+  async executeSuite(suite) {
+    this.emit(events.SUITE_START, suite);
     const results = {};
     for (const test of suite.tests) {
       const result = await this.executeTest(test, results);
       results[result.test.id] = result;
     }
+    this.emit(events.SUITE_END, suite);
+    return results;
   }
 
   async executeTest(test, resultset) {

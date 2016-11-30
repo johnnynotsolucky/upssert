@@ -1,0 +1,25 @@
+{
+  "name": "http://httpbin.org",
+  "tests": [
+    {
+      "name": "/get",
+      "request": {
+        "url": "https://httpbin.org/get?foo=bar"
+      },
+      "response": {
+        "content-type": "application/json",
+        "status-code": {
+          "equal": 200,
+          "is-at-least": 199
+        },
+        "timing.dns-resolution": {
+          "is-below": 100
+        },
+        "timing.total": {
+          "is-below": 500
+        },
+        "body.args.foo": "bar"
+      }
+    }
+  ]
+}

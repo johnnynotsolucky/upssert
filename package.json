@@ -41,6 +41,7 @@
     "gulp-watch": "^4.3.10",
     "mocha": "^3.1.2",
     "mocha-lcov-reporter": "^1.2.0",
+    "nock": "^9.0.2",
     "nyc": "^9.0.1",
     "sinon": "^1.17.6"
   },

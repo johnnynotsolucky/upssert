@@ -22,7 +22,11 @@ const getObjectValue = (object, key) => {
       if (bracketNotation) {
         value = getValueFromBracketNotation(value, property, bracketNotation);
       } else {
-        value = value[camelcase(property)] || value[property];
+        let tmp = value[camelcase(property)];
+        if (tmp === undefined) {
+          tmp = value[property];
+        }
+        value = tmp;
       }
     }
     return value;

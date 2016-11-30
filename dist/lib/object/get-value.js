@@ -64,7 +64,11 @@ var getObjectValue = function getObjectValue(object, key) {
         if (bracketNotation) {
           value = getValueFromBracketNotation(value, property, bracketNotation);
         } else {
-          value = value[(0, _camelcase2.default)(property)] || value[property];
+          var tmp = value[(0, _camelcase2.default)(property)];
+          if (tmp === undefined) {
+            tmp = value[property];
+          }
+          value = tmp;
         }
       }
     } catch (err) {
