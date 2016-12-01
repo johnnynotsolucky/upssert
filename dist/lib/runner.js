@@ -6,6 +6,8 @@ Object.defineProperty(exports, "__esModule", {
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _events = require('events');
@@ -62,15 +64,14 @@ var Runner = function (_EventEmitter) {
     key: 'run',
     value: function () {
       var _ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee(definitions) {
-        var suites;
+        var suites, results;
         return regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
                 suites = this.suitesFromDefinitions(definitions);
-
-                suites = this.startExecutionIfValid(suites);
-                return _context.abrupt('return', suites);
+                results = this.startExecutionIfValid(suites);
+                return _context.abrupt('return', results);
 
               case 3:
               case 'end':
@@ -112,14 +113,16 @@ var Runner = function (_EventEmitter) {
     key: 'startExecutionIfValid',
     value: function () {
       var _ref2 = _asyncToGenerator(regeneratorRuntime.mark(function _callee2(suites) {
-        var _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, suite;
+        var results, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, _step$value, index, value, testResult;
 
         return regeneratorRuntime.wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
+                results = { pass: true };
+
                 if (!(suites !== false)) {
-                  _context2.next = 34;
+                  _context2.next = 38;
                   break;
                 }
 
@@ -131,73 +134,80 @@ var Runner = function (_EventEmitter) {
                 _iteratorNormalCompletion = true;
                 _didIteratorError = false;
                 _iteratorError = undefined;
-                _context2.prev = 9;
-                _iterator = suites[Symbol.iterator]();
+                _context2.prev = 10;
+                _iterator = suites.entries()[Symbol.iterator]();
 
-              case 11:
+              case 12:
                 if (_iteratorNormalCompletion = (_step = _iterator.next()).done) {
-                  _context2.next = 19;
+                  _context2.next = 21;
                   break;
                 }
 
-                suite = _step.value;
-                _context2.next = 15;
-                return this.executeSuite(suite);
-
-              case 15:
-                suite.results = _context2.sent;
+                _step$value = _slicedToArray(_step.value, 2), index = _step$value[0], value = _step$value[1];
+                _context2.next = 16;
+                return this.executeSuite(value);
 
               case 16:
-                _iteratorNormalCompletion = true;
-                _context2.next = 11;
-                break;
+                testResult = _context2.sent;
 
-              case 19:
-                _context2.next = 25;
+                results[index] = testResult;
+
+              case 18:
+                _iteratorNormalCompletion = true;
+                _context2.next = 12;
                 break;
 
               case 21:
-                _context2.prev = 21;
-                _context2.t0 = _context2['catch'](9);
+                _context2.next = 27;
+                break;
+
+              case 23:
+                _context2.prev = 23;
+                _context2.t0 = _context2['catch'](10);
                 _didIteratorError = true;
                 _iteratorError = _context2.t0;
 
-              case 25:
-                _context2.prev = 25;
-                _context2.prev = 26;
+              case 27:
+                _context2.prev = 27;
+                _context2.prev = 28;
 
                 if (!_iteratorNormalCompletion && _iterator.return) {
                   _iterator.return();
                 }
 
-              case 28:
-                _context2.prev = 28;
+              case 30:
+                _context2.prev = 30;
 
                 if (!_didIteratorError) {
-                  _context2.next = 31;
+                  _context2.next = 33;
                   break;
                 }
 
                 throw _iteratorError;
 
-              case 31:
-                return _context2.finish(28);
-
-              case 32:
-                return _context2.finish(25);
-
               case 33:
-                this.emit(_events3.default.END);
+                return _context2.finish(30);
 
               case 34:
-                return _context2.abrupt('return', suites);
+                return _context2.finish(27);
 
               case 35:
+                this.emit(_events3.default.END);
+                _context2.next = 39;
+                break;
+
+              case 38:
+                results.pass = false;
+
+              case 39:
+                return _context2.abrupt('return', results);
+
+              case 40:
               case 'end':
                 return _context2.stop();
             }
           }
-        }, _callee2, this, [[9, 21, 25, 33], [26,, 28, 32]]);
+        }, _callee2, this, [[10, 23, 27, 35], [28,, 30, 34]]);
       }));
 
       function startExecutionIfValid(_x2) {
@@ -302,26 +312,38 @@ var Runner = function (_EventEmitter) {
       var _ref4 = _asyncToGenerator(regeneratorRuntime.mark(function _callee4(test, resultset) {
         var _this2 = this;
 
-        var requiredData, data, httpRequest, testPassed, stat, result, response, assertObject;
+        var dependencies, result, testPassed, err, data, httpRequest, stat, response, assertObject;
         return regeneratorRuntime.wrap(function _callee4$(_context4) {
           while (1) {
             switch (_context4.prev = _context4.next) {
               case 0:
                 this.emit(_events3.default.SUITE_TEST_START, test);
-                requiredData = Runner.extractRequiredData(test, resultset);
-                data = _extends({}, requiredData, _globals2.default);
-                httpRequest = new _http.HttpRequest(test.request, data, this.config);
+                dependencies = Runner.extractDependencies(test, resultset);
+                result = { test: test };
                 testPassed = false;
+
+                if (!Runner.dependenciesHaveFailed(dependencies)) {
+                  _context4.next = 9;
+                  break;
+                }
+
+                err = new Error('Failed dependencies');
+
+                this.emit(_events3.default.SUITE_TEST_FAIL, test, err);
+                _context4.next = 27;
+                break;
+
+              case 9:
+                data = _extends({}, dependencies, _globals2.default);
+                httpRequest = new _http.HttpRequest(test.request, data, this.config);
+
+                result.trace = httpRequest.trace;
                 stat = void 0;
-                result = {
-                  trace: httpRequest.trace,
-                  test: test
-                };
-                _context4.prev = 7;
-                _context4.next = 10;
+                _context4.prev = 13;
+                _context4.next = 16;
                 return (0, _http.makeRequest)(httpRequest);
 
-              case 10:
+              case 16:
                 response = _context4.sent;
 
                 stat = (0, _http.httpStat)(response);
@@ -337,26 +359,26 @@ var Runner = function (_EventEmitter) {
                   }
                 }
                 this.emit(_events3.default.SUITE_TEST_END, test);
-                result.result = stat;
-                _context4.next = 21;
+                result.stat = stat;
+                _context4.next = 27;
                 break;
 
-              case 18:
-                _context4.prev = 18;
-                _context4.t0 = _context4['catch'](7);
+              case 24:
+                _context4.prev = 24;
+                _context4.t0 = _context4['catch'](13);
 
                 this.emit(_events3.default.SUITE_TEST_FAIL, test, _context4.t0);
 
-              case 21:
+              case 27:
                 result.pass = testPassed;
                 return _context4.abrupt('return', result);
 
-              case 23:
+              case 29:
               case 'end':
                 return _context4.stop();
             }
           }
-        }, _callee4, this, [[7, 18]]);
+        }, _callee4, this, [[13, 24]]);
       }));
 
       function executeTest(_x4, _x5) {
@@ -366,13 +388,45 @@ var Runner = function (_EventEmitter) {
       return executeTest;
     }()
   }], [{
-    key: 'extractRequiredData',
-    value: function extractRequiredData(test, results) {
+    key: 'dependenciesHaveFailed',
+    value: function dependenciesHaveFailed(dependencies) {
+      return Object.keys(dependencies).map(function (key) {
+        return dependencies[key];
+      }).some(function (dependency) {
+        return dependency.pass !== true;
+      });
+    }
+  }, {
+    key: 'extractDependencies',
+    value: function extractDependencies(test, results) {
       var data = {};
       if (test.requires && results) {
-        test.requires.forEach(function (id) {
-          data[id] = results[id].result;
-        });
+        var _iteratorNormalCompletion3 = true;
+        var _didIteratorError3 = false;
+        var _iteratorError3 = undefined;
+
+        try {
+          for (var _iterator3 = test.requires[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+            var id = _step3.value;
+
+            data[id] = _extends({}, results[id].stat, {
+              pass: results[id].pass
+            });
+          }
+        } catch (err) {
+          _didIteratorError3 = true;
+          _iteratorError3 = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion3 && _iterator3.return) {
+              _iterator3.return();
+            }
+          } finally {
+            if (_didIteratorError3) {
+              throw _iteratorError3;
+            }
+          }
+        }
       }
       return data;
     }

@@ -9,8 +9,8 @@
       "response": {
         "content-type": "application/json",
         "status-code": {
-          "equal": 200,
-          "is-at-least": 199
+          "is-at-least": 200,
+          "is-at-most": 201
         },
         "timing.dns-resolution": {
           "is-below": 100
@@ -22,7 +22,6 @@
       }
     }, {
       "name": "Something else",
-      "needs-previous-test": false,
       "request": {
         "url": "https://httpbin.org/get?a=b"
       },

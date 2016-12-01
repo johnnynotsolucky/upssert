@@ -1,0 +1,24 @@
+{
+  "name": "http://httpbin.org",
+  "tests": [
+    {
+      "name": "get-foo",
+      "request": {
+        "url": "https://httpbin.org/get?foo=bar"
+      }
+    }, {
+      "name": "get-bar",
+      "requires": ["test1"],
+      "request": {
+        "url": "https://httpbin.org/get?bar={{test1.body.foo}}"
+      },
+      "response": {
+        "body.bar": "foobar",
+        "body.xyz": {
+          "is-at-least": "{{test1.body.min}}",
+          "is-at-most": "{{test1.body.max}}"
+        }
+      }
+    }
+  ]
+}
