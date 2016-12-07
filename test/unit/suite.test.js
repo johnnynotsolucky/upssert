@@ -4,7 +4,7 @@ import Test from '../../src/lib/test';
 
 describe('Suite', () => {
   it('sets the ID of a suite if not already defined', () => {
-    let suite = new Suite({ tests: [{}, {}] });
+    const suite = new Suite({ tests: [{}, {}] });
     assert.strictEqual(suite.tests[0].id, 'test1');
     assert.strictEqual(suite.tests[1].id, 'test2');
   });
