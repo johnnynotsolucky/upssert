@@ -157,4 +157,70 @@ describe('Runner', () => {
         done();
       }).catch(done);
   });
+
+  const url = 'https://httpbin.org/get';
+  const metaDataRequest = {
+    name: 'Ping',
+    tests: [{
+      name: url,
+      request: { url },
+    }],
+  };
+
+  it('returns suite meta-data if defined', (done) => {
+    const definition = {
+      ...metaDataRequest,
+      meta: {
+        foo: 'bar',
+      },
+    };
+    nock('https://httpbin.org')
+      .get('/get')
+      .reply(200, {});
+    runner.run([definition])
+      .then((results) => {
+        const meta = results[0].meta;
+        assert.strictEqual(meta.foo, 'bar');
+        done();
+      }).catch(done);
+  });
+
+  it('returns suite meta-data regardless of type', (done) => {
+    const definition = { ...metaDataRequest, meta: 'foobar' };
+    nock('https://httpbin.org')
+      .get('/get')
+      .reply(200, {});
+    runner.run([definition])
+      .then((results) => {
+        const meta = results[0].meta;
+        assert.strictEqual(meta, 'foobar');
+        done();
+      }).catch(done);
+  });
+
+  it('returns suite meta-data if set to false', (done) => {
+    const definition = { ...metaDataRequest, meta: false };
+    nock('https://httpbin.org')
+      .get('/get')
+      .reply(200, {});
+    runner.run([definition])
+      .then((results) => {
+        const meta = results[0].meta;
+        assert.strictEqual(meta, false);
+        done();
+      }).catch(done);
+  });
+
+  it('returns empty meta-data if none defined', (done) => {
+    const definition = metaDataRequest;
+    nock('https://httpbin.org')
+      .get('/get')
+      .reply(200, {});
+    runner.run([definition])
+      .then((results) => {
+        const meta = results[0].meta;
+        assert.isOk(meta);
+        done();
+      }).catch(done);
+  });
 });

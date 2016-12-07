@@ -54,7 +54,7 @@ class Runner extends EventEmitter {
       this.emit(events.START);
       for (const [index, value] of suites.entries()) {
         const testResult = await this.executeSuite(value);
-        results[index] = testResult;
+        results[index] = this.appendMetaData(testResult, value);
         if (testResult.pass === false) {
           passed = false;
         }
@@ -65,6 +65,15 @@ class Runner extends EventEmitter {
     }
     results.pass = passed;
     return results;
+  }
+
+  appendMetaData(result, suite) {
+    if (suite.meta !== undefined && suite.meta !== null) {
+      result.meta = suite.meta;
+    } else {
+      result.meta = {};
+    }
+    return result;
   }
 
   async executeSuite(suite) {
@@ -85,10 +94,10 @@ class Runner extends EventEmitter {
 
   async executeTest(test, resultset) {
     this.emit(events.SUITE_TEST_START, test);
-    const dependencies = Runner.extractDependencies(test, resultset);
+    const dependencies = this.extractDependencies(test, resultset);
     const result = {};
     let testPassed = false;
-    if (Runner.dependenciesHaveFailed(dependencies)) {
+    if (this.dependenciesHaveFailed(dependencies)) {
       const err = new Error('Failed dependencies');
       this.emit(events.SUITE_TEST_FAIL, test, err);
     } else {
@@ -120,13 +129,13 @@ class Runner extends EventEmitter {
     return result;
   }
 
-  static dependenciesHaveFailed(dependencies) {
+  dependenciesHaveFailed(dependencies) {
     return Object.keys(dependencies)
       .map(key => dependencies[key])
       .some(dependency => dependency.pass !== true);
   }
 
-  static extractDependencies(test, results) {
+  extractDependencies(test, results) {
     const data = {};
     if (test.requires && results) {
       for (const id of test.requires) {

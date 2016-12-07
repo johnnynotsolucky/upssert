@@ -33,7 +33,7 @@ var Suite = function () {
             index = _step$value[0],
             value = _step$value[1];
 
-        Suite.setIdIfNotSet(value, index + 1);
+        this.setIdIfNotSet(value, index + 1);
         this.tests[index] = new _test2.default(value);
         this.assertionCount += this.tests[index].assertions.length;
       }
@@ -53,7 +53,7 @@ var Suite = function () {
     }
   }
 
-  _createClass(Suite, null, [{
+  _createClass(Suite, [{
     key: 'setIdIfNotSet',
     value: function setIdIfNotSet(object, index) {
       if (!object.id) {

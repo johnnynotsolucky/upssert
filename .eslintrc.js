@@ -8,6 +8,7 @@ module.exports = {
   'rules': {
     'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0,
     "no-param-reassign": 0,
-    "no-plusplus": ["error", { "allowForLoopAfterthoughts": true }]
+    "no-plusplus": ["error", { "allowForLoopAfterthoughts": true }],
+    "class-methods-use-this": 0
   }
 };

@@ -155,7 +155,7 @@ var Runner = function (_EventEmitter) {
               case 17:
                 testResult = _context2.sent;
 
-                results[index] = testResult;
+                results[index] = this.appendMetaData(testResult, value);
                 if (testResult.pass === false) {
                   passed = false;
                 }
@@ -225,6 +225,16 @@ var Runner = function (_EventEmitter) {
 
       return startExecutionIfValid;
     }()
+  }, {
+    key: 'appendMetaData',
+    value: function appendMetaData(result, suite) {
+      if (suite.meta !== undefined && suite.meta !== null) {
+        result.meta = suite.meta;
+      } else {
+        result.meta = {};
+      }
+      return result;
+    }
   }, {
     key: 'executeSuite',
     value: function () {
@@ -401,7 +411,7 @@ var Runner = function (_EventEmitter) {
 
       return executeTest;
     }()
-  }], [{
+  }, {
     key: 'dependenciesHaveFailed',
     value: function dependenciesHaveFailed(dependencies) {
       return Object.keys(dependencies).map(function (key) {

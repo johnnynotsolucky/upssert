@@ -4,10 +4,9 @@ import Test from '../../src/lib/test';
 
 describe('Suite', () => {
   it('sets the ID of a suite if not already defined', () => {
-    let suite = Suite.setIdIfNotSet({}, 2);
-    assert.strictEqual(suite.id, 'test2');
-    suite = Suite.setIdIfNotSet({}, 0);
-    assert.strictEqual(suite.id, 'test0');
+    let suite = new Suite({ tests: [{}, {}] });
+    assert.strictEqual(suite.tests[0].id, 'test1');
+    assert.strictEqual(suite.tests[1].id, 'test2');
   });
 
   it('applies suite options to the instance', () => {

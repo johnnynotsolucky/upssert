@@ -12,7 +12,7 @@ class Upssert extends EventEmitter {
     const { config } = options;
     let { suites, reporter } = options;
     if (typeof suites === 'string') {
-      suites = Upssert.createSuiteForUrl(suites);
+      suites = this.createSuiteForUrl(suites);
     }
     this.suites = !Array.isArray(suites) ? [suites] : suites;
     this.runner = new Runner(config);
@@ -26,7 +26,7 @@ class Upssert extends EventEmitter {
     });
   }
 
-  static createSuiteForUrl(url) {
+  createSuiteForUrl(url) {
     return {
       name: 'Ping',
       tests: [{

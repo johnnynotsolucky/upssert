@@ -70,6 +70,19 @@ var Upssert = function (_EventEmitter) {
   }
 
   _createClass(Upssert, [{
+    key: 'createSuiteForUrl',
+    value: function createSuiteForUrl(url) {
+      return {
+        name: 'Ping',
+        tests: [{
+          name: url,
+          request: {
+            url: url
+          }
+        }]
+      };
+    }
+  }, {
     key: 'execute',
     value: function () {
       var _ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee() {
@@ -99,19 +112,6 @@ var Upssert = function (_EventEmitter) {
 
       return execute;
     }()
-  }], [{
-    key: 'createSuiteForUrl',
-    value: function createSuiteForUrl(url) {
-      return {
-        name: 'Ping',
-        tests: [{
-          name: url,
-          request: {
-            url: url
-          }
-        }]
-      };
-    }
   }]);
 
   return Upssert;
