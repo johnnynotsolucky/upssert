@@ -342,11 +342,11 @@ var Runner = function (_EventEmitter) {
             switch (_context4.prev = _context4.next) {
               case 0:
                 this.emit(_events3.default.SUITE_TEST_START, test);
-                dependencies = Runner.extractDependencies(test, resultset);
+                dependencies = this.extractDependencies(test, resultset);
                 result = {};
                 testPassed = false;
 
-                if (!Runner.dependenciesHaveFailed(dependencies)) {
+                if (!this.dependenciesHaveFailed(dependencies)) {
                   _context4.next = 9;
                   break;
                 }

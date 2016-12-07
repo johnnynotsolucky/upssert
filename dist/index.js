@@ -54,7 +54,7 @@ var Upssert = function (_EventEmitter) {
         reporter = options.reporter;
 
     if (typeof suites === 'string') {
-      suites = Upssert.createSuiteForUrl(suites);
+      suites = _this.createSuiteForUrl(suites);
     }
     _this.suites = !Array.isArray(suites) ? [suites] : suites;
     _this.runner = new _runner2.default(config);
