@@ -1,16 +1,16 @@
 import { assert } from 'chai';
-import { httpStat } from '../../../src/lib/http';
+import { formatResponse } from '../../../src/lib/http';
 import readJsonFile from '../../../src/lib/read-json-file';
 
-describe('stat', () => {
+describe('formatResponse', () => {
   it('should correctly calculate HTTP protocol timings and other meta data', () => {
     const data = readJsonFile('./test/unit/http/data/result-http.json');
-    const stat = httpStat(data);
-    assert.isOk(stat);
-    assert.strictEqual(stat.statusCode, 200);
-    assert.strictEqual(stat.contentType, 'application/json');
-    assert.strictEqual(stat.contentLength, 100);
-    const timing = stat.timing;
+    const response = formatResponse(data);
+    assert.isOk(response);
+    assert.strictEqual(response.statusCode, 200);
+    assert.strictEqual(response.contentType, 'application/json');
+    assert.strictEqual(response.contentLength, 100);
+    const timing = response.timing;
     assert.isOk(timing);
     assert.strictEqual(timing.dnsResolution, 50);
     assert.strictEqual(timing.tcpConnection, 80);
@@ -21,19 +21,19 @@ describe('stat', () => {
     assert.strictEqual(timing.connect, 130);
     assert.strictEqual(timing.startTransfer, 230);
     assert.strictEqual(timing.total, 270);
-    const headers = stat.headers;
+    const headers = response.headers;
     assert.isOk(headers);
     assert.strictEqual(headers.contentType, 'application/json');
     assert.strictEqual(headers.contentLength, '100');
     assert.strictEqual(headers.xFooBar, 'foobar');
-    const body = stat.body;
+    const body = response.body;
     assert.isOk(body);
     assert.strictEqual(body.foo, 'bar');
   });
 
   it('should correctly calculate unknown protocol timings and other meta data', () => {
     const data = readJsonFile('./test/unit/http/data/result-unknown.json');
-    const stat = httpStat(data);
+    const stat = formatResponse(data);
     assert.isOk(stat);
     assert.strictEqual(stat.statusCode, 200);
     assert.strictEqual(stat.contentType, '');
@@ -59,12 +59,12 @@ describe('stat', () => {
 
   it('should correctly calculate HTTPS protocol timings and other meta data', () => {
     const data = readJsonFile('./test/unit/http/data/result-https.json');
-    const stat = httpStat(data);
-    assert.isOk(stat);
-    assert.strictEqual(stat.statusCode, 200);
-    assert.strictEqual(stat.contentType, 'application/json');
-    assert.strictEqual(stat.contentLength, 100);
-    const timing = stat.timing;
+    const response = formatResponse(data);
+    assert.isOk(response);
+    assert.strictEqual(response.statusCode, 200);
+    assert.strictEqual(response.contentType, 'application/json');
+    assert.strictEqual(response.contentLength, 100);
+    const timing = response.timing;
     assert.isOk(timing);
     assert.strictEqual(timing.dnsResolution, 50);
     assert.strictEqual(timing.tcpConnection, 80);
@@ -76,12 +76,12 @@ describe('stat', () => {
     assert.strictEqual(timing.pretransfer, 230);
     assert.strictEqual(timing.startTransfer, 380);
     assert.strictEqual(timing.total, 420);
-    const headers = stat.headers;
+    const headers = response.headers;
     assert.isOk(headers);
     assert.strictEqual(headers.contentType, 'application/json');
     assert.strictEqual(headers.contentLength, '100');
     assert.strictEqual(headers.xFooBar, 'foobar');
-    const body = stat.body;
+    const body = response.body;
     assert.isOk(body);
     assert.strictEqual(body.foo, 'bar');
   });

@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import { HttpRequest, makeRequest, httpStat } from './http';
+import { HttpRequest, makeRequest, formatResponse } from './http';
 import AssertObject from './object/assert';
 import Suite from './suite';
 import events from '../data/events.json';
@@ -18,7 +18,7 @@ class Runner extends EventEmitter {
 
   async run(definitions) {
     const suites = this.suitesFromDefinitions(definitions);
-    const results = this.startExecutionIfValid(suites);
+    const results = await this.startExecutionIfValid(suites);
     return results;
   }
 
@@ -45,6 +45,7 @@ class Runner extends EventEmitter {
 
   async startExecutionIfValid(suites) {
     const results = { pass: true };
+    let passed = true;
     if (suites !== false) {
       this.suiteCount = suites.length;
       this.emit(events.SUITE_COUNT, this.suiteCount);
@@ -54,21 +55,30 @@ class Runner extends EventEmitter {
       for (const [index, value] of suites.entries()) {
         const testResult = await this.executeSuite(value);
         results[index] = testResult;
+        if (testResult.pass === false) {
+          passed = false;
+        }
       }
       this.emit(events.END);
     } else {
-      results.pass = false;
+      passed = false;
     }
+    results.pass = passed;
     return results;
   }
 
   async executeSuite(suite) {
     this.emit(events.SUITE_START, suite);
-    const results = {};
+    let suitePassed = true;
+    const results = { tests: {} };
     for (const test of suite.tests) {
-      const result = await this.executeTest(test, results);
-      results[result.test.id] = result;
+      const result = await this.executeTest(test, results.tests);
+      results.tests[test.id] = result;
+      if (result.pass === false) {
+        suitePassed = false;
+      }
     }
+    results.pass = suitePassed;
     this.emit(events.SUITE_END, suite);
     return results;
   }
@@ -76,7 +86,7 @@ class Runner extends EventEmitter {
   async executeTest(test, resultset) {
     this.emit(events.SUITE_TEST_START, test);
     const dependencies = Runner.extractDependencies(test, resultset);
-    const result = { test };
+    const result = {};
     let testPassed = false;
     if (Runner.dependenciesHaveFailed(dependencies)) {
       const err = new Error('Failed dependencies');
@@ -85,14 +95,14 @@ class Runner extends EventEmitter {
       const data = { ...dependencies, ...globals };
       const httpRequest = new HttpRequest(test.request, data, this.config);
       result.trace = httpRequest.trace;
-      let stat;
+      let formattedResponse;
       try {
         const response = await makeRequest(httpRequest);
-        stat = httpStat(response);
+        formattedResponse = formatResponse(response);
         testPassed = false;
-        if (stat) {
+        if (formattedResponse) {
           const assertObject =
-            new AssertObject(stat, test.assertions, data, this.config);
+            new AssertObject(formattedResponse, test.assertions, data, this.config);
           testPassed = assertObject.assert((err) => {
             this.emit(events.SUITE_TEST_FAIL, test, err);
           });
@@ -101,7 +111,7 @@ class Runner extends EventEmitter {
           }
         }
         this.emit(events.SUITE_TEST_END, test);
-        result.stat = stat;
+        result.response = formattedResponse;
       } catch (err) {
         this.emit(events.SUITE_TEST_FAIL, test, err);
       }
@@ -121,7 +131,7 @@ class Runner extends EventEmitter {
     if (test.requires && results) {
       for (const id of test.requires) {
         data[id] = {
-          ...results[id].stat,
+          ...results[id].response,
           pass: results[id].pass,
         };
       }

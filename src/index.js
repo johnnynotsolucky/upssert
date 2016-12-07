@@ -38,8 +38,9 @@ class Upssert extends EventEmitter {
     };
   }
 
-  execute() {
-    this.runner.run(this.suites);
+  async execute() {
+    const results = await this.runner.run(this.suites);
+    return results;
   }
 }
 

@@ -1,5 +1,5 @@
 import makeRequest from './make';
 import HttpRequest from './request';
-import httpStat from './stat';
+import formatResponse from './response';
 
-export { HttpRequest, makeRequest, httpStat };
+export { HttpRequest, makeRequest, formatResponse };

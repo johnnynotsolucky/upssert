@@ -70,10 +70,14 @@ var Runner = function (_EventEmitter) {
             switch (_context.prev = _context.next) {
               case 0:
                 suites = this.suitesFromDefinitions(definitions);
-                results = this.startExecutionIfValid(suites);
-                return _context.abrupt('return', results);
+                _context.next = 3;
+                return this.startExecutionIfValid(suites);
 
               case 3:
+                results = _context.sent;
+                return _context.abrupt('return', results);
+
+              case 5:
               case 'end':
                 return _context.stop();
             }
@@ -113,16 +117,17 @@ var Runner = function (_EventEmitter) {
     key: 'startExecutionIfValid',
     value: function () {
       var _ref2 = _asyncToGenerator(regeneratorRuntime.mark(function _callee2(suites) {
-        var results, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, _step$value, index, value, testResult;
+        var results, passed, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, _step$value, index, value, testResult;
 
         return regeneratorRuntime.wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
                 results = { pass: true };
+                passed = true;
 
                 if (!(suites !== false)) {
-                  _context2.next = 38;
+                  _context2.next = 40;
                   break;
                 }
 
@@ -134,80 +139,84 @@ var Runner = function (_EventEmitter) {
                 _iteratorNormalCompletion = true;
                 _didIteratorError = false;
                 _iteratorError = undefined;
-                _context2.prev = 10;
+                _context2.prev = 11;
                 _iterator = suites.entries()[Symbol.iterator]();
 
-              case 12:
+              case 13:
                 if (_iteratorNormalCompletion = (_step = _iterator.next()).done) {
-                  _context2.next = 21;
+                  _context2.next = 23;
                   break;
                 }
 
                 _step$value = _slicedToArray(_step.value, 2), index = _step$value[0], value = _step$value[1];
-                _context2.next = 16;
+                _context2.next = 17;
                 return this.executeSuite(value);
 
-              case 16:
+              case 17:
                 testResult = _context2.sent;
 
                 results[index] = testResult;
+                if (testResult.pass === false) {
+                  passed = false;
+                }
 
-              case 18:
+              case 20:
                 _iteratorNormalCompletion = true;
-                _context2.next = 12;
-                break;
-
-              case 21:
-                _context2.next = 27;
+                _context2.next = 13;
                 break;
 
               case 23:
-                _context2.prev = 23;
-                _context2.t0 = _context2['catch'](10);
+                _context2.next = 29;
+                break;
+
+              case 25:
+                _context2.prev = 25;
+                _context2.t0 = _context2['catch'](11);
                 _didIteratorError = true;
                 _iteratorError = _context2.t0;
 
-              case 27:
-                _context2.prev = 27;
-                _context2.prev = 28;
+              case 29:
+                _context2.prev = 29;
+                _context2.prev = 30;
 
                 if (!_iteratorNormalCompletion && _iterator.return) {
                   _iterator.return();
                 }
 
-              case 30:
-                _context2.prev = 30;
+              case 32:
+                _context2.prev = 32;
 
                 if (!_didIteratorError) {
-                  _context2.next = 33;
+                  _context2.next = 35;
                   break;
                 }
 
                 throw _iteratorError;
 
-              case 33:
-                return _context2.finish(30);
-
-              case 34:
-                return _context2.finish(27);
-
               case 35:
+                return _context2.finish(32);
+
+              case 36:
+                return _context2.finish(29);
+
+              case 37:
                 this.emit(_events3.default.END);
-                _context2.next = 39;
+                _context2.next = 41;
                 break;
 
-              case 38:
-                results.pass = false;
+              case 40:
+                passed = false;
 
-              case 39:
+              case 41:
+                results.pass = passed;
                 return _context2.abrupt('return', results);
 
-              case 40:
+              case 43:
               case 'end':
                 return _context2.stop();
             }
           }
-        }, _callee2, this, [[10, 23, 27, 35], [28,, 30, 34]]);
+        }, _callee2, this, [[11, 25, 29, 37], [30,, 32, 36]]);
       }));
 
       function startExecutionIfValid(_x2) {
@@ -220,84 +229,89 @@ var Runner = function (_EventEmitter) {
     key: 'executeSuite',
     value: function () {
       var _ref3 = _asyncToGenerator(regeneratorRuntime.mark(function _callee3(suite) {
-        var results, _iteratorNormalCompletion2, _didIteratorError2, _iteratorError2, _iterator2, _step2, test, result;
+        var suitePassed, results, _iteratorNormalCompletion2, _didIteratorError2, _iteratorError2, _iterator2, _step2, test, result;
 
         return regeneratorRuntime.wrap(function _callee3$(_context3) {
           while (1) {
             switch (_context3.prev = _context3.next) {
               case 0:
                 this.emit(_events3.default.SUITE_START, suite);
-                results = {};
+                suitePassed = true;
+                results = { tests: {} };
                 _iteratorNormalCompletion2 = true;
                 _didIteratorError2 = false;
                 _iteratorError2 = undefined;
-                _context3.prev = 5;
+                _context3.prev = 6;
                 _iterator2 = suite.tests[Symbol.iterator]();
 
-              case 7:
+              case 8:
                 if (_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done) {
-                  _context3.next = 16;
+                  _context3.next = 18;
                   break;
                 }
 
                 test = _step2.value;
-                _context3.next = 11;
-                return this.executeTest(test, results);
+                _context3.next = 12;
+                return this.executeTest(test, results.tests);
 
-              case 11:
+              case 12:
                 result = _context3.sent;
 
-                results[result.test.id] = result;
+                results.tests[test.id] = result;
+                if (result.pass === false) {
+                  suitePassed = false;
+                }
 
-              case 13:
+              case 15:
                 _iteratorNormalCompletion2 = true;
-                _context3.next = 7;
-                break;
-
-              case 16:
-                _context3.next = 22;
+                _context3.next = 8;
                 break;
 
               case 18:
-                _context3.prev = 18;
-                _context3.t0 = _context3['catch'](5);
+                _context3.next = 24;
+                break;
+
+              case 20:
+                _context3.prev = 20;
+                _context3.t0 = _context3['catch'](6);
                 _didIteratorError2 = true;
                 _iteratorError2 = _context3.t0;
 
-              case 22:
-                _context3.prev = 22;
-                _context3.prev = 23;
+              case 24:
+                _context3.prev = 24;
+                _context3.prev = 25;
 
                 if (!_iteratorNormalCompletion2 && _iterator2.return) {
                   _iterator2.return();
                 }
 
-              case 25:
-                _context3.prev = 25;
+              case 27:
+                _context3.prev = 27;
 
                 if (!_didIteratorError2) {
-                  _context3.next = 28;
+                  _context3.next = 30;
                   break;
                 }
 
                 throw _iteratorError2;
 
-              case 28:
-                return _context3.finish(25);
-
-              case 29:
-                return _context3.finish(22);
-
               case 30:
+                return _context3.finish(27);
+
+              case 31:
+                return _context3.finish(24);
+
+              case 32:
+                results.pass = suitePassed;
                 this.emit(_events3.default.SUITE_END, suite);
                 return _context3.abrupt('return', results);
 
-              case 32:
+              case 35:
               case 'end':
                 return _context3.stop();
             }
           }
-        }, _callee3, this, [[5, 18, 22, 30], [23,, 25, 29]]);
+        }, _callee3, this, [[6, 20, 24, 32], [25,, 27, 31]]);
       }));
 
       function executeSuite(_x3) {
@@ -312,14 +326,14 @@ var Runner = function (_EventEmitter) {
       var _ref4 = _asyncToGenerator(regeneratorRuntime.mark(function _callee4(test, resultset) {
         var _this2 = this;
 
-        var dependencies, result, testPassed, err, data, httpRequest, stat, response, assertObject;
+        var dependencies, result, testPassed, err, data, httpRequest, formattedResponse, response, assertObject;
         return regeneratorRuntime.wrap(function _callee4$(_context4) {
           while (1) {
             switch (_context4.prev = _context4.next) {
               case 0:
                 this.emit(_events3.default.SUITE_TEST_START, test);
                 dependencies = Runner.extractDependencies(test, resultset);
-                result = { test: test };
+                result = {};
                 testPassed = false;
 
                 if (!Runner.dependenciesHaveFailed(dependencies)) {
@@ -338,7 +352,7 @@ var Runner = function (_EventEmitter) {
                 httpRequest = new _http.HttpRequest(test.request, data, this.config);
 
                 result.trace = httpRequest.trace;
-                stat = void 0;
+                formattedResponse = void 0;
                 _context4.prev = 13;
                 _context4.next = 16;
                 return (0, _http.makeRequest)(httpRequest);
@@ -346,10 +360,10 @@ var Runner = function (_EventEmitter) {
               case 16:
                 response = _context4.sent;
 
-                stat = (0, _http.httpStat)(response);
+                formattedResponse = (0, _http.formatResponse)(response);
                 testPassed = false;
-                if (stat) {
-                  assertObject = new _assert2.default(stat, test.assertions, data, this.config);
+                if (formattedResponse) {
+                  assertObject = new _assert2.default(formattedResponse, test.assertions, data, this.config);
 
                   testPassed = assertObject.assert(function (err) {
                     _this2.emit(_events3.default.SUITE_TEST_FAIL, test, err);
@@ -359,7 +373,7 @@ var Runner = function (_EventEmitter) {
                   }
                 }
                 this.emit(_events3.default.SUITE_TEST_END, test);
-                result.stat = stat;
+                result.response = formattedResponse;
                 _context4.next = 27;
                 break;
 
@@ -409,7 +423,7 @@ var Runner = function (_EventEmitter) {
           for (var _iterator3 = test.requires[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
             var id = _step3.value;
 
-            data[id] = _extends({}, results[id].stat, {
+            data[id] = _extends({}, results[id].response, {
               pass: results[id].pass
             });
           }

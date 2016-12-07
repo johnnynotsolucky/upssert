@@ -8,7 +8,7 @@
     "build": "gulp",
     "test": "mocha",
     "watch": "gulp watch",
-    "lint": "eslint --format 'node_modules/eslint-friendly-formatter' src,test"
+    "lint": "eslint --format 'node_modules/eslint-friendly-formatter' src test"
   },
   "repository": {
     "type": "git",

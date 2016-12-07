@@ -21,7 +21,8 @@ describe('Runner', () => {
       .reply(200, reply);
     runner.run([definition])
       .then((results) => {
-        assert.strictEqual(results[0].test1.pass, true);
+        const test1 = results[0].tests.test1;
+        assert.strictEqual(test1.pass, true);
         done();
       }).catch(done);
   });
@@ -34,7 +35,8 @@ describe('Runner', () => {
       .reply(404, reply);
     runner.run([definition])
       .then((results) => {
-        assert.strictEqual(results[0].test1.pass, false);
+        const test1 = results[0].tests.test1;
+        assert.strictEqual(test1.pass, false);
         done();
       }).catch(done);
   });
@@ -58,8 +60,10 @@ describe('Runner', () => {
       .reply(200, replyB);
     runner.run([definition])
       .then((results) => {
-        assert.strictEqual(results[0].test1.pass, true);
-        assert.strictEqual(results[0].test2.pass, true);
+        const test1 = results[0].tests.test1;
+        const test2 = results[0].tests.test2;
+        assert.strictEqual(test1.pass, true);
+        assert.strictEqual(test2.pass, true);
         done();
       }).catch(done);
   });
@@ -75,8 +79,10 @@ describe('Runner', () => {
       .reply(200, replyB);
     runner.run([definition])
       .then((results) => {
-        assert.strictEqual(results[0].test1.pass, false);
-        assert.strictEqual(results[0].test2.pass, false);
+        const test1 = results[0].tests.test1;
+        const test2 = results[0].tests.test2;
+        assert.strictEqual(test1.pass, false);
+        assert.strictEqual(test2.pass, false);
         done();
       }).catch(done);
   });
