@@ -8,6 +8,10 @@ var _camelcase = require('camelcase');
 
 var _camelcase2 = _interopRequireDefault(_camelcase);
 
+var _contentType = require('content-type');
+
+var _contentType2 = _interopRequireDefault(_contentType);
+
 var _factory = require('../parser/factory');
 
 var _factory2 = _interopRequireDefault(_factory);
@@ -76,21 +80,23 @@ var populateHeaders = function populateHeaders(responseHeaders) {
 };
 
 var getContentPropertiesIfApplicable = function getContentPropertiesIfApplicable(headers) {
-  var contentType = '';
+  var result = {
+    type: '',
+    charset: 'utf-8',
+    contentLength: 0
+  };
   if (headers.contentType) {
-    contentType = headers.contentType;
+    var parsed = _contentType2.default.parse(headers.contentType);
+    result.type = parsed.type || '';
+    result.charset = parsed.parameters.charset || 'utf-8';
   }
-  var contentLength = 0;
   if (headers.contentLength) {
     var value = parseInt(headers.contentLength, 10);
     if (!isNaN(value)) {
-      contentLength = value;
+      result.contentLength = value;
     }
   }
-  return {
-    contentType: contentType,
-    contentLength: contentLength
-  };
+  return result;
 };
 
 exports.default = function (result) {
@@ -99,15 +105,15 @@ exports.default = function (result) {
   var timing = calculateResponseTimesByProtocol(protocol, result.time);
   var headers = populateHeaders(result.response.headers);
   var contentProperties = getContentPropertiesIfApplicable(headers);
-  var contentType = contentProperties.contentType,
+  var type = contentProperties.type,
       contentLength = contentProperties.contentLength;
 
-  var parser = (0, _factory2.default)(contentType);
+  var parser = (0, _factory2.default)(type);
   var body = parser(result.response.body);
 
   var transposed = {
     statusCode: statusCode,
-    contentType: contentType,
+    contentType: type,
     contentLength: contentLength,
     timing: timing,
     headers: headers,

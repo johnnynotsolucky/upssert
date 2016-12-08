@@ -5,7 +5,7 @@
 	"response": {
 		"statusCode": 200,
 		"headers": {
-			"Content-Type": "application/json",
+			"Content-Type": "application/json; charset=UTF-8",
 			"Content-Length": "100",
 			"X-Foo-Bar": "foobar"
 		},

@@ -1,4 +1,5 @@
 import camelcase from 'camelcase';
+import contentType from 'content-type';
 import parserFactory from '../parser/factory';
 
 const getUrlProtocol = (url) => {
@@ -63,21 +64,23 @@ const populateHeaders = (responseHeaders) => {
 };
 
 const getContentPropertiesIfApplicable = (headers) => {
-  let contentType = '';
+  const result = {
+    type: '',
+    charset: 'utf-8',
+    contentLength: 0,
+  };
   if (headers.contentType) {
-    contentType = headers.contentType;
+    const parsed = contentType.parse(headers.contentType);
+    result.type = parsed.type || '';
+    result.charset = parsed.parameters.charset || 'utf-8';
   }
-  let contentLength = 0;
   if (headers.contentLength) {
     const value = parseInt(headers.contentLength, 10);
     if (!isNaN(value)) {
-      contentLength = value;
+      result.contentLength = value;
     }
   }
-  return {
-    contentType,
-    contentLength,
-  };
+  return result;
 };
 
 export default (result) => {
@@ -86,13 +89,13 @@ export default (result) => {
   const timing = calculateResponseTimesByProtocol(protocol, result.time);
   const headers = populateHeaders(result.response.headers);
   const contentProperties = getContentPropertiesIfApplicable(headers);
-  const { contentType, contentLength } = contentProperties;
-  const parser = parserFactory(contentType);
+  const { type, contentLength } = contentProperties;
+  const parser = parserFactory(type);
   const body = parser(result.response.body);
 
   const transposed = {
     statusCode,
-    contentType,
+    contentType: type,
     contentLength,
     timing,
     headers,
