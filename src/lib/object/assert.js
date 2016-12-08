@@ -46,7 +46,7 @@ class AssertObject {
   }
 
   assertValue(value, assertAgainst, assertionMethodName) {
-    const expectedValue = assertAgainst[assertionMethodName];
+    let expectedValue = assertAgainst[assertionMethodName];
     const assertionMethod = camelcase(assertionMethodName);
     if (!assert[assertionMethod]) {
       let message;
@@ -57,8 +57,17 @@ class AssertObject {
       }
       throw new Error(message);
     }
+    expectedValue = this.renderValue(expectedValue);
+    expectedValue = this.createRegExpIfRequired(assertionMethod, expectedValue);
+    assert[assertionMethod](value, expectedValue);
+  }
 
-    assert[assertionMethod](value, this.renderValue(expectedValue));
+  createRegExpIfRequired(assertionMethod, regexStr) {
+    let result = regexStr;
+    if (assertionMethod === 'match' || assertionMethod === 'notMatch') {
+      result = new RegExp(regexStr);
+    }
+    return result;
   }
 
   renderValue(value) {

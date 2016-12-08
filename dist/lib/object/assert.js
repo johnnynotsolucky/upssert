@@ -90,8 +90,18 @@ var AssertObject = function () {
         }
         throw new Error(message);
       }
-
-      _chai.assert[assertionMethod](value, this.renderValue(expectedValue));
+      expectedValue = this.renderValue(expectedValue);
+      expectedValue = this.createRegExpIfRequired(assertionMethod, expectedValue);
+      _chai.assert[assertionMethod](value, expectedValue);
+    }
+  }, {
+    key: 'createRegExpIfRequired',
+    value: function createRegExpIfRequired(assertionMethod, regexStr) {
+      var result = regexStr;
+      if (assertionMethod === 'match' || assertionMethod === 'notMatch') {
+        result = new RegExp(regexStr);
+      }
+      return result;
     }
   }, {
     key: 'renderValue',

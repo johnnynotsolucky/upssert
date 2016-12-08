@@ -33,10 +33,10 @@ describe('Test', () => {
     assert.equal(test.assertions.length, 2);
     const fooAssertion = test.assertions[0];
     assert.isOk(fooAssertion.foo);
-    assert.equal(fooAssertion.foo.equal, 'bar');
+    assert.equal(fooAssertion.foo.match, '^bar$');
     const barAssertion = test.assertions[1];
     assert.isOk(barAssertion.bar);
-    assert.equal(barAssertion.bar.equal, 'foo');
+    assert.equal(barAssertion.bar.match, '^foo$');
   });
 
   it('applies defined assertions for a property', () => {

@@ -23,10 +23,18 @@ class Test {
     if (typeof assertion === 'string') {
       this.assertions.push({
         [key]: {
-          equal: assertion,
+          match: this.convertToRegexString(assertion),
         },
       });
     }
+  }
+
+  convertToRegexString(assertion) {
+    let converted = assertion;
+    if (!converted.match(/(^\^)|(\$$)/)) {
+      converted = `^${converted}$`;
+    }
+    return converted;
   }
 
   addAssertionsIfObject(assertion, key) {

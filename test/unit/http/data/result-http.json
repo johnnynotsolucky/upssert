@@ -7,7 +7,10 @@
 		"headers": {
 			"Content-Type": "application/json; charset=UTF-8",
 			"Content-Length": "100",
-			"X-Foo-Bar": "foobar"
+			"X-Foo-Bar": {
+				"match": "foobar",
+				"not-match": "bar"
+			}
 		},
 		"body": "{\"foo\": \"bar\"}"
 	},

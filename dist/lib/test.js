@@ -66,9 +66,18 @@ var Test = function () {
     value: function addEqualAssertionIfString(assertion, key) {
       if (typeof assertion === 'string') {
         this.assertions.push(_defineProperty({}, key, {
-          equal: assertion
+          match: this.convertToRegexString(assertion)
         }));
       }
+    }
+  }, {
+    key: 'convertToRegexString',
+    value: function convertToRegexString(assertion) {
+      var converted = assertion;
+      if (!converted.match(/(^\^)|(\$$)/)) {
+        converted = '^' + converted + '$';
+      }
+      return converted;
     }
   }, {
     key: 'addAssertionsIfObject',

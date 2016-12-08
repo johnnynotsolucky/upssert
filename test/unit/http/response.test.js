@@ -25,7 +25,8 @@ describe('formatResponse', () => {
     assert.isOk(headers);
     assert.strictEqual(headers.contentType, 'application/json; charset=UTF-8');
     assert.strictEqual(headers.contentLength, '100');
-    assert.strictEqual(headers.xFooBar, 'foobar');
+    assert.strictEqual(headers.xFooBar.match, 'foobar');
+    assert.strictEqual(headers.xFooBar['not-match'], 'bar');
     const body = response.body;
     assert.isOk(body);
     assert.strictEqual(body.foo, 'bar');
@@ -78,7 +79,7 @@ describe('formatResponse', () => {
     assert.strictEqual(timing.total, 420);
     const headers = response.headers;
     assert.isOk(headers);
-    assert.strictEqual(headers.contentType, 'application/json; charset=UTF-8');
+    assert.strictEqual(headers.contentType, 'application/json');
     assert.strictEqual(headers.contentLength, '100');
     assert.strictEqual(headers.xFooBar, 'foobar');
     const body = response.body;
