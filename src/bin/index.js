@@ -3,7 +3,6 @@
 import 'babel-polyfill';
 import readJsonFile from '../lib/read-json-file';
 import optParser from './option-parser';
-import events from '../data/events.json';
 import pack from '../package.json'; // eslint-disable-line import/no-unresolved
 import Config from '../lib/config';
 import Upssert, { TapReporter, ConsoleReporter, LogWriter } from '../';
@@ -78,5 +77,11 @@ const upssert = new Upssert({
   reporter,
   config: new Config(),
 });
-upssert.on(events.FAIL, () => { process.exitCode = 1; });
-upssert.execute();
+
+const execute = async () => {
+  const results = await upssert.execute();
+  if (!results.pass) {
+    process.exitCode = 1;
+  }
+};
+execute();

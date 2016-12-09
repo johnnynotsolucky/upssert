@@ -11,10 +11,6 @@ var _optionParser = require('./option-parser');
 
 var _optionParser2 = _interopRequireDefault(_optionParser);
 
-var _events = require('../data/events.json');
-
-var _events2 = _interopRequireDefault(_events);
-
 var _package = require('../package.json');
 
 var _package2 = _interopRequireDefault(_package);
@@ -29,12 +25,14 @@ var _2 = _interopRequireDefault(_);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+/* eslint-disable no-console*/
 // eslint-disable-line import/no-unresolved
+
+
 var optionDefinitions = {
   boolean: ['help', 'h']
 };
-/* eslint-disable no-console*/
-
 
 var minimist = require('minimist');
 
@@ -87,7 +85,34 @@ var upssert = new _2.default({
   reporter: reporter,
   config: new _config2.default()
 });
-upssert.on(_events2.default.FAIL, function () {
-  process.exitCode = 1;
-});
-upssert.execute();
+
+var execute = function () {
+  var _ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee() {
+    var results;
+    return regeneratorRuntime.wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            _context.next = 2;
+            return upssert.execute();
+
+          case 2:
+            results = _context.sent;
+
+            if (!results.pass) {
+              process.exitCode = 1;
+            }
+
+          case 4:
+          case 'end':
+            return _context.stop();
+        }
+      }
+    }, _callee, undefined);
+  }));
+
+  return function execute() {
+    return _ref.apply(this, arguments);
+  };
+}();
+execute();
