@@ -47,12 +47,12 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var Runner = function (_EventEmitter) {
   _inherits(Runner, _EventEmitter);
 
-  function Runner(options) {
+  function Runner(config) {
     _classCallCheck(this, Runner);
 
     var _this = _possibleConstructorReturn(this, (Runner.__proto__ || Object.getPrototypeOf(Runner)).call(this));
 
-    _this.config = options.config;
+    _this.config = config;
     _this.suiteCount = 0;
     _this.testCount = 0;
     _this.assertionCount = 0;
@@ -336,7 +336,7 @@ var Runner = function (_EventEmitter) {
       var _ref4 = _asyncToGenerator(regeneratorRuntime.mark(function _callee4(test, resultset) {
         var _this2 = this;
 
-        var dependencies, result, testPassed, err, data, httpRequest, formattedResponse, response, assertObject;
+        var dependencies, result, testPassed, err, globals, data, httpRequest, formattedResponse, response, assertObject;
         return regeneratorRuntime.wrap(function _callee4$(_context4) {
           while (1) {
             switch (_context4.prev = _context4.next) {
@@ -354,20 +354,21 @@ var Runner = function (_EventEmitter) {
                 err = new Error('Failed dependencies');
 
                 this.emit(_events3.default.SUITE_TEST_FAIL, test, err);
-                _context4.next = 27;
+                _context4.next = 28;
                 break;
 
               case 9:
-                data = _extends({}, dependencies, _globals2.default);
+                globals = (0, _globals2.default)(this.config);
+                data = _extends({}, dependencies, globals);
                 httpRequest = new _http.HttpRequest(test.request, data, this.config);
 
                 result.trace = httpRequest.trace;
                 formattedResponse = void 0;
-                _context4.prev = 13;
-                _context4.next = 16;
+                _context4.prev = 14;
+                _context4.next = 17;
                 return (0, _http.makeRequest)(httpRequest);
 
-              case 16:
+              case 17:
                 response = _context4.sent;
 
                 formattedResponse = (0, _http.formatResponse)(response);
@@ -384,25 +385,25 @@ var Runner = function (_EventEmitter) {
                 }
                 this.emit(_events3.default.SUITE_TEST_END, test);
                 result.response = formattedResponse;
-                _context4.next = 27;
+                _context4.next = 28;
                 break;
 
-              case 24:
-                _context4.prev = 24;
-                _context4.t0 = _context4['catch'](13);
+              case 25:
+                _context4.prev = 25;
+                _context4.t0 = _context4['catch'](14);
 
                 this.emit(_events3.default.SUITE_TEST_FAIL, test, _context4.t0);
 
-              case 27:
+              case 28:
                 result.pass = testPassed;
                 return _context4.abrupt('return', result);
 
-              case 29:
+              case 30:
               case 'end':
                 return _context4.stop();
             }
           }
-        }, _callee4, this, [[13, 24]]);
+        }, _callee4, this, [[14, 25]]);
       }));
 
       function executeTest(_x4, _x5) {

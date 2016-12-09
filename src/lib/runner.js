@@ -3,13 +3,13 @@ import { HttpRequest, makeRequest, formatResponse } from './http';
 import AssertObject from './object/assert';
 import Suite from './suite';
 import events from '../data/events.json';
-import globals from './globals';
+import getGlobals from './globals';
 import validateSuite from './validate-suite';
 
 class Runner extends EventEmitter {
-  constructor(options) {
+  constructor(config) {
     super();
-    this.config = options.config;
+    this.config = config;
     this.suiteCount = 0;
     this.testCount = 0;
     this.assertionCount = 0;
@@ -101,6 +101,7 @@ class Runner extends EventEmitter {
       const err = new Error('Failed dependencies');
       this.emit(events.SUITE_TEST_FAIL, test, err);
     } else {
+      const globals = getGlobals(this.config);
       const data = { ...dependencies, ...globals };
       const httpRequest = new HttpRequest(test.request, data, this.config);
       result.trace = httpRequest.trace;
