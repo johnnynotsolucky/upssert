@@ -4,6 +4,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _chai = require('chai');
@@ -65,11 +67,12 @@ var AssertObject = function () {
       } else {
         (function () {
           var assertAgainst = propertyToAssert[propertyNameToAssert];
-          Object.keys(propertyToAssert[propertyNameToAssert]).forEach(function (assertionMethod) {
+          Object.keys(assertAgainst).forEach(function (assertionMethod) {
             try {
               _this2.assertValue(objectValue, assertAgainst, assertionMethod);
             } catch (err) {
-              err.message = err.message + ' (' + propertyNameToAssert + ')';
+              var params = [objectValue, assertAgainst[assertionMethod], propertyNameToAssert, err];
+              err.message = _this2.getAssertionMessage.apply(_this2, params);
               throw err;
             }
           });
@@ -79,7 +82,7 @@ var AssertObject = function () {
   }, {
     key: 'assertValue',
     value: function assertValue(value, assertAgainst, assertionMethodName) {
-      var expectedValue = assertAgainst[assertionMethodName];
+      var expectedValue = this.getExpectedValue(assertAgainst[assertionMethodName]);
       var assertionMethod = (0, _camelcase2.default)(assertionMethodName);
       if (!_chai.assert[assertionMethod]) {
         var message = void 0;
@@ -93,6 +96,33 @@ var AssertObject = function () {
       expectedValue = this.renderValue(expectedValue);
       expectedValue = this.createRegExpIfRequired(assertionMethod, expectedValue);
       _chai.assert[assertionMethod](value, expectedValue);
+    }
+  }, {
+    key: 'getExpectedValue',
+    value: function getExpectedValue(val) {
+      var result = void 0;
+      if ((typeof val === 'undefined' ? 'undefined' : _typeof(val)) === 'object') {
+        result = val.value;
+      } else {
+        result = val;
+      }
+      return result;
+    }
+  }, {
+    key: 'getAssertionMessage',
+    value: function getAssertionMessage(actual, expect, propertyName, err) {
+      var result = void 0;
+      if ((typeof expect === 'undefined' ? 'undefined' : _typeof(expect)) === 'object') {
+        var model = {
+          actual: actual,
+          expected: expect.value
+        };
+        result = (0, _render2.default)(expect.message, model);
+      } else {
+        result = err.message;
+      }
+      result = result + ' (' + propertyName + ')';
+      return result;
     }
   }, {
     key: 'createRegExpIfRequired',

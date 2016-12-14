@@ -73,7 +73,10 @@
           "is-below": 100
         },
         "timing.total": {
-          "is-below": 500
+          "is-below": {
+            "value": 500,
+            "message": "Total timing should be less than {{expected}}, was {{actual}}"
+          }
         },
         "body.form[test1-data]": "bar",
         "body.form[test2-data]": "bar"

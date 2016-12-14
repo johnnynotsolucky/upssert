@@ -16,7 +16,9 @@
         "body.bar": "foobar",
         "body.xyz": {
           "is-at-least": "{{test1.body.min}}",
-          "is-at-most": "{{test1.body.max}}"
+          "is-at-most": {
+            "value": "{{test1.body.max}}"
+          }
         }
       }
     }

@@ -33,12 +33,18 @@ class AssertObject {
       throw new Error(`${propertyNameToAssert} is not valid`);
     } else {
       const assertAgainst = propertyToAssert[propertyNameToAssert];
-      Object.keys(propertyToAssert[propertyNameToAssert])
+      Object.keys(assertAgainst)
         .forEach((assertionMethod) => {
           try {
             this.assertValue(objectValue, assertAgainst, assertionMethod);
           } catch (err) {
-            err.message = `${err.message} (${propertyNameToAssert})`;
+            const params = [
+              objectValue,
+              assertAgainst[assertionMethod],
+              propertyNameToAssert,
+              err,
+            ];
+            err.message = this.getAssertionMessage(...params);
             throw err;
           }
         });
@@ -46,7 +52,7 @@ class AssertObject {
   }
 
   assertValue(value, assertAgainst, assertionMethodName) {
-    let expectedValue = assertAgainst[assertionMethodName];
+    let expectedValue = this.getExpectedValue(assertAgainst[assertionMethodName]);
     const assertionMethod = camelcase(assertionMethodName);
     if (!assert[assertionMethod]) {
       let message;
@@ -60,6 +66,31 @@ class AssertObject {
     expectedValue = this.renderValue(expectedValue);
     expectedValue = this.createRegExpIfRequired(assertionMethod, expectedValue);
     assert[assertionMethod](value, expectedValue);
+  }
+
+  getExpectedValue(val) {
+    let result;
+    if (typeof val === 'object') {
+      result = val.value;
+    } else {
+      result = val;
+    }
+    return result;
+  }
+
+  getAssertionMessage(actual, expect, propertyName, err) {
+    let result;
+    if (typeof expect === 'object') {
+      const model = {
+        actual,
+        expected: expect.value,
+      };
+      result = render(expect.message, model);
+    } else {
+      result = err.message;
+    }
+    result = `${result} (${propertyName})`;
+    return result;
   }
 
   createRegExpIfRequired(assertionMethod, regexStr) {

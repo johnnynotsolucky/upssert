@@ -91,4 +91,20 @@ describe('AssertObject', () => {
     const result = new AssertObject(object, assertions).assert();
     assert.strictEqual(result, true);
   });
+
+  it('should fail an assertion of a property in an object', () => {
+    const object = { foo: 'bar' };
+    const assertion = {
+      foo: {
+        equal: {
+          value: 1,
+          message: 'foo should equal {{expected}}, got "{{actual}}"',
+        },
+      },
+    };
+    const result = new AssertObject(object, [assertion]).assert((err) => {
+      assert.strictEqual(err.message, 'foo should equal 1, got "bar" (foo)');
+    });
+    assert.strictEqual(result, false);
+  });
 });
