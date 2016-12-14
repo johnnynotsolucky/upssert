@@ -4,6 +4,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _render = require('../util/render');
@@ -60,17 +62,36 @@ var HttpRequest = function () {
   }, {
     key: 'renderFormData',
     value: function renderFormData(request) {
-      var _this = this;
-
       var form = void 0;
       if (request.form) {
         form = [];
-        request.form.forEach(function (item) {
-          var renderedKey = (0, _render2.default)(item.key, _this.model, _this.unescaped);
-          var renderedValue = (0, _render2.default)(item.value, _this.model, _this.unescaped);
-          var formItem = renderedKey + '=' + renderedValue;
-          form.push(formItem);
-        });
+        var _iteratorNormalCompletion = true;
+        var _didIteratorError = false;
+        var _iteratorError = undefined;
+
+        try {
+          for (var _iterator = request.form[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            var item = _step.value;
+
+            var renderedKey = (0, _render2.default)(item.key, this.model, this.unescaped);
+            var renderedValue = (0, _render2.default)(item.value, this.model, this.unescaped);
+            var formItem = renderedKey + '=' + renderedValue;
+            form.push(formItem);
+          }
+        } catch (err) {
+          _didIteratorError = true;
+          _iteratorError = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion && _iterator.return) {
+              _iterator.return();
+            }
+          } finally {
+            if (_didIteratorError) {
+              throw _iteratorError;
+            }
+          }
+        }
       }
       return form;
     }
@@ -79,20 +100,59 @@ var HttpRequest = function () {
     value: function renderData(request) {
       var data = void 0;
       if (request.data) {
-        data = (0, _render2.default)(request.data, this.model, this.unescaped);
+        if (typeof request.data === 'string') {
+          data = request.data;
+        } else if (_typeof(request.data) === 'object') {
+          data = this.renderDataFromObject(request.data);
+        }
+        data = (0, _render2.default)(data, this.model, this.unescaped);
       }
       return data;
     }
   }, {
+    key: 'renderDataFromObject',
+    value: function renderDataFromObject(obj) {
+      var rendered = '';
+      var _iteratorNormalCompletion2 = true;
+      var _didIteratorError2 = false;
+      var _iteratorError2 = undefined;
+
+      try {
+        for (var _iterator2 = Object.keys(obj)[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+          var key = _step2.value;
+
+          if (obj[key] && typeof obj[key] === 'string') {
+            var part = key + '=' + obj[key];
+            rendered = rendered + '&' + part;
+          }
+        }
+      } catch (err) {
+        _didIteratorError2 = true;
+        _iteratorError2 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion2 && _iterator2.return) {
+            _iterator2.return();
+          }
+        } finally {
+          if (_didIteratorError2) {
+            throw _iteratorError2;
+          }
+        }
+      }
+
+      return rendered.substr(1);
+    }
+  }, {
     key: 'renderRequestHeaders',
     value: function renderRequestHeaders(request) {
-      var _this2 = this;
+      var _this = this;
 
       var headers = [];
       if (request.headers) {
         Object.keys(request.headers).forEach(function (key) {
           var value = request.headers[key];
-          var concatenated = key + ': ' + (0, _render2.default)(value, _this2.model, _this2.unescaped);
+          var concatenated = key + ': ' + (0, _render2.default)(value, _this.model, _this.unescaped);
           headers.push(concatenated);
         });
       }

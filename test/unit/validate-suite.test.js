@@ -47,4 +47,21 @@ describe('validateSuite', () => {
     assert.isOk(result.message);
     assert.equal(result.message, 'Missing required property: request');
   });
+
+  it('does not allow array for request data property', () => {
+    const suite = {
+      name: 'foobar',
+      tests: [{
+        name: 'foobar',
+        request: {
+          url: '',
+          data: [],
+        },
+      }],
+    };
+    const result = validateSuite(suite);
+    assert.isObject(result, true);
+    assert.isOk(result.message);
+    assert.equal(result.message, 'Invalid type: array (expected object/string)');
+  });
 });

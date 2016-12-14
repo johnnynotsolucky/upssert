@@ -39,12 +39,12 @@ class HttpRequest {
     let form;
     if (request.form) {
       form = [];
-      request.form.forEach((item) => {
+      for (const item of request.form) {
         const renderedKey = render(item.key, this.model, this.unescaped);
         const renderedValue = render(item.value, this.model, this.unescaped);
         const formItem = `${renderedKey}=${renderedValue}`;
         form.push(formItem);
-      });
+      }
     }
     return form;
   }
@@ -52,9 +52,25 @@ class HttpRequest {
   renderData(request) {
     let data;
     if (request.data) {
-      data = render(request.data, this.model, this.unescaped);
+      if (typeof request.data === 'string') {
+        data = request.data;
+      } else if (typeof request.data === 'object') {
+        data = this.renderDataFromObject(request.data);
+      }
+      data = render(data, this.model, this.unescaped);
     }
     return data;
+  }
+
+  renderDataFromObject(obj) {
+    let rendered = '';
+    for (const key of Object.keys(obj)) {
+      if (obj[key] && typeof obj[key] === 'string') {
+        const part = `${key}=${obj[key]}`;
+        rendered = `${rendered}&${part}`;
+      }
+    }
+    return rendered.substr(1);
   }
 
   renderRequestHeaders(request) {

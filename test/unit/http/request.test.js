@@ -75,4 +75,19 @@ describe('HttpRequest', () => {
     assert.strictEqual(request.form[0], 'foo=foobar');
     assert.strictEqual(request.form[1], 'bar=bar');
   });
+
+  it('combines form data passed through as an object', () => {
+    const options = {
+      data: {
+        foo: '{{foo}}',
+        bar: '{{bar}}',
+      },
+    };
+    const model = {
+      foo: 'bar',
+      bar: 'foo',
+    };
+    const request = new HttpRequest(options, model);
+    assert.strictEqual(request.data, 'foo=bar&bar=foo');
+  });
 });

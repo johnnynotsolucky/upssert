@@ -20,7 +20,7 @@
 			"type": "object"
 		},
 		"data": {
-			"type": ["string"]
+			"type": ["object", "string"]
 		},
 		"form": {
 			"type": "array",
