@@ -37,7 +37,10 @@ class Runner extends EventEmitter {
         this.stopExecution = true;
         this.emit(events.FAIL, definition, validation);
         this.emit(events.SUITE_FAIL, definition, validation);
-        result = false;
+        const dataPath = validation.dataPath || '/';
+        result = {
+          fail: `[${dataPath}] ${validation.message}`,
+        };
       }
     }
     return result;
@@ -45,8 +48,12 @@ class Runner extends EventEmitter {
 
   async startExecutionIfValid(suites) {
     const results = { pass: true };
+    let failMessage;
     let passed = true;
-    if (suites !== false) {
+    if (suites.fail) {
+      passed = false;
+      failMessage = suites.fail;
+    } else {
       this.suiteCount = suites.length;
       this.emit(events.SUITE_COUNT, this.suiteCount);
       this.emit(events.TEST_COUNT, this.testCount);
@@ -60,10 +67,11 @@ class Runner extends EventEmitter {
         }
       }
       this.emit(events.END);
-    } else {
-      passed = false;
     }
     results.pass = passed;
+    if (!passed && failMessage) {
+      results.reason = failMessage;
+    }
     return results;
   }
 
@@ -96,9 +104,11 @@ class Runner extends EventEmitter {
     this.emit(events.SUITE_TEST_START, test);
     const dependencies = this.extractDependencies(test, resultset);
     const result = {};
+    let failMessage;
     let testPassed = false;
     if (this.dependenciesHaveFailed(dependencies)) {
       const err = new Error('Failed dependencies');
+      failMessage = err.message;
       this.emit(events.SUITE_TEST_FAIL, test, err);
     } else {
       const globals = getGlobals(this.config);
@@ -114,6 +124,7 @@ class Runner extends EventEmitter {
           const assertObject =
             new AssertObject(formattedResponse, test.assertions, data, this.config);
           testPassed = assertObject.assert((err) => {
+            failMessage = err.message;
             this.emit(events.SUITE_TEST_FAIL, test, err);
           });
           if (testPassed) {
@@ -123,10 +134,14 @@ class Runner extends EventEmitter {
         this.emit(events.SUITE_TEST_END, test);
         result.response = formattedResponse;
       } catch (err) {
+        failMessage = err.message;
         this.emit(events.SUITE_TEST_FAIL, test, err);
       }
     }
     result.pass = testPassed;
+    if (!testPassed) {
+      result.reason = failMessage;
+    }
     return result;
   }
 

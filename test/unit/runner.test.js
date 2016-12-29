@@ -23,6 +23,7 @@ describe('Runner', () => {
       .then((results) => {
         const test1 = results[0].tests.test1;
         assert.strictEqual(test1.pass, true);
+        assert.isNotOk(test1.reason);
         done();
       }).catch(done);
   });
@@ -37,6 +38,7 @@ describe('Runner', () => {
       .then((results) => {
         const test1 = results[0].tests.test1;
         assert.strictEqual(test1.pass, false);
+        assert.strictEqual(test1.reason, 'expected 404 to equal 200 (status-code)');
         done();
       }).catch(done);
   });
@@ -45,6 +47,7 @@ describe('Runner', () => {
     runner.run([{}])
       .then((results) => {
         assert.strictEqual(results.pass, false);
+        assert.strictEqual(results.reason, '[/] Missing required property: name');
         done();
       }).catch(done);
   });
@@ -63,7 +66,9 @@ describe('Runner', () => {
         const test1 = results[0].tests.test1;
         const test2 = results[0].tests.test2;
         assert.strictEqual(test1.pass, true);
+        assert.isNotOk(test1.reason);
         assert.strictEqual(test2.pass, true);
+        assert.isNotOk(test2.reason);
         done();
       }).catch(done);
   });
@@ -82,7 +87,9 @@ describe('Runner', () => {
         const test1 = results[0].tests.test1;
         const test2 = results[0].tests.test2;
         assert.strictEqual(test1.pass, false);
+        assert.strictEqual(test1.reason, 'expected 404 to be below 400 (statusCode)');
         assert.strictEqual(test2.pass, false);
+        assert.strictEqual(test2.reason, 'Failed dependencies');
         done();
       }).catch(done);
   });
