@@ -1,9 +1,7 @@
 import glob from 'glob';
 import fs from 'fs';
-import Config from '../lib/config';
 
-const opts = (argv) => {
-  const config = new Config();
+const opts = (argv, config) => {
   const help = argv.help || argv.h;
   const version = argv.version;
   const url = argv.url;

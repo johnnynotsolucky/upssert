@@ -44,7 +44,8 @@ try {
   process.exit(1);
 }
 
-var opts = (0, _optionParser2.default)(argv);
+var config = new _config2.default();
+var opts = (0, _optionParser2.default)(argv, config);
 
 var showHelp = function showHelp() {
   console.log('\n    ' + _package2.default.description + '\n\n    Usage: upssert [options...] [glob]\n\n    Default glob searches in tests/api/**/*.js\n\n    upssert -r tap --url https://httpbin.org/get\n    upssert tests/api/**/*.json\n\n    options:\n      --url           Ping supplied URL\n      --reporter, -r  Set test reporter (tap, console)\n      --help,     -h  Show help\n      --version\n  ');
@@ -83,7 +84,7 @@ reporter.setWriter(new _.LogWriter());
 var upssert = new _2.default({
   suites: data,
   reporter: reporter,
-  config: new _config2.default()
+  config: config
 });
 
 var execute = function () {

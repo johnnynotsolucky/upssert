@@ -21,7 +21,8 @@ try {
   process.exit(1);
 }
 
-const opts = optParser(argv);
+const config = new Config();
+const opts = optParser(argv, config);
 
 const showHelp = () => {
   console.log(`
@@ -75,7 +76,7 @@ reporter.setWriter(new LogWriter());
 const upssert = new Upssert({
   suites: data,
   reporter,
-  config: new Config(),
+  config,
 });
 
 const execute = async () => {

@@ -12,16 +12,11 @@ var _fs = require('fs');
 
 var _fs2 = _interopRequireDefault(_fs);
 
-var _config = require('../lib/config');
-
-var _config2 = _interopRequireDefault(_config);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
-var opts = function opts(argv) {
-  var config = new _config2.default();
+var opts = function opts(argv, config) {
   var help = argv.help || argv.h;
   var version = argv.version;
   var url = argv.url;
