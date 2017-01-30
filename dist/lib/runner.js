@@ -126,7 +126,9 @@ var Runner = function (_EventEmitter) {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
-                results = { pass: true };
+                results = {
+                  pass: true
+                };
                 failMessage = void 0;
                 passed = true;
 
@@ -255,7 +257,9 @@ var Runner = function (_EventEmitter) {
               case 0:
                 this.emit(_events3.default.SUITE_START, suite);
                 suitePassed = true;
-                results = { tests: {} };
+                results = {
+                  tests: {}
+                };
                 _iteratorNormalCompletion2 = true;
                 _didIteratorError2 = false;
                 _iteratorError2 = undefined;

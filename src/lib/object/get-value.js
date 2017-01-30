@@ -1,38 +1,38 @@
-import camelcase from 'camelcase';
-import falsy from 'falsy';
+import camelcase from 'camelcase'
+import falsy from 'falsy'
 
 const getValueFromBracketNotation = (object, property, bracketNotation) => {
-  const parentProperty = property.substr(0, property.match(/\[/).index);
-  let newObject = object[camelcase(parentProperty)] || object[parentProperty];
+  const parentProperty = property.substr(0, property.match(/\[/).index)
+  let newObject = object[camelcase(parentProperty)] || object[parentProperty]
   for (const part of bracketNotation) {
-    newObject = newObject[part.replace('[', '').replace(']', '')];
+    newObject = newObject[part.replace('[', '').replace(']', '')]
   }
-  return newObject;
-};
+  return newObject
+}
 
 const getObjectValue = (object, key) => {
   if (falsy(key)) {
-    return object;
+    return object
   }
   try {
-    let value = object;
-    const properties = key.split('.');
+    let value = object
+    const properties = key.split('.')
     for (const property of properties) {
-      const bracketNotation = property.match(/\[(.*?)]/g);
+      const bracketNotation = property.match(/\[(.*?)]/g)
       if (bracketNotation) {
-        value = getValueFromBracketNotation(value, property, bracketNotation);
+        value = getValueFromBracketNotation(value, property, bracketNotation)
       } else {
-        let tmp = value[camelcase(property)];
+        let tmp = value[camelcase(property)]
         if (tmp === undefined) {
-          tmp = value[property];
+          tmp = value[property]
         }
-        value = tmp;
+        value = tmp
       }
     }
-    return value;
+    return value
   } catch (err) {
-    return undefined;
+    return undefined
   }
-};
+}
 
-export default getObjectValue;
+export default getObjectValue

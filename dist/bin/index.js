@@ -7,9 +7,9 @@ var _readJsonFile = require('../lib/read-json-file');
 
 var _readJsonFile2 = _interopRequireDefault(_readJsonFile);
 
-var _optionParser = require('./option-parser');
+var _parseArgs = require('./parse-args');
 
-var _optionParser2 = _interopRequireDefault(_optionParser);
+var _parseArgs2 = _interopRequireDefault(_parseArgs);
 
 var _package = require('../package.json');
 
@@ -26,7 +26,7 @@ var _2 = _interopRequireDefault(_);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
-/* eslint-disable no-console*/
+/* eslint-disable no-console */
 // eslint-disable-line import/no-unresolved
 
 
@@ -45,7 +45,7 @@ try {
 }
 
 var config = new _config2.default();
-var opts = (0, _optionParser2.default)(argv, config);
+var opts = (0, _parseArgs2.default)(argv, config);
 
 var showHelp = function showHelp() {
   console.log('\n    ' + _package2.default.description + '\n\n    Usage: upssert [options...] [glob]\n\n    Default glob searches in tests/api/**/*.js\n\n    upssert -r tap --url https://httpbin.org/get\n    upssert tests/api/**/*.json\n\n    options:\n      --url           Ping supplied URL\n      --reporter, -r  Set test reporter (tap, console)\n      --help,     -h  Show help\n      --version\n  ');

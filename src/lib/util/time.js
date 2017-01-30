@@ -1,16 +1,16 @@
 export default (milliseconds) => {
-  const seconds = milliseconds / 1000;
-  const minutes = seconds / 60;
-  const hours = minutes / 60;
-  let result;
+  const seconds = milliseconds / 1000
+  const minutes = seconds / 60
+  const hours = minutes / 60
+  let result
   if (hours >= 1) {
-    result = `${hours.toFixed(3)}h`;
+    result = `${hours.toFixed(3)}h`
   } else if (minutes >= 1) {
-    result = `${minutes.toFixed(3)}m`;
+    result = `${minutes.toFixed(3)}m`
   } else if (seconds >= 1) {
-    result = `${seconds.toFixed(3)}s`;
+    result = `${seconds.toFixed(3)}s`
   } else {
-    result = `${milliseconds}ms`;
+    result = `${milliseconds}ms`
   }
-  return result;
-};
+  return result
+}

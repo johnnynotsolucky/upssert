@@ -1,13 +1,13 @@
-import fs from 'fs';
+import fs from 'fs'
 
 export default (file) => {
-  let result;
+  let result
   try {
-    const fileContents = fs.readFileSync(file);
-    const jsonContent = JSON.parse(fileContents);
-    result = jsonContent;
+    const fileContents = fs.readFileSync(file)
+    const jsonContent = JSON.parse(fileContents)
+    result = jsonContent
   } catch (err) {
-    result = false;
+    result = false
   }
-  return result;
-};
+  return result
+}

@@ -1,28 +1,28 @@
 #!/usr/bin/env node
-/* eslint-disable no-console*/
-import 'babel-polyfill';
-import readJsonFile from '../lib/read-json-file';
-import optParser from './option-parser';
-import pack from '../package.json'; // eslint-disable-line import/no-unresolved
-import Config from '../lib/config';
-import Upssert, { TapReporter, ConsoleReporter, LogWriter } from '../';
+/* eslint-disable no-console */
+import 'babel-polyfill'
+import readJsonFile from '../lib/read-json-file'
+import parseArgs from './parse-args'
+import pack from '../package.json' // eslint-disable-line import/no-unresolved
+import Config from '../lib/config'
+import Upssert, { TapReporter, ConsoleReporter, LogWriter } from '../'
 
 const optionDefinitions = {
-  boolean: ['help', 'h'],
-};
-
-const minimist = require('minimist');
-
-let argv;
-try {
-  argv = minimist(process.argv.slice(2), optionDefinitions);
-} catch (err) {
-  console.log(err);
-  process.exit(1);
+  boolean: ['help', 'h']
 }
 
-const config = new Config();
-const opts = optParser(argv, config);
+const minimist = require('minimist')
+
+let argv
+try {
+  argv = minimist(process.argv.slice(2), optionDefinitions)
+} catch (err) {
+  console.log(err)
+  process.exit(1)
+}
+
+const config = new Config()
+const opts = parseArgs(argv, config)
 
 const showHelp = () => {
   console.log(`
@@ -40,49 +40,49 @@ const showHelp = () => {
       --reporter, -r  Set test reporter (tap, console)
       --help,     -h  Show help
       --version
-  `);
-  process.exit(0);
-};
+  `)
+  process.exit(0)
+}
 
-let data;
+let data
 
 if (opts.url) {
-  data = opts.url;
+  data = opts.url
 } else {
-  data = [];
+  data = []
   if (opts.help) {
-    showHelp();
+    showHelp()
   } else if (opts.version) {
-    console.log(pack.version);
-    process.exit(0);
+    console.log(pack.version)
+    process.exit(0)
   }
 
   opts.files.forEach((file) => {
-    const json = readJsonFile(file);
-    data.push(json);
-  });
+    const json = readJsonFile(file)
+    data.push(json)
+  })
 }
 
-let reporter;
+let reporter
 switch (opts.reporter) {
   case 'tap':
-    reporter = new TapReporter();
-    break;
+    reporter = new TapReporter()
+    break
   case 'console':
   default:
-    reporter = new ConsoleReporter();
+    reporter = new ConsoleReporter()
 }
-reporter.setWriter(new LogWriter());
+reporter.setWriter(new LogWriter())
 const upssert = new Upssert({
   suites: data,
   reporter,
-  config,
-});
+  config
+})
 
 const execute = async () => {
-  const results = await upssert.execute();
+  const results = await upssert.execute()
   if (!results.pass) {
-    process.exitCode = 1;
+    process.exitCode = 1
   }
-};
-execute();
+}
+execute()

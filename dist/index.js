@@ -76,9 +76,7 @@ var Upssert = function (_EventEmitter) {
         name: 'Ping',
         tests: [{
           name: url,
-          request: {
-            url: url
-          }
+          request: { url: url }
         }]
       };
     }

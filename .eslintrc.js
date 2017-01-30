@@ -4,11 +4,8 @@ module.exports = {
   parserOptions: {
     sourceType: 'module'
   },
-  extends: 'airbnb-base',
+  extends: 'standard',
   'rules': {
-    'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0,
-    "no-param-reassign": 0,
-    "no-plusplus": ["error", { "allowForLoopAfterthoughts": true }],
-    "class-methods-use-this": 0
+    'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0
   }
 };
