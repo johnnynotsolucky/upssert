@@ -20,66 +20,55 @@ var _ramda2 = _interopRequireDefault(_ramda);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-
-var defaultReporter = function defaultReporter() {
-  return 'console';
-};
-var argvParams = function argvParams(reporter) {
+var paramsFromArgs = function paramsFromArgs(reporter) {
   return function (argv) {
     return {
       help: argv.help || argv.h,
       version: argv.version,
       url: argv.url,
-      reporter: argv.reporter || argv.r || reporter
+      reporter: argv.reporter || argv.r || 'console'
     };
   };
 };
-var argsWithReporter = argvParams(defaultReporter());
 
-var relativePatternToAbsolutePattern = function relativePatternToAbsolutePattern(baseDir) {
+var mapToPath = function mapToPath(baseDir) {
   return function (p) {
     return !p.startsWith('/') ? baseDir + '/' + p : p;
   };
 };
-var directoryPathToPattern = function directoryPathToPattern(globOptions) {
+var pathToPattern = function pathToPattern(globOptions) {
   return function (p) {
     return !_glob2.default.hasMagic(p, globOptions) ? _fs2.default.statSync(p).isDirectory() ? p + '/**/*.json' : p : p;
   };
 };
-var globFilesForPattern = function globFilesForPattern(globOptions) {
+var globFiles = function globFiles(globOptions) {
   return function (p) {
     return _glob2.default.sync(p, globOptions);
   };
 };
 
-var globFiles = function globFiles(cwd) {
-  return function (globOptions) {
-    return function (patterns) {
-      var cwdPattern = relativePatternToAbsolutePattern(cwd);
-      var dirPatternOpts = directoryPathToPattern(globOptions);
-      var globWithOpts = globFilesForPattern(globOptions);
-      var globByPattern = _ramda2.default.compose(globWithOpts, dirPatternOpts, cwdPattern);
-      var reducer = function reducer(acc, val) {
-        return _ramda2.default.concat(acc, globByPattern(val));
-      };
-      var patternsToFiles = _ramda2.default.reduce(reducer, []);
-      return patternsToFiles(patterns);
+var byPattern = function byPattern(cwd, globOptions) {
+  return _ramda2.default.compose(globFiles(globOptions), pathToPattern(globOptions), mapToPath(cwd));
+};
+
+var mapFiles = function mapFiles(f) {
+  return function (patterns) {
+    var reducer = function reducer(acc, val) {
+      return _ramda2.default.concat(acc, f(val));
     };
+    var patternsToFiles = _ramda2.default.reduce(reducer, []);
+    return patternsToFiles(patterns);
   };
 };
 
-var cwdGlob = globFiles(process.cwd());
+var patternsFromArgs = function patternsFromArgs(args, fallback) {
+  return args.length ? args : [fallback];
+};
 
 exports.default = function (argv, config) {
-  var patterns = [].concat(_toConsumableArray(argv._));
-  if (patterns.length === 0) {
-    patterns.push(config.testDir);
-  }
-
-  var globWithOptions = cwdGlob(config.globOptions);
-
-  return _extends({}, argsWithReporter(argv), {
-    files: globWithOptions(patterns)
+  var byAbsolutePattern = byPattern(process.cwd(), config.globOptions);
+  var globber = mapFiles(byAbsolutePattern);
+  return _extends({}, paramsFromArgs(argv), {
+    files: globber(patternsFromArgs(argv._, config.testDir))
   });
 };
