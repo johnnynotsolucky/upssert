@@ -1,45 +1,45 @@
 import glob from 'glob'
 import fs from 'fs'
+import R from 'ramda'
 
-const opts = (argv, config) => {
-  const help = argv.help || argv.h
-  const version = argv.version
-  const url = argv.url
-  const reporter = argv.reporter || argv.r || 'console'
+const defaultReporter = () => 'console'
+const argvParams = reporter => argv => ({
+  help: argv.help || argv.h,
+  version: argv.version,
+  url: argv.url,
+  reporter: argv.reporter || argv.r || reporter
+})
+const argsWithReporter = argvParams(defaultReporter())
 
-  const files = []
+const relativePatternToAbsolutePattern = baseDir => p =>
+  !p.startsWith('/') ? `${baseDir}/${p}` : p
+const directoryPathToPattern = globOptions => (p) =>
+  !glob.hasMagic(p, globOptions)
+    ? (fs.statSync(p).isDirectory() ? `${p}/**/*.json` : p) : p
+const globFilesForPattern = globOptions => p => glob.sync(p, globOptions)
 
-  const globPattern = (pattern) => {
-    const globbed = glob.sync(pattern, config.globOptions)
-    files.push(...globbed)
-  }
-
-  if (argv._.length === 0) {
-    argv._.push(config.testDir)
-  }
-  argv._.forEach((pattern) => {
-    if (!pattern.startsWith('/')) {
-      pattern = `${process.cwd()}/${pattern}`
-    }
-    let stat
-    try {
-      stat = fs.statSync(pattern)
-    } catch (err) {
-      // noOp
-    }
-    if (stat && stat.isDirectory()) {
-      pattern = `${pattern}/**/*.json`
-    }
-    globPattern(pattern)
-  })
-
-  return {
-    help,
-    version,
-    files,
-    url,
-    reporter
-  }
+const globFiles = cwd => globOptions => patterns => {
+  const cwdPattern = relativePatternToAbsolutePattern(cwd)
+  const dirPatternOpts = directoryPathToPattern(globOptions)
+  const globWithOpts = globFilesForPattern(globOptions)
+  const globByPattern = R.compose(globWithOpts, dirPatternOpts, cwdPattern)
+  const reducer = (acc, val) => R.concat(acc, globByPattern(val))
+  const patternsToFiles = R.reduce(reducer, [])
+  return patternsToFiles(patterns)
 }
 
-export default opts
+const cwdGlob = globFiles(process.cwd())
+
+export default (argv, config) => {
+  const patterns = [...argv._]
+  if (patterns.length === 0) {
+    patterns.push(config.testDir)
+  }
+
+  const globWithOptions = cwdGlob(config.globOptions)
+
+  return {
+    ...argsWithReporter(argv),
+    files: globWithOptions(patterns)
+  }
+}
