@@ -23,10 +23,8 @@ try {
 }
 
 const config = new Config()
-const opts = parseArgs(fs, argv, {
-  globOptions: config.globOptions,
-  defaultDir: config.testDir
-})
+const { globOptions, testDir: defaultPattern } = config
+const opts = parseArgs(fs, argv, { globOptions, defaultPattern })
 
 const showHelp = () => {
   console.log(`

@@ -27,11 +27,11 @@ var paramsFromArgs = _ramda2.default.curry(function (reporter, args) {
 // parseArgs :: Object -> Object -> Object -> Object
 exports.default = _ramda2.default.curry(function (fs, args, _ref) {
   var globOptions = _ref.globOptions,
-      defaultDir = _ref.defaultDir;
+      defaultPattern = _ref.defaultPattern;
 
   var globByAbsolutePattern = (0, _globber.globByPattern)((0, _globber.isDirectory)(fs), process.cwd(), '**/*.json', globOptions);
   var globber = (0, _globber.mapFiles)(globByAbsolutePattern);
   return _extends({}, paramsFromArgs(args), {
-    files: globber((0, _globber.patternsFromArgs)(args._, defaultDir))
+    files: globber((0, _globber.patternsFromArgs)(args._, defaultPattern))
   });
 });
