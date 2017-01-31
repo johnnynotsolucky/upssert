@@ -33,37 +33,24 @@ var paramsFromArgs = function paramsFromArgs(reporter) {
 };
 
 // mapToPath :: String -> String -> String
-var mapToPath = function mapToPath(baseDir) {
-  return function (p) {
-    return !p.startsWith('/') ? baseDir + '/' + p : p;
-  };
-};
+var mapToPath = _ramda2.default.curry(function (baseDir, p) {
+  return !p.startsWith('/') ? baseDir + '/' + p : p;
+});
 
 // pathToPattern :: Object -> String -> String
-var pathToPattern = function pathToPattern(globOptions) {
-  return function (p) {
-    return !_glob2.default.hasMagic(p, globOptions) ? _fs2.default.statSync(p).isDirectory() ? p + '/**/*.json' : p : p;
-  };
-};
+var pathToPattern = _ramda2.default.curry(function (globOptions, p) {
+  return !_glob2.default.hasMagic(p, globOptions) ? _fs2.default.statSync(p).isDirectory() ? p + '/**/*.json' : p : p;
+});
 
 // globFiles :: Object -> String -> [String]
-var globFiles = function globFiles(globOptions) {
-  return function (p) {
-    return _glob2.default.sync(p, globOptions);
-  };
-};
+var globFiles = _ramda2.default.curry(function (globOptions, p) {
+  return _glob2.default.sync(p, globOptions);
+});
 
-// byPattern :: String, Object -> String -> [String]
-var byPattern = function byPattern(cwd, globOptions) {
+// byPattern :: String -> Object -> String -> [String]
+var byPattern = _ramda2.default.curry(function (cwd, globOptions) {
   return _ramda2.default.compose(globFiles(globOptions), pathToPattern(globOptions), mapToPath(cwd));
-};
-
-var trace = function trace(tag) {
-  return function (x) {
-    console.log(tag, x);
-    return x;
-  };
-};
+});
 
 // mapFiles :: (String -> [String]) -> [String]
 var mapFiles = function mapFiles(f) {
@@ -73,10 +60,10 @@ var mapFiles = function mapFiles(f) {
   };
 };
 
-// patternsFromArgs :: [String], String -> [String]
-var patternsFromArgs = function patternsFromArgs(args, fallback) {
+// patternsFromArgs :: [String] -> String -> [String]
+var patternsFromArgs = _ramda2.default.curry(function (args, fallback) {
   return args.length ? args : [fallback];
-};
+});
 
 exports.default = function (argv, config) {
   var byAbsolutePattern = byPattern(process.cwd(), config.globOptions);

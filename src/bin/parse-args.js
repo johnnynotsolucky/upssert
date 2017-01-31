@@ -11,29 +11,23 @@ const paramsFromArgs = reporter => argv => ({
 })
 
 // mapToPath :: String -> String -> String
-const mapToPath = baseDir => p =>
-  !p.startsWith('/') ? `${baseDir}/${p}` : p
+const mapToPath = R.curry((baseDir, p) => !p.startsWith('/') ? `${baseDir}/${p}` : p)
 
 // pathToPattern :: Object -> String -> String
-const pathToPattern = globOptions => p =>
+const pathToPattern = R.curry((globOptions, p) =>
   !glob.hasMagic(p, globOptions)
-    ? (fs.statSync(p).isDirectory() ? `${p}/**/*.json` : p) : p
+    ? (fs.statSync(p).isDirectory() ? `${p}/**/*.json` : p) : p)
 
 // globFiles :: Object -> String -> [String]
-const globFiles = globOptions => p => glob.sync(p, globOptions)
+const globFiles = R.curry((globOptions, p) => glob.sync(p, globOptions))
 
-// byPattern :: String, Object -> String -> [String]
-const byPattern = (cwd, globOptions) =>
+// byPattern :: String -> Object -> String -> [String]
+const byPattern = R.curry((cwd, globOptions) =>
   R.compose(
     globFiles(globOptions),
     pathToPattern(globOptions),
     mapToPath(cwd)
-  )
-
-const trace = tag => x => {
-  console.log(tag, x)
-  return x
-}
+  ))
 
 // mapFiles :: (String -> [String]) -> [String]
 const mapFiles = f => (patterns) => {
@@ -41,8 +35,8 @@ const mapFiles = f => (patterns) => {
   return patternsToFiles(patterns)
 }
 
-// patternsFromArgs :: [String], String -> [String]
-const patternsFromArgs = (args, fallback) => args.length ? args : [fallback]
+// patternsFromArgs :: [String] -> String -> [String]
+const patternsFromArgs = R.curry((args, fallback) => args.length ? args : [fallback])
 
 export default (argv, config) => {
   const byAbsolutePattern = byPattern(process.cwd(), config.globOptions)
