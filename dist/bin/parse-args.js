@@ -58,13 +58,17 @@ var byPattern = function byPattern(cwd, globOptions) {
   return _ramda2.default.compose(globFiles(globOptions), pathToPattern(globOptions), mapToPath(cwd));
 };
 
+var trace = function trace(tag) {
+  return function (x) {
+    console.log(tag, x);
+    return x;
+  };
+};
+
 // mapFiles :: (String -> [String]) -> [String]
 var mapFiles = function mapFiles(f) {
   return function (patterns) {
-    var reducer = function reducer(acc, val) {
-      return _ramda2.default.concat(acc, f(val));
-    };
-    var patternsToFiles = _ramda2.default.reduce(reducer, []);
+    var patternsToFiles = _ramda2.default.compose(_ramda2.default.flatten, _ramda2.default.map(f));
     return patternsToFiles(patterns);
   };
 };

@@ -30,10 +30,14 @@ const byPattern = (cwd, globOptions) =>
     mapToPath(cwd)
   )
 
+const trace = tag => x => {
+  console.log(tag, x)
+  return x
+}
+
 // mapFiles :: (String -> [String]) -> [String]
 const mapFiles = f => (patterns) => {
-  const reducer = (acc, val) => R.concat(acc, f(val))
-  const patternsToFiles = R.reduce(reducer, [])
+  const patternsToFiles = R.compose(R.flatten, R.map(f))
   return patternsToFiles(patterns)
 }
 
