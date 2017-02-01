@@ -15,8 +15,8 @@ const paramsFromArgs = args => ({
 })
 
 // parseArgs :: Object -> Object -> Object -> Object
-export default R.curry((fs, args, { globOptions, defaultPattern }) => {
-  const globByAbsolutePattern = globByPattern(isDirectory(fs), process.cwd(), '**/*.json', globOptions)
+export default R.curry((args, { globOptions, defaultPattern }) => {
+  const globByAbsolutePattern = globByPattern(isDirectory, process.cwd(), '**/*.json', globOptions)
   const globber = mapFiles(globByAbsolutePattern)
   return {
     ...paramsFromArgs(args),

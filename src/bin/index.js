@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 /* eslint-disable no-console */
 import 'babel-polyfill'
-import fs from 'fs'
 import readJsonFile from '../lib/read-json-file'
 import parseArgs from './parse-args'
 import pack from '../package.json' // eslint-disable-line import/no-unresolved
@@ -24,7 +23,7 @@ try {
 
 const config = new Config()
 const { globOptions, testDir: defaultPattern } = config
-const opts = parseArgs(fs, argv, { globOptions, defaultPattern })
+const opts = parseArgs(argv, { globOptions, defaultPattern })
 
 const showHelp = () => {
   console.log(`

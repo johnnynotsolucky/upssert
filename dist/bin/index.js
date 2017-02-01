@@ -3,10 +3,6 @@
 
 require('babel-polyfill');
 
-var _fs = require('fs');
-
-var _fs2 = _interopRequireDefault(_fs);
-
 var _readJsonFile = require('../lib/read-json-file');
 
 var _readJsonFile2 = _interopRequireDefault(_readJsonFile);
@@ -52,7 +48,7 @@ var config = new _config2.default();
 var globOptions = config.globOptions,
     defaultPattern = config.testDir;
 
-var opts = (0, _parseArgs2.default)(_fs2.default, argv, { globOptions: globOptions, defaultPattern: defaultPattern });
+var opts = (0, _parseArgs2.default)(argv, { globOptions: globOptions, defaultPattern: defaultPattern });
 
 var showHelp = function showHelp() {
   console.log('\n    ' + _package2.default.description + '\n\n    Usage: upssert [options...] [glob]\n\n    Default glob searches in tests/api/**/*.js\n\n    upssert -r tap --url https://httpbin.org/get\n    upssert tests/api/**/*.json\n\n    options:\n      --url           Ping supplied URL\n      --reporter, -r  Set test reporter (tap, console)\n      --help,     -h  Show help\n      --version\n  ');

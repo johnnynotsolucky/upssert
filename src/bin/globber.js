@@ -1,11 +1,12 @@
 import R from 'ramda'
+import fs from 'fs'
 import glob from 'glob'
 
 // mapToPath :: String -> String -> String
 const mapToPath = R.curry((baseDir, p) => !p.startsWith('/') ? `${baseDir}/${p}` : p)
 
 // isDirectory :: Object -> String -> Boolean
-const isDirectory = R.curry((fs, p) => fs.statSync(p).isDirectory())
+const isDirectory = p => fs.statSync(p).isDirectory()
 
 // pathToPattern :: (Object -> String -> Boolean) -> Object -> String -> String -> String
 const pathToPattern = R.curry((f, globOptions, postfix, p) =>

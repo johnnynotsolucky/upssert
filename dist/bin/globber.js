@@ -9,6 +9,10 @@ var _ramda = require('ramda');
 
 var _ramda2 = _interopRequireDefault(_ramda);
 
+var _fs = require('fs');
+
+var _fs2 = _interopRequireDefault(_fs);
+
 var _glob = require('glob');
 
 var _glob2 = _interopRequireDefault(_glob);
@@ -21,9 +25,9 @@ var mapToPath = _ramda2.default.curry(function (baseDir, p) {
 });
 
 // isDirectory :: Object -> String -> Boolean
-var isDirectory = _ramda2.default.curry(function (fs, p) {
-  return fs.statSync(p).isDirectory();
-});
+var isDirectory = function isDirectory(p) {
+  return _fs2.default.statSync(p).isDirectory();
+};
 
 // pathToPattern :: (Object -> String -> Boolean) -> Object -> String -> String -> String
 var pathToPattern = _ramda2.default.curry(function (f, globOptions, postfix, p) {
