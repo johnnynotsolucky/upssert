@@ -8,11 +8,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 var _ramda = require('ramda');
 
-var _ramda2 = _interopRequireDefault(_ramda);
-
-var _globber = require('./globber');
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var _globber = require('../lib/util/globber');
 
 // paramsFromArgs :: a -> b
 var paramsFromArgs = function paramsFromArgs(args) {
@@ -25,11 +21,11 @@ var paramsFromArgs = function paramsFromArgs(args) {
 };
 
 // parseArgs :: Object -> Object -> Object -> Object
-exports.default = _ramda2.default.curry(function (args, _ref) {
+exports.default = (0, _ramda.curry)(function (args, _ref) {
   var globOptions = _ref.globOptions,
       defaultPattern = _ref.defaultPattern;
 
-  var globByAbsolutePattern = (0, _globber.globByPattern)(_globber.isDirectory, process.cwd(), '**/*.json', globOptions);
+  var globByAbsolutePattern = (0, _globber.globByPattern)(process.cwd(), globOptions, '**/*.json');
   var globber = (0, _globber.mapFiles)(globByAbsolutePattern);
   return _extends({}, paramsFromArgs(args), {
     files: globber((0, _globber.patternsFromArgs)(args._, defaultPattern))

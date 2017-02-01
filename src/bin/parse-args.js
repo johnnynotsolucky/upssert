@@ -1,10 +1,9 @@
-import R from 'ramda'
+import { curry } from 'ramda'
 import {
-  isDirectory,
   globByPattern,
   mapFiles,
   patternsFromArgs
-} from './globber'
+} from '../lib/util/globber'
 
 // paramsFromArgs :: a -> b
 const paramsFromArgs = args => ({
@@ -15,8 +14,8 @@ const paramsFromArgs = args => ({
 })
 
 // parseArgs :: Object -> Object -> Object -> Object
-export default R.curry((args, { globOptions, defaultPattern }) => {
-  const globByAbsolutePattern = globByPattern(isDirectory, process.cwd(), '**/*.json', globOptions)
+export default curry((args, { globOptions, defaultPattern }) => {
+  const globByAbsolutePattern = globByPattern(process.cwd(), globOptions, '**/*.json')
   const globber = mapFiles(globByAbsolutePattern)
   return {
     ...paramsFromArgs(args),

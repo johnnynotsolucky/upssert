@@ -11,7 +11,7 @@ var _glob = require('glob');
 
 var _glob2 = _interopRequireDefault(_glob);
 
-var _fileSystem = require('../lib/util/file-system');
+var _fileSystem = require('./file-system');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -30,7 +30,7 @@ var globFiles = (0, _ramda.curry)(function (globOptions, p) {
   return _glob2.default.sync(p, globOptions);
 });
 
-// byPattern :: (Object -> String -> Boolean) -> String -> Object -> String -> [String]
+// byPattern :: String -> Object -> String -> [String]
 var globByPattern = (0, _ramda.curry)(function (dir, globOptions, postfix) {
   return (0, _ramda.compose)(globFiles(globOptions), pathToPattern(globOptions, postfix), mapToPath(dir));
 });
