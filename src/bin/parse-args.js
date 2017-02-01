@@ -7,12 +7,12 @@ import {
 } from './globber'
 
 // paramsFromArgs :: String -> a -> b
-const paramsFromArgs = R.curry((reporter, args) => ({
+const paramsFromArgs = args => ({
   help: args.help || args.h,
   version: args.version,
   url: args.url,
   reporter: args.reporter || args.r || 'console'
-}))
+})
 
 // parseArgs :: Object -> Object -> Object -> Object
 export default R.curry((fs, args, { globOptions, defaultPattern }) => {

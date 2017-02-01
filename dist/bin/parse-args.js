@@ -15,14 +15,14 @@ var _globber = require('./globber');
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // paramsFromArgs :: String -> a -> b
-var paramsFromArgs = _ramda2.default.curry(function (reporter, args) {
+var paramsFromArgs = function paramsFromArgs(args) {
   return {
     help: args.help || args.h,
     version: args.version,
     url: args.url,
     reporter: args.reporter || args.r || 'console'
   };
-});
+};
 
 // parseArgs :: Object -> Object -> Object -> Object
 exports.default = _ramda2.default.curry(function (fs, args, _ref) {
