@@ -6,7 +6,7 @@ import {
   patternsFromArgs
 } from './globber'
 
-// paramsFromArgs :: String -> a -> b
+// paramsFromArgs :: a -> b
 const paramsFromArgs = args => ({
   help: args.help || args.h,
   version: args.version,
