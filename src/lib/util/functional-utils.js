@@ -17,7 +17,7 @@ const toFlattenedArray = curry((f) => compose(flatten, map(f)))
 const arrayOrDefault = curry((args, defaultDir) => args.length ? args : [defaultDir])
 
 // either :: a -> Boolean -> Either a
-const either = curry((p, x) => x ? Either.Right(p) : Either.Left(p))
+const either = curry((a, x) => x ? Either.Right(a) : Either.Left(a))
 
 // inverseEither :: a -> Boolean -> Either a
 const inverseEither = curry((p, x) => x ? Either.Left(p) : Either.Right(p))

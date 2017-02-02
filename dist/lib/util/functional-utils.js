@@ -31,8 +31,8 @@ var arrayOrDefault = (0, _ramda.curry)(function (args, defaultDir) {
 });
 
 // either :: a -> Boolean -> Either a
-var either = (0, _ramda.curry)(function (p, x) {
-  return x ? _ramdaFantasy.Either.Right(p) : _ramdaFantasy.Either.Left(p);
+var either = (0, _ramda.curry)(function (a, x) {
+  return x ? _ramdaFantasy.Either.Right(a) : _ramdaFantasy.Either.Left(a);
 });
 
 // inverseEither :: a -> Boolean -> Either a
