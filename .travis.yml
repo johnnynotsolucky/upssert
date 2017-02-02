@@ -5,8 +5,7 @@ node_js:
   - "6"
   - "7"
 install:
-  - "npm install yarn"
-  - "yarn"
+  - "npm install"
 script:
   - "./node_modules/eslint/bin/eslint.js --format 'node_modules/eslint-friendly-formatter' src test"
   - "./node_modules/.bin/nyc --require babel-core/register --all ./node_modules/.bin/mocha && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage"

@@ -9,7 +9,7 @@
     "test": "mocha",
     "watch": "gulp watch",
     "lint": "eslint --format 'node_modules/eslint-friendly-formatter' src test",
-    "prepublish": "yarn run lint && yarn test && yarn run build"
+    "prepublish": "npm run lint && npm test && npm run build"
   },
   "repository": {
     "type": "git",
