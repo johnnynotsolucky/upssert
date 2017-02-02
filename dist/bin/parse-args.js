@@ -10,6 +10,8 @@ var _ramda = require('ramda');
 
 var _globber = require('../lib/util/globber');
 
+var _functionalUtils = require('../lib/util/functional-utils');
+
 // paramsFromArgs :: a -> b
 var paramsFromArgs = function paramsFromArgs(args) {
   return {
@@ -26,8 +28,8 @@ exports.default = (0, _ramda.curry)(function (args, _ref) {
       defaultPattern = _ref.defaultPattern;
 
   var globByAbsolutePattern = (0, _globber.globByPattern)(process.cwd(), globOptions, '**/*.json');
-  var globber = (0, _globber.mapFiles)(globByAbsolutePattern);
+  var globber = (0, _functionalUtils.toFlattenedArray)(globByAbsolutePattern);
   return _extends({}, paramsFromArgs(args), {
-    files: globber((0, _globber.patternsFromArgs)(args._, defaultPattern))
+    files: globber((0, _functionalUtils.arrayOrDefault)(args._, defaultPattern))
   });
 });

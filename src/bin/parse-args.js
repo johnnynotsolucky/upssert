@@ -1,9 +1,9 @@
 import { curry } from 'ramda'
+import { globByPattern } from '../lib/util/globber'
 import {
-  globByPattern,
-  mapFiles,
-  patternsFromArgs
-} from '../lib/util/globber'
+  arrayOrDefault,
+  toFlattenedArray
+} from '../lib/util/functional-utils'
 
 // paramsFromArgs :: a -> b
 const paramsFromArgs = args => ({
@@ -16,9 +16,9 @@ const paramsFromArgs = args => ({
 // parseArgs :: Object -> Object -> Object -> Object
 export default curry((args, { globOptions, defaultPattern }) => {
   const globByAbsolutePattern = globByPattern(process.cwd(), globOptions, '**/*.json')
-  const globber = mapFiles(globByAbsolutePattern)
+  const globber = toFlattenedArray(globByAbsolutePattern)
   return {
     ...paramsFromArgs(args),
-    files: globber(patternsFromArgs(args._, defaultPattern))
+    files: globber(arrayOrDefault(args._, defaultPattern))
   }
 })

@@ -1,19 +1,32 @@
-import { compose, curry, map, flatten } from 'ramda'
+import { compose, curry } from 'ramda'
+import { Identity } from 'ramda-fantasy'
 import glob from 'glob'
 import { isDirectory } from './file-system'
+import {
+  either,
+  inverseEither,
+  joinStr,
+  inverseJoinStr
+} from './functional-utils'
 
 // mapToPath :: String -> String -> String
-const mapToPath = curry((baseDir, p) =>
-  !p.startsWith('/') ? `${baseDir}/${p}` : p)
+const mapToPath = curry((dir, p) =>
+  !p.startsWith('/') ? joinStr('/', dir, p) : p)
+
+// isGlobPattern :: Object -> String -> Identity Boolean
+const isGlobPattern = curry((globOptions, p) =>
+  Identity(glob.hasMagic(p, globOptions)))
 
 // pathToPattern :: Object -> String -> String -> String
 const pathToPattern = curry((globOptions, postfix, p) =>
-  !glob.hasMagic(p, globOptions)
-    ? (isDirectory(p) ? [p, postfix].join('/') : p)
-    : p)
+  isGlobPattern(globOptions, p)
+    .chain(inverseEither(p))
+    .chain(isDirectory)
+    .chain(either(p))
+    .map(inverseJoinStr('/', postfix)))
 
-// globFiles :: Object -> String -> [String]
-const globFiles = curry((globOptions, p) => glob.sync(p, globOptions))
+// globFiles :: Object -> Either String -> [String]
+const globFiles = curry((globOptions, p) => glob.sync(p.value, globOptions))
 
 // byPattern :: String -> Object -> String -> [String]
 const globByPattern = curry((dir, globOptions, postfix) =>
@@ -23,21 +36,8 @@ const globByPattern = curry((dir, globOptions, postfix) =>
     mapToPath(dir)
   ))
 
-// mapFiles :: (String -> [String]) -> [String]
-const mapFiles = f => (patterns) => {
-  const patternsToFiles = compose(flatten, map(f))
-  return patternsToFiles(patterns)
-}
-
-// patternsFromArgs :: [String] -> String -> [String]
-const patternsFromArgs = curry((args, defaultDir) => args.length ? args : [defaultDir])
-
 export {
   mapToPath,
-  isDirectory,
   pathToPattern,
-  globFiles,
-  globByPattern,
-  mapFiles,
-  patternsFromArgs
+  globByPattern
 }
