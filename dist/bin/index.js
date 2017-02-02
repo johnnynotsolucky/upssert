@@ -3,9 +3,7 @@
 
 require('babel-polyfill');
 
-var _readJsonFile = require('../lib/read-json-file');
-
-var _readJsonFile2 = _interopRequireDefault(_readJsonFile);
+var _json = require('../lib/util/json');
 
 var _parseArgs = require('./parse-args');
 
@@ -67,9 +65,8 @@ if (opts.url) {
     console.log(_package2.default.version);
     process.exit(0);
   }
-
   opts.files.forEach(function (file) {
-    var json = (0, _readJsonFile2.default)(file);
+    var json = (0, _json.readJsonFile)(file).value;
     data.push(json);
   });
 }

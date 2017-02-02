@@ -14,8 +14,12 @@ const fsIsDirectory = m =>
 // isDirectory :: String -> Identity Boolean
 const isDirectory = compose(fsIsDirectory, fsStat)
 
+// readFile :: String -> Maybe String
+const readFile = compose(Maybe, tryCatch(fs.readFileSync, () => null))
+
 export {
   fsStat,
   fsIsDirectory,
-  isDirectory
+  isDirectory,
+  readFile
 }

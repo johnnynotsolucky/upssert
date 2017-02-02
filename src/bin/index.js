@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /* eslint-disable no-console */
 import 'babel-polyfill'
-import readJsonFile from '../lib/read-json-file'
+import { readJsonFile } from '../lib/util/json'
 import parseArgs from './parse-args'
 import pack from '../package.json' // eslint-disable-line import/no-unresolved
 import Config from '../lib/config'
@@ -57,9 +57,8 @@ if (opts.url) {
     console.log(pack.version)
     process.exit(0)
   }
-
   opts.files.forEach((file) => {
-    const json = readJsonFile(file)
+    const json = readJsonFile(file).value
     data.push(json)
   })
 }

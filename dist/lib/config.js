@@ -4,11 +4,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _readJsonFile = require('./read-json-file');
-
-var _readJsonFile2 = _interopRequireDefault(_readJsonFile);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var _json = require('./util/json');
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -17,11 +13,11 @@ var Config = function Config() {
 
   var config = void 0;
   try {
-    var runcom = (0, _readJsonFile2.default)(process.cwd() + '/.upssertrc');
+    var runcom = (0, _json.readJsonFile)(process.cwd() + '/.upssertrc').value;
     if (runcom) {
       config = runcom;
     } else {
-      var clientPackage = (0, _readJsonFile2.default)(process.cwd() + '/package.json');
+      var clientPackage = (0, _json.readJsonFile)(process.cwd() + '/package.json').value;
       if (clientPackage && clientPackage.upssert) {
         config = clientPackage.upssert;
       } else {

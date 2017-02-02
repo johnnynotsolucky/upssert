@@ -18,7 +18,7 @@ const directoryToPattern = curry((globOptions, postfix, p) =>
     .map(inverseJoinStr('/', postfix)))
 
 // globFiles :: Object -> Either String -> [String]
-const globFiles = curry((globOptions, p) => glob.sync(p.value, globOptions))
+const globFiles = curry((globOptions, m) => glob.sync(m.value, globOptions))
 
 // byPattern :: String -> Object -> String -> [String]
 const globByPattern = curry((dir, globOptions, postfix) =>

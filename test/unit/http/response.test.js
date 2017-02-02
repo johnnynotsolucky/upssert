@@ -1,10 +1,10 @@
 import { assert } from 'chai'
 import { formatResponse } from '../../../src/lib/http'
-import readJsonFile from '../../../src/lib/read-json-file'
+import { readJsonFile } from '../../../src/lib/util/json'
 
 describe('formatResponse', () => {
   it('should correctly calculate HTTP protocol timings and other meta data', () => {
-    const data = readJsonFile('./test/unit/http/data/result-http.json')
+    const data = readJsonFile('./test/unit/http/data/result-http.json').value
     const response = formatResponse(data)
     assert.isOk(response)
     assert.strictEqual(response.statusCode, 200)
@@ -33,7 +33,7 @@ describe('formatResponse', () => {
   })
 
   it('should correctly calculate unknown protocol timings and other meta data', () => {
-    const data = readJsonFile('./test/unit/http/data/result-unknown.json')
+    const data = readJsonFile('./test/unit/http/data/result-unknown.json').value
     const stat = formatResponse(data)
     assert.isOk(stat)
     assert.strictEqual(stat.statusCode, 200)
@@ -59,7 +59,7 @@ describe('formatResponse', () => {
   })
 
   it('should correctly calculate HTTPS protocol timings and other meta data', () => {
-    const data = readJsonFile('./test/unit/http/data/result-https.json')
+    const data = readJsonFile('./test/unit/http/data/result-https.json').value
     const response = formatResponse(data)
     assert.isOk(response)
     assert.strictEqual(response.statusCode, 200)

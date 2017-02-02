@@ -2,7 +2,7 @@ import { assert } from 'chai'
 import sinon from 'sinon'
 import nock from 'nock'
 import Runner from '../../src/lib/runner'
-import readJsonFile from '../../src/lib/read-json-file'
+import { readJsonFile } from '../../src/lib/util/json'
 import events from '../../src/data/events.json'
 
 describe('Runner', () => {
@@ -16,8 +16,8 @@ describe('Runner', () => {
   })
 
   it('passes a simple test suite', (done) => {
-    const definition = readJsonFile(`${basePath}/test-simple.json`)
-    const reply = readJsonFile(`${basePath}/test-simple-res.json`)
+    const definition = readJsonFile(`${basePath}/test-simple.json`).value
+    const reply = readJsonFile(`${basePath}/test-simple-res.json`).value
     nock('https://httpbin.org')
       .get('/get?foo=bar')
       .reply(200, reply)
@@ -31,8 +31,8 @@ describe('Runner', () => {
   })
 
   it('fails a test case', (done) => {
-    const definition = readJsonFile(`${basePath}/test-simple.json`)
-    const reply = readJsonFile(`${basePath}/test-simple-res.json`)
+    const definition = readJsonFile(`${basePath}/test-simple.json`).value
+    const reply = readJsonFile(`${basePath}/test-simple-res.json`).value
     nock('https://httpbin.org')
       .get('/get?foo=bar')
       .reply(404, reply)
@@ -55,9 +55,9 @@ describe('Runner', () => {
   })
 
   it('passes a test suite with depedencies', (done) => {
-    const definition = readJsonFile(`${basePath}/test-complex.json`)
-    const replyA = readJsonFile(`${basePath}/test-simple-res.json`)
-    const replyB = readJsonFile(`${basePath}/test-complex-res.json`)
+    const definition = readJsonFile(`${basePath}/test-complex.json`).value
+    const replyA = readJsonFile(`${basePath}/test-simple-res.json`).value
+    const replyB = readJsonFile(`${basePath}/test-complex-res.json`).value
     nock('https://httpbin.org')
       .get('/get?foo=bar')
       .reply(200, replyA)
@@ -76,9 +76,9 @@ describe('Runner', () => {
   })
 
   it('fails a test case if a dependency has failed', (done) => {
-    const definition = readJsonFile(`${basePath}/test-complex.json`)
-    const replyA = readJsonFile(`${basePath}/test-simple-res.json`)
-    const replyB = readJsonFile(`${basePath}/test-complex-res.json`)
+    const definition = readJsonFile(`${basePath}/test-complex.json`).value
+    const replyA = readJsonFile(`${basePath}/test-simple-res.json`).value
+    const replyB = readJsonFile(`${basePath}/test-complex-res.json`).value
     nock('https://httpbin.org')
       .get('/get?foo=bar')
       .reply(404, replyA)
@@ -116,8 +116,8 @@ describe('Runner', () => {
       spies.push(spy)
     }
 
-    const definition = readJsonFile(`${basePath}/test-simple.json`)
-    const reply = readJsonFile(`${basePath}/test-simple-res.json`)
+    const definition = readJsonFile(`${basePath}/test-simple.json`).value
+    const reply = readJsonFile(`${basePath}/test-simple-res.json`).value
     nock('https://httpbin.org')
       .get('/get?foo=bar')
       .reply(200, reply)
@@ -134,8 +134,8 @@ describe('Runner', () => {
     const spy = sinon.spy()
     runner.on(events.SUITE_TEST_FAIL, spy)
 
-    const definition = readJsonFile(`${basePath}/test-simple.json`)
-    const reply = readJsonFile(`${basePath}/test-simple-res.json`)
+    const definition = readJsonFile(`${basePath}/test-simple.json`).value
+    const reply = readJsonFile(`${basePath}/test-simple-res.json`).value
     nock('https://httpbin.org')
       .get('/get?foo=bar')
       .reply(404, reply)

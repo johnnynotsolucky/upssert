@@ -1,14 +1,14 @@
-import readJsonFile from './read-json-file'
+import { readJsonFile } from './util/json'
 
 class Config {
   constructor () {
     let config
     try {
-      const runcom = readJsonFile(`${process.cwd()}/.upssertrc`)
+      const runcom = readJsonFile(`${process.cwd()}/.upssertrc`).value
       if (runcom) {
         config = runcom
       } else {
-        const clientPackage = readJsonFile(`${process.cwd()}/package.json`)
+        const clientPackage = readJsonFile(`${process.cwd()}/package.json`).value
         if (clientPackage && clientPackage.upssert) {
           config = clientPackage.upssert
         } else {

@@ -28,8 +28,8 @@ var directoryToPattern = (0, _ramda.curry)(function (globOptions, postfix, p) {
 });
 
 // globFiles :: Object -> Either String -> [String]
-var globFiles = (0, _ramda.curry)(function (globOptions, p) {
-  return _glob2.default.sync(p.value, globOptions);
+var globFiles = (0, _ramda.curry)(function (globOptions, m) {
+  return _glob2.default.sync(m.value, globOptions);
 });
 
 // byPattern :: String -> Object -> String -> [String]
