@@ -1,5 +1,5 @@
 import 'colors'
-import time from '../util/time'
+import { mapToUnitFormat } from '../util/time'
 import symbols from './symbols'
 import events from '../../data/events.json'
 
@@ -96,7 +96,7 @@ class Console {
 
   handleEnd () {
     this.runIfNotBailed(() => {
-      const duration = time(Date.now() - this.startTime)
+      const duration = mapToUnitFormat(Date.now() - this.startTime).value
 
       this.failLog.forEach(({ test, error }, index) => {
         const errorOutput = [

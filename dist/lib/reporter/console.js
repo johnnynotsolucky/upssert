@@ -10,8 +10,6 @@ require('colors');
 
 var _time = require('../util/time');
 
-var _time2 = _interopRequireDefault(_time);
-
 var _symbols = require('./symbols');
 
 var _symbols2 = _interopRequireDefault(_symbols);
@@ -144,7 +142,7 @@ var Console = function () {
       this.runIfNotBailed(function () {
         var _writer3;
 
-        var duration = (0, _time2.default)(Date.now() - _this5.startTime);
+        var duration = (0, _time.mapToUnitFormat)(Date.now() - _this5.startTime).value;
 
         _this5.failLog.forEach(function (_ref, index) {
           var _writer2;

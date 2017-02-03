@@ -10,11 +10,11 @@ const trace = curry((tag, x) => {
 // getOrElse :: a -> Maybe -> b
 const getOrElse = curry((x, m) => m.getOrElse(x))
 
-// toFlattenedArray :: (a -> [b]) -> [c]
-const toFlattenedArray = curry((f) => compose(flatten, map(f)))
+// flatMap :: (a -> [b]) -> [c]
+const flatMap = curry((f) => compose(flatten, map(f)))
 
 // identityOrDefault :: [a] -> a -> [a]
-const arrayOrDefault = curry((args, defaultDir) => args.length ? args : [defaultDir])
+const arrayOrDefault = curry((args, x) => args.length ? args : [x])
 
 // either :: a -> Boolean -> Either a
 const either = curry((a, x) => x ? Either.Right(a) : Either.Left(a))
@@ -28,13 +28,22 @@ const joinStr = curry((joinWith, a, b) => `${a}${joinWith}${b}`)
 // inverseJoinStr :: String -> String -> String -> String
 const inverseJoinStr = curry((joinWith, a, b) => joinStr(joinWith, b, a))
 
+const appendStr = joinStr('')
+const prependStr = inverseJoinStr('')
+
+// toDecimalPrecision :: Integer -> Number -> String
+const toDecimalPrecision = curry((p, d) => `${d.toFixed(p)}`)
+
 export {
   trace,
   getOrElse,
-  toFlattenedArray,
+  flatMap,
   arrayOrDefault,
   either,
   inverseEither,
   joinStr,
-  inverseJoinStr
+  inverseJoinStr,
+  appendStr,
+  prependStr,
+  toDecimalPrecision
 }

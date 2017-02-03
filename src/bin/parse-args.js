@@ -2,7 +2,7 @@ import { curry } from 'ramda'
 import { globByPattern } from '../lib/util/globber'
 import {
   arrayOrDefault,
-  toFlattenedArray
+  flatMap
 } from '../lib/util/functional-utils'
 
 // paramsFromArgs :: a -> b
@@ -16,7 +16,7 @@ const paramsFromArgs = args => ({
 // parseArgs :: Object -> Object -> Object -> Object
 export default curry((args, { globOptions, defaultPattern }) => {
   const globByAbsolutePattern = globByPattern(process.cwd(), globOptions, '**/*.json')
-  const globber = toFlattenedArray(globByAbsolutePattern)
+  const globber = flatMap(globByAbsolutePattern)
   return {
     ...paramsFromArgs(args),
     files: globber(arrayOrDefault(args._, defaultPattern))

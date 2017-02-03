@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.readFile = exports.isDirectory = exports.fsIsDirectory = exports.fsStat = undefined;
+exports.readFile = exports.isDirectory = exports.fsIsDirectory = exports.tryFsStat = undefined;
 
 var _ramda = require('ramda');
 
@@ -16,7 +16,7 @@ var _fs2 = _interopRequireDefault(_fs);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // fsStat :: String -> Maybe Object
-var fsStat = (0, _ramda.compose)(_ramdaFantasy.Maybe, (0, _ramda.tryCatch)(_fs2.default.statSync, function () {
+var tryFsStat = (0, _ramda.compose)(_ramdaFantasy.Maybe, (0, _ramda.tryCatch)(_fs2.default.statSync, function () {
   return null;
 }));
 
@@ -28,14 +28,14 @@ var fsIsDirectory = function fsIsDirectory(m) {
 };
 
 // isDirectory :: String -> Identity Boolean
-var isDirectory = (0, _ramda.compose)(fsIsDirectory, fsStat);
+var isDirectory = (0, _ramda.compose)(fsIsDirectory, tryFsStat);
 
 // readFile :: String -> Maybe String
 var readFile = (0, _ramda.compose)(_ramdaFantasy.Maybe, (0, _ramda.tryCatch)(_fs2.default.readFileSync, function () {
   return null;
 }));
 
-exports.fsStat = fsStat;
+exports.tryFsStat = tryFsStat;
 exports.fsIsDirectory = fsIsDirectory;
 exports.isDirectory = isDirectory;
 exports.readFile = readFile;

@@ -28,7 +28,7 @@ exports.default = (0, _ramda.curry)(function (args, _ref) {
       defaultPattern = _ref.defaultPattern;
 
   var globByAbsolutePattern = (0, _globber.globByPattern)(process.cwd(), globOptions, '**/*.json');
-  var globber = (0, _functionalUtils.toFlattenedArray)(globByAbsolutePattern);
+  var globber = (0, _functionalUtils.flatMap)(globByAbsolutePattern);
   return _extends({}, paramsFromArgs(args), {
     files: globber((0, _functionalUtils.arrayOrDefault)(args._, defaultPattern))
   });

@@ -1,30 +1,30 @@
 import { assert } from 'chai'
-import time from '../../../src/lib/util/time'
+import { mapToUnitFormat } from '../../../src/lib/util/time'
 
 describe('time', () => {
   it('renders time as milliseconds', () => {
-    const result = time(100)
+    const result = mapToUnitFormat(100).value
     assert.equal(result, '100ms')
   })
 
   it('renders time as seconds', () => {
-    let result = time(1000)
+    let result = mapToUnitFormat(1000).value
     assert.equal(result, '1.000s')
-    result = time(1050)
+    result = mapToUnitFormat(1050).value
     assert.equal(result, '1.050s')
   })
 
   it('renders time as minutes', () => {
-    let result = time(60000)
+    let result = mapToUnitFormat(60000).value
     assert.equal(result, '1.000m')
-    result = time(63000)
+    result = mapToUnitFormat(63000).value
     assert.equal(result, '1.050m')
   })
 
   it('renders time as hours', () => {
-    let result = time(3600000)
+    let result = mapToUnitFormat(3600000).value
     assert.equal(result, '1.000h')
-    result = time(3780000)
+    result = mapToUnitFormat(3780000).value
     assert.equal(result, '1.050h')
   })
 })
