@@ -28,7 +28,10 @@ const joinStr = curry((joinWith, a, b) => `${a}${joinWith}${b}`)
 // inverseJoinStr :: String -> String -> String -> String
 const inverseJoinStr = curry((joinWith, a, b) => joinStr(joinWith, b, a))
 
+// appendStr :: String -> String -> String
 const appendStr = joinStr('')
+
+// prependStr :: String -> String -> String
 const prependStr = inverseJoinStr('')
 
 // toDecimalPrecision :: Integer -> Number -> String

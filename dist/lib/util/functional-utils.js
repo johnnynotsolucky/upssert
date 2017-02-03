@@ -50,7 +50,10 @@ var inverseJoinStr = (0, _ramda.curry)(function (joinWith, a, b) {
   return joinStr(joinWith, b, a);
 });
 
+// appendStr :: String -> String -> String
 var appendStr = joinStr('');
+
+// prependStr :: String -> String -> String
 var prependStr = inverseJoinStr('');
 
 // toDecimalPrecision :: Integer -> Number -> String
