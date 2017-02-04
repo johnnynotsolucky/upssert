@@ -1,4 +1,4 @@
-import render from '../util/render'
+import { render } from '../util/render'
 import generateToken from '../util/generate-token'
 
 class HttpRequest {
@@ -20,7 +20,7 @@ class HttpRequest {
   renderUrl (url) {
     let result
     if (url) {
-      result = render(url, this.model, this.unescaped)
+      result = render(url)(this.model)
     }
     return result
   }
@@ -28,7 +28,7 @@ class HttpRequest {
   renderRequestMethod (method) {
     let result
     if (method) {
-      result = render(method, this.model, this.unescaped)
+      result = render(method)(this.model)
     } else {
       result = 'GET'
     }
@@ -40,8 +40,8 @@ class HttpRequest {
     if (request.form) {
       form = []
       for (const item of request.form) {
-        const renderedKey = render(item.key, this.model, this.unescaped)
-        const renderedValue = render(item.value, this.model, this.unescaped)
+        const renderedKey = render(item.key)(this.model)
+        const renderedValue = render(item.value)(this.model)
         const formItem = `${renderedKey}=${renderedValue}`
         form.push(formItem)
       }
@@ -57,7 +57,7 @@ class HttpRequest {
       } else if (typeof request.data === 'object') {
         data = this.renderDataFromObject(request.data)
       }
-      data = render(data, this.model, this.unescaped)
+      data = render(data)(this.model)
     }
     return data
   }
@@ -78,7 +78,7 @@ class HttpRequest {
     if (request.headers) {
       Object.keys(request.headers).forEach((key) => {
         const value = request.headers[key]
-        const concatenated = `${key}: ${render(value, this.model, this.unescaped)}`
+        const concatenated = `${key}: ${render(value)(this.model)}`
         headers.push(concatenated)
       })
     }

@@ -10,8 +10,6 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _render = require('../util/render');
 
-var _render2 = _interopRequireDefault(_render);
-
 var _generateToken = require('../util/generate-token');
 
 var _generateToken2 = _interopRequireDefault(_generateToken);
@@ -44,7 +42,7 @@ var HttpRequest = function () {
     value: function renderUrl(url) {
       var result = void 0;
       if (url) {
-        result = (0, _render2.default)(url, this.model, this.unescaped);
+        result = (0, _render.render)(url)(this.model);
       }
       return result;
     }
@@ -53,7 +51,7 @@ var HttpRequest = function () {
     value: function renderRequestMethod(method) {
       var result = void 0;
       if (method) {
-        result = (0, _render2.default)(method, this.model, this.unescaped);
+        result = (0, _render.render)(method)(this.model);
       } else {
         result = 'GET';
       }
@@ -73,8 +71,8 @@ var HttpRequest = function () {
           for (var _iterator = request.form[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
             var item = _step.value;
 
-            var renderedKey = (0, _render2.default)(item.key, this.model, this.unescaped);
-            var renderedValue = (0, _render2.default)(item.value, this.model, this.unescaped);
+            var renderedKey = (0, _render.render)(item.key)(this.model);
+            var renderedValue = (0, _render.render)(item.value)(this.model);
             var formItem = renderedKey + '=' + renderedValue;
             form.push(formItem);
           }
@@ -105,7 +103,7 @@ var HttpRequest = function () {
         } else if (_typeof(request.data) === 'object') {
           data = this.renderDataFromObject(request.data);
         }
-        data = (0, _render2.default)(data, this.model, this.unescaped);
+        data = (0, _render.render)(data)(this.model);
       }
       return data;
     }
@@ -152,7 +150,7 @@ var HttpRequest = function () {
       if (request.headers) {
         Object.keys(request.headers).forEach(function (key) {
           var value = request.headers[key];
-          var concatenated = key + ': ' + (0, _render2.default)(value, _this.model, _this.unescaped);
+          var concatenated = key + ': ' + (0, _render.render)(value)(_this.model);
           headers.push(concatenated);
         });
       }

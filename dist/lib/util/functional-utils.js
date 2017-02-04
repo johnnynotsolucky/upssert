@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.toDecimalPrecision = exports.prependStr = exports.appendStr = exports.inverseJoinStr = exports.joinStr = exports.inverseEither = exports.either = exports.arrayOrDefault = exports.flatMap = exports.getOrElse = exports.trace = undefined;
+exports.charCodeToString = exports.entityToHex = exports.toDecimalPrecision = exports.prependStr = exports.appendStr = exports.inverseJoinStr = exports.joinStr = exports.inverseEither = exports.either = exports.arrayOrDefault = exports.flatMap = exports.getOrElse = exports.trace = undefined;
 
 var _ramda = require('ramda');
 
@@ -36,8 +36,8 @@ var either = (0, _ramda.curry)(function (a, x) {
 });
 
 // inverseEither :: a -> Boolean -> Either a
-var inverseEither = (0, _ramda.curry)(function (p, x) {
-  return x ? _ramdaFantasy.Either.Left(p) : _ramdaFantasy.Either.Right(p);
+var inverseEither = (0, _ramda.curry)(function (a, x) {
+  return x ? _ramdaFantasy.Either.Left(a) : _ramdaFantasy.Either.Right(a);
 });
 
 // joinStr :: String -> String -> String -> String
@@ -61,6 +61,12 @@ var toDecimalPrecision = (0, _ramda.curry)(function (p, d) {
   return '' + d.toFixed(p);
 });
 
+// entityToHex :: String -> String
+var entityToHex = (0, _ramda.compose)((0, _ramda.replace)(/;/, ''), (0, _ramda.replace)(/&#/, '0'));
+
+// charCodeToString :: String -> String
+var charCodeToString = String.fromCharCode;
+
 exports.trace = trace;
 exports.getOrElse = getOrElse;
 exports.flatMap = flatMap;
@@ -72,3 +78,5 @@ exports.inverseJoinStr = inverseJoinStr;
 exports.appendStr = appendStr;
 exports.prependStr = prependStr;
 exports.toDecimalPrecision = toDecimalPrecision;
+exports.entityToHex = entityToHex;
+exports.charCodeToString = charCodeToString;

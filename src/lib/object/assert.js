@@ -1,7 +1,7 @@
 import { assert } from 'chai'
 import camelcase from 'camelcase'
 import getObjectValue from './get-value'
-import render from '../util/render'
+import { render } from '../util/render'
 
 class AssertObject {
   constructor (object, assertions, model, config) {
@@ -85,7 +85,7 @@ class AssertObject {
         actual,
         expected: expect.value
       }
-      result = render(expect.message, model)
+      result = render(expect.message)(model)
     } else {
       result = err.message
     }
@@ -104,7 +104,7 @@ class AssertObject {
   renderValue (value) {
     let result
     if (typeof value === 'string') {
-      result = render(value, this.model, this.unescaped)
+      result = render(value)(this.model)
     } else {
       result = value
     }

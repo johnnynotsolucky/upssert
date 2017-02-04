@@ -1,9 +1,9 @@
 import { assert } from 'chai'
-import render from '../../../src/lib/util/render'
+import { render } from '../../../src/lib/util/render'
 
 describe('render', () => {
   it('should correctly apply an object model to a view', () => {
-    const rendered = render('{{foo}}', {
+    const rendered = render('{{foo}}')({
       foo: 'bar'
     })
     assert.strictEqual(rendered, 'bar')
@@ -15,7 +15,7 @@ describe('render', () => {
         bar: 'foobar'
       }
     }
-    const rendered = render('{{foo.bar}}', foobar)
+    const rendered = render('{{foo.bar}}')(foobar)
     assert.strictEqual(rendered, 'foobar')
   })
 
@@ -24,7 +24,7 @@ describe('render', () => {
       foo: 'foo',
       bar: 'bar'
     }
-    const rendered = render('{{foo + bar}}', foobar)
+    const rendered = render('{{foo + bar}}')(foobar)
     assert.strictEqual(rendered, '')
   })
 
@@ -37,57 +37,50 @@ describe('render', () => {
         foo: 'bar'
       }
     ]
-    const rendered = render('{{#.}}{{foo}}{{/.}}', arr)
+    const rendered = render('{{#.}}{{foo}}{{/.}}')(arr)
     assert.strictEqual(rendered, 'barbar')
   })
 
   it('should throw an exception if the view template is invalid', () => {
     assert.throws(() => {
-      render('{{#}}')
+      render('{{#}}')({})
     }, Error, /^Unclosed section/)
     assert.throws(() => {
-      render('{{#.}}')
+      render('{{#.}}')({})
     }, Error, /^Unclosed section/)
   })
 
   it('should throw an exception if the view is not a string', () => {
     assert.throws(() => {
-      render({}, {})
+      render({})({})
     },
       Error, /^Invalid template! Template should be a "string" but "object"/)
     assert.throws(() => {
-      render([], {})
+      render([])({})
     },
       Error, /^Invalid template! Template should be a "string" but "array"/)
     assert.throws(() => {
-      render(undefined, {})
+      render(undefined)({})
     },
       Error, /^Invalid template! Template should be a "string" but "undefined"/)
     assert.throws(() => {
-      render(null, {})
+      render(null)({})
     },
       Error, /^Invalid template! Template should be a "string" but "object"/)
     assert.throws(() => {
-      render(1, {})
+      render(1)({})
     },
       Error, /^Invalid template! Template should be a "string" but "number"/)
     assert.throws(() => {
-      render(false, {})
+      render(false)({})
     },
       Error, /^Invalid template! Template should be a "string" but "boolean"/)
   })
 
   it('renders special characters as plain text', () => {
-    const rendered = render('{{value}}', {
+    const rendered = render('{{value}}')({
       value: 'http://'
     }, true)
-    assert.strictEqual(rendered, 'http://', true)
-  })
-
-  it('renders special characters as html entities', () => {
-    const rendered = render('{{value}}', {
-      value: 'http://'
-    })
-    assert.strictEqual(rendered, 'http:&#x2F;&#x2F;')
+    assert.equal(rendered, 'http://', true)
   })
 })

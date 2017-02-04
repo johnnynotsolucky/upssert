@@ -20,8 +20,6 @@ var _getValue2 = _interopRequireDefault(_getValue);
 
 var _render = require('../util/render');
 
-var _render2 = _interopRequireDefault(_render);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -117,7 +115,7 @@ var AssertObject = function () {
           actual: actual,
           expected: expect.value
         };
-        result = (0, _render2.default)(expect.message, model);
+        result = (0, _render.render)(expect.message)(model);
       } else {
         result = err.message;
       }
@@ -138,7 +136,7 @@ var AssertObject = function () {
     value: function renderValue(value) {
       var result = void 0;
       if (typeof value === 'string') {
-        result = (0, _render2.default)(value, this.model, this.unescaped);
+        result = (0, _render.render)(value)(this.model);
       } else {
         result = value;
       }
