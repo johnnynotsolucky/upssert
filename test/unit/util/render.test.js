@@ -81,6 +81,6 @@ describe('render', () => {
     const rendered = render('{{value}}')({
       value: 'http://'
     }, true)
-    assert.equal(rendered, 'http://', true)
+    assert.strictEqual(rendered, 'http://', true)
   })
 })
