@@ -1,5 +1,5 @@
 import { render } from '../util/render'
-import generateToken from '../util/generate-token'
+import { cryptoString } from '../util/functional-utils'
 
 class HttpRequest {
   constructor (request, model, config) {
@@ -86,7 +86,7 @@ class HttpRequest {
   }
 
   addTraceHeader () {
-    const token = generateToken()
+    const token = cryptoString(32, 'hex')
     this.headers.push(`X-Upssert-Trace: ${token}`)
     return token
   }

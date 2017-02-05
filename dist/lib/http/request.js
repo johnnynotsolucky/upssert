@@ -10,11 +10,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _render = require('../util/render');
 
-var _generateToken = require('../util/generate-token');
-
-var _generateToken2 = _interopRequireDefault(_generateToken);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var _functionalUtils = require('../util/functional-utils');
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -159,7 +155,7 @@ var HttpRequest = function () {
   }, {
     key: 'addTraceHeader',
     value: function addTraceHeader() {
-      var token = (0, _generateToken2.default)();
+      var token = (0, _functionalUtils.cryptoString)(32, 'hex');
       this.headers.push('X-Upssert-Trace: ' + token);
       return token;
     }

@@ -1,5 +1,6 @@
 import { curry, compose, flatten, map, replace } from 'ramda'
 import { Either } from 'ramda-fantasy'
+import crypto from 'crypto'
 
 // trace :: String -> a -> a
 const trace = curry((tag, x) => {
@@ -43,6 +44,9 @@ const entityToHex = compose(replace(/;/, ''), replace(/&#/, '0'))
 // charCodeToString :: String -> String
 const charCodeToString = String.fromCharCode
 
+// cryptoString :: Integer -> String -> String
+const cryptoString = curry((bytes, to) => crypto.randomBytes(bytes).toString(to))
+
 export {
   trace,
   getOrElse,
@@ -56,5 +60,6 @@ export {
   prependStr,
   toDecimalPrecision,
   entityToHex,
-  charCodeToString
+  charCodeToString,
+  cryptoString
 }

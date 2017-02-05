@@ -3,11 +3,17 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.charCodeToString = exports.entityToHex = exports.toDecimalPrecision = exports.prependStr = exports.appendStr = exports.inverseJoinStr = exports.joinStr = exports.inverseEither = exports.either = exports.arrayOrDefault = exports.flatMap = exports.getOrElse = exports.trace = undefined;
+exports.cryptoString = exports.charCodeToString = exports.entityToHex = exports.toDecimalPrecision = exports.prependStr = exports.appendStr = exports.inverseJoinStr = exports.joinStr = exports.inverseEither = exports.either = exports.arrayOrDefault = exports.flatMap = exports.getOrElse = exports.trace = undefined;
 
 var _ramda = require('ramda');
 
 var _ramdaFantasy = require('ramda-fantasy');
+
+var _crypto = require('crypto');
+
+var _crypto2 = _interopRequireDefault(_crypto);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // trace :: String -> a -> a
 var trace = (0, _ramda.curry)(function (tag, x) {
@@ -67,6 +73,11 @@ var entityToHex = (0, _ramda.compose)((0, _ramda.replace)(/;/, ''), (0, _ramda.r
 // charCodeToString :: String -> String
 var charCodeToString = String.fromCharCode;
 
+// cryptoString :: Integer -> String -> String
+var cryptoString = (0, _ramda.curry)(function (bytes, to) {
+  return _crypto2.default.randomBytes(bytes).toString(to);
+});
+
 exports.trace = trace;
 exports.getOrElse = getOrElse;
 exports.flatMap = flatMap;
@@ -80,3 +91,4 @@ exports.prependStr = prependStr;
 exports.toDecimalPrecision = toDecimalPrecision;
 exports.entityToHex = entityToHex;
 exports.charCodeToString = charCodeToString;
+exports.cryptoString = cryptoString;
