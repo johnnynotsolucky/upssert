@@ -13,13 +13,17 @@ const defaultConfig = () => ({
 const readConfig = file => readJsonFile(`${process.cwd()}/${file}`)
 
 // readRuncom :: String
-const readRuncom = () =>
-  compose(inverseMaybeEither, readConfig)('.upssertrc')
+const readRuncom = () => {
+  const read = compose(inverseMaybeEither, readConfig)
+  return read('.upssertrc')
+}
 
 // readClientPackage :: String
-const readClientPackage = () =>
-  compose(inverseMaybeEither, readConfig)('package.json')
+const readClientPackage = () => {
+  const read = compose(inverseMaybeEither, readConfig)
+  return read('package.json')
     .bimap(propOr(null, 'upssert'), F)
+}
 
 // mergeConfigs :: Object -> Object
 const mergeConfigs = merge(defaultConfig())

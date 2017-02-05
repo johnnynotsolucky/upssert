@@ -27,12 +27,14 @@ var readConfig = function readConfig(file) {
 
 // readRuncom :: String
 var readRuncom = function readRuncom() {
-  return (0, _ramda.compose)(_functionalUtils.inverseMaybeEither, readConfig)('.upssertrc');
+  var read = (0, _ramda.compose)(_functionalUtils.inverseMaybeEither, readConfig);
+  return read('.upssertrc');
 };
 
 // readClientPackage :: String
 var readClientPackage = function readClientPackage() {
-  return (0, _ramda.compose)(_functionalUtils.inverseMaybeEither, readConfig)('package.json').bimap((0, _ramda.propOr)(null, 'upssert'), _ramda.F);
+  var read = (0, _ramda.compose)(_functionalUtils.inverseMaybeEither, readConfig);
+  return read('package.json').bimap((0, _ramda.propOr)(null, 'upssert'), _ramda.F);
 };
 
 // mergeConfigs :: Object -> Object
