@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.cryptoString = exports.charCodeToString = exports.entityToHex = exports.toDecimalPrecision = exports.prependStr = exports.appendStr = exports.inverseJoinStr = exports.joinStr = exports.inverseMaybeEither = exports.inverseEither = exports.either = exports.arrayOrDefault = exports.flatMap = exports.getOrElse = exports.trace = undefined;
+exports.bimap = exports.cryptoString = exports.charCodeToString = exports.entityToHex = exports.toDecimalPrecision = exports.prependStr = exports.appendStr = exports.inverseJoinStr = exports.joinStr = exports.inverseMaybeEither = exports.inverseEither = exports.either = exports.arrayOrDefault = exports.flatMap = exports.getOrElse = exports.value = exports.trace = undefined;
 
 var _ramda = require('ramda');
 
@@ -20,6 +20,11 @@ var trace = (0, _ramda.curry)(function (tag, x) {
   console.log(tag, x);
   return x;
 });
+
+// value :: a -> b
+var value = function value(x) {
+  return x.value;
+};
 
 // getOrElse :: a -> Maybe -> b
 var getOrElse = (0, _ramda.curry)(function (x, m) {
@@ -47,9 +52,9 @@ var inverseEither = (0, _ramda.curry)(function (a, x) {
 });
 
 // inverseMaybeEither :: Maybe a -> Either Null a
-var inverseMaybeEither = function inverseMaybeEither(m) {
-  return m.isNothing ? _ramdaFantasy.Either.Right(null) : _ramdaFantasy.Either.Left(m.value);
-};
+var inverseMaybeEither = (0, _ramda.curry)(function (x, m) {
+  return m.isNothing ? _ramdaFantasy.Either.Right(x) : _ramdaFantasy.Either.Left(m.value);
+});
 
 // joinStr :: String -> String -> String -> String
 var joinStr = (0, _ramda.curry)(function (joinWith, a, b) {
@@ -83,7 +88,12 @@ var cryptoString = (0, _ramda.curry)(function (bytes, to) {
   return _crypto2.default.randomBytes(bytes).toString(to);
 });
 
+var bimap = (0, _ramda.curry)(function (f, g, x) {
+  return x.bimap(f, g);
+});
+
 exports.trace = trace;
+exports.value = value;
 exports.getOrElse = getOrElse;
 exports.flatMap = flatMap;
 exports.arrayOrDefault = arrayOrDefault;
@@ -98,3 +108,4 @@ exports.toDecimalPrecision = toDecimalPrecision;
 exports.entityToHex = entityToHex;
 exports.charCodeToString = charCodeToString;
 exports.cryptoString = cryptoString;
+exports.bimap = bimap;

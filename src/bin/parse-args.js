@@ -1,4 +1,4 @@
-import { curry } from 'ramda'
+import minimist from 'minimist'
 import { globByPattern } from '../lib/util/globber'
 import {
   arrayOrDefault,
@@ -13,12 +13,21 @@ const paramsFromArgs = args => ({
   reporter: args.reporter || args.r || 'console'
 })
 
+const argsToObject = () => minimist(process.argv.slice(2))
+
+const cwd = process.cwd
+
 // parseArgs :: Object -> Object -> Object -> Object
-export default curry((args, { globOptions, defaultPattern }) => {
-  const globByAbsolutePattern = globByPattern(process.cwd(), globOptions, '**/*.json')
+const parseArgs = ({ globOptions, pattern }) => {
+  const args = argsToObject()
+  const globByAbsolutePattern = globByPattern(cwd(), globOptions, '**/*.json')
   const globber = flatMap(globByAbsolutePattern)
   return {
     ...paramsFromArgs(args),
-    files: globber(arrayOrDefault(args._, defaultPattern))
+    files: globber(arrayOrDefault(args._, pattern))
   }
-})
+}
+
+export {
+  parseArgs
+}

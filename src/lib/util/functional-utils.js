@@ -8,6 +8,9 @@ const trace = curry((tag, x) => {
   return x
 })
 
+// value :: a -> b
+const value = x => x.value
+
 // getOrElse :: a -> Maybe -> b
 const getOrElse = curry((x, m) => m.getOrElse(x))
 
@@ -24,7 +27,7 @@ const either = curry((a, x) => x ? Either.Right(a) : Either.Left(a))
 const inverseEither = curry((a, x) => x ? Either.Left(a) : Either.Right(a))
 
 // inverseMaybeEither :: Maybe a -> Either Null a
-const inverseMaybeEither = m => m.isNothing ? Either.Right(null) : Either.Left(m.value)
+const inverseMaybeEither = curry((x, m) => m.isNothing ? Either.Right(x) : Either.Left(m.value))
 
 // joinStr :: String -> String -> String -> String
 const joinStr = curry((joinWith, a, b) => `${a}${joinWith}${b}`)
@@ -50,8 +53,11 @@ const charCodeToString = String.fromCharCode
 // cryptoString :: Integer -> String -> String
 const cryptoString = curry((bytes, to) => crypto.randomBytes(bytes).toString(to))
 
+const bimap = curry((f, g, x) => x.bimap(f, g))
+
 export {
   trace,
+  value,
   getOrElse,
   flatMap,
   arrayOrDefault,
@@ -65,5 +71,6 @@ export {
   toDecimalPrecision,
   entityToHex,
   charCodeToString,
-  cryptoString
+  cryptoString,
+  bimap
 }

@@ -15,7 +15,7 @@ var _functionalUtils = require('./util/functional-utils');
 var defaultConfig = function defaultConfig() {
   return {
     globOpts: [],
-    testDir: process.cwd() + '/test/api/**/*.json',
+    pattern: process.cwd() + '/test/api/**/*.json',
     envPrefix: false
   };
 };
@@ -25,15 +25,15 @@ var readConfig = function readConfig(file) {
   return (0, _json.readJsonFile)(process.cwd() + '/' + file);
 };
 
-// readRuncom :: String
+// readRuncom :: Either String
 var readRuncom = function readRuncom() {
-  var read = (0, _ramda.compose)(_functionalUtils.inverseMaybeEither, readConfig);
+  var read = (0, _ramda.compose)((0, _functionalUtils.inverseMaybeEither)(null), readConfig);
   return read('.upssertrc');
 };
 
-// readClientPackage :: String
+// readClientPackage :: Either String
 var readClientPackage = function readClientPackage() {
-  var read = (0, _ramda.compose)(_functionalUtils.inverseMaybeEither, readConfig);
+  var read = (0, _ramda.compose)((0, _functionalUtils.inverseMaybeEither)(null), readConfig);
   return read('package.json').bimap((0, _ramda.propOr)(null, 'upssert'), _ramda.F);
 };
 
@@ -41,8 +41,6 @@ var readClientPackage = function readClientPackage() {
 var mergeConfigs = (0, _ramda.merge)(defaultConfig());
 
 // getConfig :: Object
-var getConfig = function getConfig() {
-  return readRuncom().chain(readClientPackage).bimap(mergeConfigs, mergeConfigs);
-};
+var getConfig = (0, _ramda.compose)(_functionalUtils.value, (0, _functionalUtils.bimap)(mergeConfigs, mergeConfigs), (0, _ramda.chain)(readClientPackage), readRuncom);
 
 exports.getConfig = getConfig;

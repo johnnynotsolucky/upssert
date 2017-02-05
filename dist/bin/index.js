@@ -3,11 +3,15 @@
 
 require('babel-polyfill');
 
+var _ramda = require('ramda');
+
+var _ramdaFantasy = require('ramda-fantasy');
+
+var _functionalUtils = require('../lib/util/functional-utils');
+
 var _json = require('../lib/util/json');
 
 var _parseArgs = require('./parse-args');
-
-var _parseArgs2 = _interopRequireDefault(_parseArgs);
 
 var _package = require('../package.json');
 
@@ -26,43 +30,57 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 // eslint-disable-line import/no-unresolved
 
 
-var optionDefinitions = {
-  boolean: ['help', 'h']
+var config = (0, _config.getConfig)();
+var opts = (0, _parseArgs.parseArgs)(config);
+
+var helpText = function helpText(p) {
+  return '\n  ' + p.description + '\n\n  Usage: upssert [options...] [glob]\n\n  Default glob searches in tests/api/**/*.js\n\n  upssert -r tap --url https://httpbin.org/get\n  upssert tests/api/**/*.json\n\n  options:\n    --url           Ping supplied URL\n    --reporter, -r  Set test reporter (tap, console)\n    --help,     -h  Show help\n    --version\n  ';
 };
 
-var minimist = require('minimist');
-
-var argv = void 0;
-try {
-  argv = minimist(process.argv.slice(2), optionDefinitions);
-} catch (err) {
-  console.log(err);
-  process.exit(1);
-}
-
-var config = (0, _config.getConfig)().value;
-var globOptions = config.globOptions,
-    defaultPattern = config.testDir;
-
-var opts = (0, _parseArgs2.default)(argv, { globOptions: globOptions, defaultPattern: defaultPattern });
-
-var showHelp = function showHelp() {
-  console.log('\n    ' + _package2.default.description + '\n\n    Usage: upssert [options...] [glob]\n\n    Default glob searches in tests/api/**/*.js\n\n    upssert -r tap --url https://httpbin.org/get\n    upssert tests/api/**/*.json\n\n    options:\n      --url           Ping supplied URL\n      --reporter, -r  Set test reporter (tap, console)\n      --help,     -h  Show help\n      --version\n  ');
-  process.exit(0);
+var versionText = function versionText(p) {
+  return p.version;
 };
+
+var state = function state(conf) {
+  return {
+    args: (0, _parseArgs.parseArgs)(conf),
+    conf: conf
+  };
+};
+
+var setup = (0, _ramda.compose)(state, _config.getConfig);
+
+var showHelp = function showHelp(x) {
+  return x ? (0, _ramdaFantasy.Maybe)(helpText(_package2.default)) : _ramdaFantasy.Maybe.Nothing();
+};
+
+var showVersion = function showVersion(x) {
+  return x ? (0, _ramdaFantasy.Maybe)(versionText(_package2.default)) : _ramdaFantasy.Maybe.Nothing();
+};
+
+var print = function print(x) {
+  console.log(x);
+  return x;
+};
+
+var exit = function exit(code) {
+  return function () {
+    return process.exit(code);
+  };
+};
+
+var printOutput = function printOutput(args) {
+  var f = (0, _ramda.compose)((0, _functionalUtils.bimap)(exit(0), _ramda.identity), (0, _functionalUtils.bimap)(print, _ramda.identity), (0, _ramda.chain)((0, _ramda.compose)((0, _functionalUtils.inverseMaybeEither)(args), showVersion, (0, _ramda.prop)('version'))), (0, _ramda.compose)((0, _functionalUtils.inverseMaybeEither)(args), showHelp, (0, _ramda.prop)('help')));
+  f(args);
+};
+
+printOutput(setup().args);
 
 var data = void 0;
-
 if (opts.url) {
   data = opts.url;
 } else {
   data = [];
-  if (opts.help) {
-    showHelp();
-  } else if (opts.version) {
-    console.log(_package2.default.version);
-    process.exit(0);
-  }
   opts.files.forEach(function (file) {
     var json = (0, _json.readJsonFile)(file).value;
     data.push(json);
