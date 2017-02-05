@@ -4,7 +4,7 @@ import 'babel-polyfill'
 import { readJsonFile } from '../lib/util/json'
 import parseArgs from './parse-args'
 import pack from '../package.json' // eslint-disable-line import/no-unresolved
-import Config from '../lib/config'
+import { getConfig } from '../lib/config'
 import Upssert, { TapReporter, ConsoleReporter, LogWriter } from '../'
 
 const optionDefinitions = {
@@ -21,7 +21,7 @@ try {
   process.exit(1)
 }
 
-const config = new Config()
+const config = getConfig().value
 const { globOptions, testDir: defaultPattern } = config
 const opts = parseArgs(argv, { globOptions, defaultPattern })
 

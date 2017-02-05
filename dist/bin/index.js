@@ -15,8 +15,6 @@ var _package2 = _interopRequireDefault(_package);
 
 var _config = require('../lib/config');
 
-var _config2 = _interopRequireDefault(_config);
-
 var _ = require('../');
 
 var _2 = _interopRequireDefault(_);
@@ -42,7 +40,7 @@ try {
   process.exit(1);
 }
 
-var config = new _config2.default();
+var config = (0, _config.getConfig)().value;
 var globOptions = config.globOptions,
     defaultPattern = config.testDir;
 

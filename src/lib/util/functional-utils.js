@@ -23,6 +23,9 @@ const either = curry((a, x) => x ? Either.Right(a) : Either.Left(a))
 // inverseEither :: a -> Boolean -> Either a
 const inverseEither = curry((a, x) => x ? Either.Left(a) : Either.Right(a))
 
+// inverseMaybeEither :: Maybe a -> Either Null a
+const inverseMaybeEither = m => m.isNothing ? Either.Right(null) : Either.Left(m.value)
+
 // joinStr :: String -> String -> String -> String
 const joinStr = curry((joinWith, a, b) => `${a}${joinWith}${b}`)
 
@@ -54,6 +57,7 @@ export {
   arrayOrDefault,
   either,
   inverseEither,
+  inverseMaybeEither,
   joinStr,
   inverseJoinStr,
   appendStr,

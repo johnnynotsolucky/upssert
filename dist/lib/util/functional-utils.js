@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.cryptoString = exports.charCodeToString = exports.entityToHex = exports.toDecimalPrecision = exports.prependStr = exports.appendStr = exports.inverseJoinStr = exports.joinStr = exports.inverseEither = exports.either = exports.arrayOrDefault = exports.flatMap = exports.getOrElse = exports.trace = undefined;
+exports.cryptoString = exports.charCodeToString = exports.entityToHex = exports.toDecimalPrecision = exports.prependStr = exports.appendStr = exports.inverseJoinStr = exports.joinStr = exports.inverseMaybeEither = exports.inverseEither = exports.either = exports.arrayOrDefault = exports.flatMap = exports.getOrElse = exports.trace = undefined;
 
 var _ramda = require('ramda');
 
@@ -46,6 +46,11 @@ var inverseEither = (0, _ramda.curry)(function (a, x) {
   return x ? _ramdaFantasy.Either.Left(a) : _ramdaFantasy.Either.Right(a);
 });
 
+// inverseMaybeEither :: Maybe a -> Either Null a
+var inverseMaybeEither = function inverseMaybeEither(m) {
+  return m.isNothing ? _ramdaFantasy.Either.Right(null) : _ramdaFantasy.Either.Left(m.value);
+};
+
 // joinStr :: String -> String -> String -> String
 var joinStr = (0, _ramda.curry)(function (joinWith, a, b) {
   return '' + a + joinWith + b;
@@ -84,6 +89,7 @@ exports.flatMap = flatMap;
 exports.arrayOrDefault = arrayOrDefault;
 exports.either = either;
 exports.inverseEither = inverseEither;
+exports.inverseMaybeEither = inverseMaybeEither;
 exports.joinStr = joinStr;
 exports.inverseJoinStr = inverseJoinStr;
 exports.appendStr = appendStr;

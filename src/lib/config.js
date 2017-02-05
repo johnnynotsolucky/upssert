@@ -1,29 +1,36 @@
+import { compose, propOr, merge, F } from 'ramda'
 import { readJsonFile } from './util/json'
+import { inverseMaybeEither } from './util/functional-utils'
 
-class Config {
-  constructor () {
-    let config
-    try {
-      const runcom = readJsonFile(`${process.cwd()}/.upssertrc`).value
-      if (runcom) {
-        config = runcom
-      } else {
-        const clientPackage = readJsonFile(`${process.cwd()}/package.json`).value
-        if (clientPackage && clientPackage.upssert) {
-          config = clientPackage.upssert
-        } else {
-          config = {}
-        }
-      }
-    } catch (err) {
-      config = {}
-    }
+// defaultConfig :: Object
+const defaultConfig = () => ({
+  globOpts: [],
+  testDir: `${process.cwd()}/test/api/**/*.json`,
+  envPrefix: false
+})
 
-    this.globOptions = config.globOpts || []
-    this.testDir = config.testDir || `${process.cwd()}/test/api/**/*.json`
-    this.envPrefix = config.envPrefix || false
-    this.unescaped = config.unescaped || false
-  }
+// readConfig :: String -> String
+const readConfig = file => readJsonFile(`${process.cwd()}/${file}`)
+
+// readRuncom :: String
+const readRuncom = () =>
+  compose(inverseMaybeEither, readConfig)('.upssertrc')
+
+// readClientPackage :: String
+const readClientPackage = () =>
+  compose(inverseMaybeEither, readConfig)('package.json')
+    .bimap(propOr(null, 'upssert'), F)
+
+// mergeConfigs :: Object -> Object
+const mergeConfigs = merge(defaultConfig())
+
+// getConfig :: Object
+const getConfig = () => {
+  return readRuncom()
+    .chain(readClientPackage)
+    .bimap(mergeConfigs, mergeConfigs)
 }
 
-export default Config
+export {
+  getConfig
+}
