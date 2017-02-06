@@ -53,7 +53,7 @@ describe('getObjectValue', () => {
     assert.strictEqual(foobar, 99)
   })
 
-  it('should return undefined is property does not exist', () => {
+  it('should return undefined if property does not exist', () => {
     let object = {}
     let foo = getObjectValue(object, 'foo')
     assert.isNotOk(foo)
@@ -75,14 +75,5 @@ describe('getObjectValue', () => {
     const original = getObjectValue(object, '')
     assert.isOk(original)
     assert.strictEqual(original, object)
-  })
-
-  it('should return the undefined if query starts with bracket notation', () => {
-    const object = {
-      foo: 'bar'
-    }
-    const foo = getObjectValue(object, '[foo]')
-    assert.isNotOk(foo)
-    assert.strictEqual(foo, undefined)
   })
 })

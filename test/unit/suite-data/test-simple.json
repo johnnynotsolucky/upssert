@@ -7,7 +7,7 @@
         "url": "https://httpbin.org/get?foo=bar"
       },
       "response": {
-        "status-code": {
+        "statusCode": {
           "equal": 200
         },
         "body.foo": "bar"

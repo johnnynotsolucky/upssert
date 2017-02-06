@@ -1,38 +1,34 @@
-import camelcase from 'camelcase'
+import {
+  curry,
+  concat,
+  compose,
+  map,
+  replace,
+  path,
+  match,
+  split,
+  flatten
+} from 'ramda'
 import falsy from 'falsy'
 
-const getValueFromBracketNotation = (object, property, bracketNotation) => {
-  const parentProperty = property.substr(0, property.match(/\[/).index)
-  let newObject = object[camelcase(parentProperty)] || object[parentProperty]
-  for (const part of bracketNotation) {
-    newObject = newObject[part.replace('[', '').replace(']', '')]
-  }
-  return newObject
-}
+// trimBrackets :: String -> String
+const trimBrackets = replace(/\[|\]/g, '')
 
-const getObjectValue = (object, key) => {
-  if (falsy(key)) {
-    return object
-  }
-  try {
-    let value = object
-    const properties = key.split('.')
-    for (const property of properties) {
-      const bracketNotation = property.match(/\[(.*?)]/g)
-      if (bracketNotation) {
-        value = getValueFromBracketNotation(value, property, bracketNotation)
-      } else {
-        let tmp = value[camelcase(property)]
-        if (tmp === undefined) {
-          tmp = value[property]
-        }
-        value = tmp
-      }
-    }
-    return value
-  } catch (err) {
-    return undefined
-  }
-}
+// bracketNotation :: Object -> String -> [String]
+const bracketNotation = a => concat(match(/[^[]*/, a), match(/\[.*?\]/g, a))
+
+// dotNotation :: String -> [String]
+const dotNotation = split('.')
+
+// propsFromKey :: String -> [String]
+const propsFromKey = compose(
+  map(trimBrackets),
+  flatten,
+  map(bracketNotation),
+  dotNotation
+)
+
+const getObjectValue = curry((obj, key) =>
+  falsy(key) ? obj : path(propsFromKey(key), obj))
 
 export default getObjectValue

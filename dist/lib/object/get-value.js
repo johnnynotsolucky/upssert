@@ -4,9 +4,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _camelcase = require('camelcase');
-
-var _camelcase2 = _interopRequireDefault(_camelcase);
+var _ramda = require('ramda');
 
 var _falsy = require('falsy');
 
@@ -14,82 +12,22 @@ var _falsy2 = _interopRequireDefault(_falsy);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var getValueFromBracketNotation = function getValueFromBracketNotation(object, property, bracketNotation) {
-  var parentProperty = property.substr(0, property.match(/\[/).index);
-  var newObject = object[(0, _camelcase2.default)(parentProperty)] || object[parentProperty];
-  var _iteratorNormalCompletion = true;
-  var _didIteratorError = false;
-  var _iteratorError = undefined;
+// trimBrackets :: String -> String
+var trimBrackets = (0, _ramda.replace)(/\[|\]/g, '');
 
-  try {
-    for (var _iterator = bracketNotation[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-      var part = _step.value;
-
-      newObject = newObject[part.replace('[', '').replace(']', '')];
-    }
-  } catch (err) {
-    _didIteratorError = true;
-    _iteratorError = err;
-  } finally {
-    try {
-      if (!_iteratorNormalCompletion && _iterator.return) {
-        _iterator.return();
-      }
-    } finally {
-      if (_didIteratorError) {
-        throw _iteratorError;
-      }
-    }
-  }
-
-  return newObject;
+// bracketNotation :: Object -> String -> [String]
+var bracketNotation = function bracketNotation(a) {
+  return (0, _ramda.concat)((0, _ramda.match)(/[^[]*/, a), (0, _ramda.match)(/\[.*?\]/g, a));
 };
 
-var getObjectValue = function getObjectValue(object, key) {
-  if ((0, _falsy2.default)(key)) {
-    return object;
-  }
-  try {
-    var value = object;
-    var properties = key.split('.');
-    var _iteratorNormalCompletion2 = true;
-    var _didIteratorError2 = false;
-    var _iteratorError2 = undefined;
+// dotNotation :: String -> [String]
+var dotNotation = (0, _ramda.split)('.');
 
-    try {
-      for (var _iterator2 = properties[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-        var property = _step2.value;
+// propsFromKey :: String -> [String]
+var propsFromKey = (0, _ramda.compose)((0, _ramda.map)(trimBrackets), _ramda.flatten, (0, _ramda.map)(bracketNotation), dotNotation);
 
-        var bracketNotation = property.match(/\[(.*?)]/g);
-        if (bracketNotation) {
-          value = getValueFromBracketNotation(value, property, bracketNotation);
-        } else {
-          var tmp = value[(0, _camelcase2.default)(property)];
-          if (tmp === undefined) {
-            tmp = value[property];
-          }
-          value = tmp;
-        }
-      }
-    } catch (err) {
-      _didIteratorError2 = true;
-      _iteratorError2 = err;
-    } finally {
-      try {
-        if (!_iteratorNormalCompletion2 && _iterator2.return) {
-          _iterator2.return();
-        }
-      } finally {
-        if (_didIteratorError2) {
-          throw _iteratorError2;
-        }
-      }
-    }
-
-    return value;
-  } catch (err) {
-    return undefined;
-  }
-};
+var getObjectValue = (0, _ramda.curry)(function (obj, key) {
+  return (0, _falsy2.default)(key) ? obj : (0, _ramda.path)(propsFromKey(key), obj);
+});
 
 exports.default = getObjectValue;

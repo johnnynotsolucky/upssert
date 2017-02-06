@@ -40,7 +40,7 @@ describe('Runner', () => {
       .then((results) => {
         const test1 = results[0].tests.test1
         assert.strictEqual(test1.pass, false)
-        assert.strictEqual(test1.reason, 'expected 404 to equal 200 (status-code)')
+        assert.strictEqual(test1.reason, 'expected 404 to equal 200 (statusCode)')
         done()
       }).catch(done)
   })

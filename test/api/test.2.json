@@ -7,12 +7,12 @@
         "url": "https://httpbin.org/get?a=b"
       },
       "response": {
-        "content-type": "application/json",
-        "status-code": {
+        "contentType": "application/json",
+        "statusCode": {
           "is-at-least": 200,
           "is-at-most": 201
         },
-        "timing.dns-resolution": {
+        "timing.dnsResolution": {
           "is-below": 100
         },
         "timing.total": {
@@ -26,11 +26,11 @@
         "url": "https://httpbin.org/get?a=b"
       },
       "response": {
-        "content-type": "application/json",
-        "status-code": {
+        "contentType": "application/json",
+        "statusCode": {
           "equal": 200
         },
-        "timing.dns-resolution": {
+        "timing.dnsResolution": {
           "is-below": 100
         },
         "timing.total": {
