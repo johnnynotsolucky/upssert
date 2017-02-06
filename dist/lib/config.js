@@ -12,35 +12,37 @@ var _json = require('./util/json');
 var _functionalUtils = require('./util/functional-utils');
 
 // defaultConfig :: Object
-var defaultConfig = function defaultConfig() {
+var defaultConfig = function defaultConfig(proc) {
   return {
     globOpts: [],
-    pattern: process.cwd() + '/test/api/**/*.json',
+    pattern: proc.cwd() + '/test/api/**/*.json',
     envPrefix: false
   };
 };
 
-// readConfig :: String -> String
-var readConfig = function readConfig(file) {
-  return (0, _json.readJsonFile)(process.cwd() + '/' + file);
+// readConfig :: String -> Either Object
+var readConfig = (0, _ramda.compose)((0, _functionalUtils.inverseMaybeEither)(null), _json.readJsonFile);
+
+// readRuncom :: Object -> Either Object
+var readRuncom = function readRuncom(proc) {
+  return function () {
+    return readConfig(proc.cwd() + '/.upssertrc');
+  };
 };
 
-// readRuncom :: Either String
-var readRuncom = function readRuncom() {
-  var read = (0, _ramda.compose)((0, _functionalUtils.inverseMaybeEither)(null), readConfig);
-  return read('.upssertrc');
+// readClientPackage :: Object -> Either Object
+var readClientPackage = function readClientPackage(proc) {
+  return function () {
+    return readConfig(proc.cwd() + '/package.json').bimap((0, _ramda.propOr)(null, 'upssert'), _ramda.F);
+  };
 };
 
-// readClientPackage :: Either String
-var readClientPackage = function readClientPackage() {
-  var read = (0, _ramda.compose)((0, _functionalUtils.inverseMaybeEither)(null), readConfig);
-  return read('package.json').bimap((0, _ramda.propOr)(null, 'upssert'), _ramda.F);
+// getConfig :: Object -> Object
+var getConfig = function getConfig(proc) {
+  var defaultConf = defaultConfig(proc);
+  var mergeConfig = (0, _ramda.merge)(defaultConf);
+  var f = (0, _ramda.compose)(_functionalUtils.fold, (0, _functionalUtils.bimap)(mergeConfig, mergeConfig), (0, _ramda.chain)(readClientPackage(proc)), readRuncom(proc));
+  return f();
 };
-
-// mergeConfigs :: Object -> Object
-var mergeConfigs = (0, _ramda.merge)(defaultConfig());
-
-// getConfig :: Object
-var getConfig = (0, _ramda.compose)(_functionalUtils.value, (0, _functionalUtils.bimap)(mergeConfigs, mergeConfigs), (0, _ramda.chain)(readClientPackage), readRuncom);
 
 exports.getConfig = getConfig;

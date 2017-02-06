@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.bimap = exports.cryptoString = exports.charCodeToString = exports.entityToHex = exports.toDecimalPrecision = exports.prependStr = exports.appendStr = exports.inverseJoinStr = exports.joinStr = exports.inverseMaybeEither = exports.inverseEither = exports.either = exports.arrayOrDefault = exports.flatMap = exports.getOrElse = exports.value = exports.trace = undefined;
+exports.log = exports.exit = exports.emptyIO = exports.bimap = exports.cryptoString = exports.charCodeToString = exports.entityToHex = exports.toDecimalPrecision = exports.prependStr = exports.appendStr = exports.inverseJoinStr = exports.joinStr = exports.inverseMaybeEither = exports.inverseEither = exports.either = exports.booleanMaybe = exports.arrayOrDefault = exports.flatMap = exports.getOrElse = exports.fold = exports.trace = undefined;
 
 var _ramda = require('ramda');
 
@@ -22,7 +22,7 @@ var trace = (0, _ramda.curry)(function (tag, x) {
 });
 
 // value :: a -> b
-var value = function value(x) {
+var fold = function fold(x) {
   return x.value;
 };
 
@@ -39,6 +39,11 @@ var flatMap = (0, _ramda.curry)(function (f) {
 // identityOrDefault :: [a] -> a -> [a]
 var arrayOrDefault = (0, _ramda.curry)(function (args, x) {
   return args.length ? args : [x];
+});
+
+// booleanMaybe :: a -> b -> Maybe a
+var booleanMaybe = (0, _ramda.curry)(function (a, x) {
+  return x ? (0, _ramdaFantasy.Maybe)(a) : _ramdaFantasy.Maybe.Nothing();
 });
 
 // either :: a -> Boolean -> Either a
@@ -88,15 +93,39 @@ var cryptoString = (0, _ramda.curry)(function (bytes, to) {
   return _crypto2.default.randomBytes(bytes).toString(to);
 });
 
+// bimap :: (a -> b) -> (a -> b) -> Bifunctor -> Bifunctor
 var bimap = (0, _ramda.curry)(function (f, g, x) {
   return x.bimap(f, g);
 });
 
+// emptyIO :: IO True
+var emptyIO = function emptyIO() {
+  return (0, _ramdaFantasy.IO)(_ramda.T);
+};
+
+// exit :: Integer -> IO
+var exit = function exit(code) {
+  return function () {
+    return (0, _ramdaFantasy.IO)(function () {
+      return process.exit(code);
+    });
+  };
+};
+
+// log :: a -> IO a
+var log = function log(x) {
+  return (0, _ramdaFantasy.IO)(function () {
+    console.log(x);
+    return x;
+  });
+};
+
 exports.trace = trace;
-exports.value = value;
+exports.fold = fold;
 exports.getOrElse = getOrElse;
 exports.flatMap = flatMap;
 exports.arrayOrDefault = arrayOrDefault;
+exports.booleanMaybe = booleanMaybe;
 exports.either = either;
 exports.inverseEither = inverseEither;
 exports.inverseMaybeEither = inverseMaybeEither;
@@ -109,3 +138,6 @@ exports.entityToHex = entityToHex;
 exports.charCodeToString = charCodeToString;
 exports.cryptoString = cryptoString;
 exports.bimap = bimap;
+exports.emptyIO = emptyIO;
+exports.exit = exit;
+exports.log = log;

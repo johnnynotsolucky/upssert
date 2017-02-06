@@ -13,14 +13,14 @@ const paramsFromArgs = args => ({
   reporter: args.reporter || args.r || 'console'
 })
 
-const argsToObject = () => minimist(process.argv.slice(2))
+const argsToObject = proc => minimist(proc.argv.slice(2))
 
-const cwd = process.cwd
+const cwd = proc => proc.cwd()
 
 // parseArgs :: Object -> Object -> Object -> Object
-const parseArgs = ({ globOptions, pattern }) => {
-  const args = argsToObject()
-  const globByAbsolutePattern = globByPattern(cwd(), globOptions, '**/*.json')
+const parseArgs = (proc, { globOptions, pattern }) => {
+  const args = argsToObject(proc)
+  const globByAbsolutePattern = globByPattern(cwd(proc), globOptions, '**/*.json')
   const globber = flatMap(globByAbsolutePattern)
   return {
     ...paramsFromArgs(args),

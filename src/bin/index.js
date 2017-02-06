@@ -1,67 +1,31 @@
 #!/usr/bin/env node
 /* eslint-disable no-console */
 import 'babel-polyfill'
-import { compose, chain, prop, identity } from 'ramda'
-import { Maybe } from 'ramda-fantasy'
-import { inverseMaybeEither, bimap } from '../lib/util/functional-utils'
+import { compose } from 'ramda'
+import { Identity } from 'ramda-fantasy'
 import { readJsonFile } from '../lib/util/json'
 import { parseArgs } from './parse-args'
-import pack from '../package.json' // eslint-disable-line import/no-unresolved
+import { printMenu } from './menu'
 import { getConfig } from '../lib/config'
 import Upssert, { TapReporter, ConsoleReporter, LogWriter } from '../'
+import pack from '../package.json' // eslint-disable-line import/no-unresolved
 
-const config = getConfig()
-const opts = parseArgs(config)
-
-const helpText = p =>
-  `
-  ${p.description}
-
-  Usage: upssert [options...] [glob]
-
-  Default glob searches in tests/api/**/*.js
-
-  upssert -r tap --url https://httpbin.org/get
-  upssert tests/api/**/*.json
-
-  options:
-    --url           Ping supplied URL
-    --reporter, -r  Set test reporter (tap, console)
-    --help,     -h  Show help
-    --version
-  `
-
-const versionText = p => p.version
-
-const state = conf => ({
-  args: parseArgs(conf),
-  conf
-})
-
-const setup = compose(state, getConfig)
-
-const showHelp = x => x ? Maybe(helpText(pack)) : Maybe.Nothing()
-
-const showVersion = x => x ? Maybe(versionText(pack)) : Maybe.Nothing()
-
-const print = x => {
-  console.log(x)
-  return x
+// state :: Object -> Object
+const state = proc => {
+  const conf = getConfig(proc)
+  const args = parseArgs(proc, conf)
+  return { args, conf }
 }
 
-const exit = code => () => process.exit(code)
+// init :: Object -> IO a
+const init = compose(Identity, state)
 
-const printOutput = args => {
-  const f = compose(
-    bimap(exit(0), identity),
-    bimap(print, identity),
-    chain(compose(inverseMaybeEither(args), showVersion, prop('version'))),
-    compose(inverseMaybeEither(args), showHelp, prop('help'))
-  )
-  f(args)
-}
+init(process)
+  .chain(printMenu(pack))
+  .runIO()
 
-printOutput(setup().args)
+const config = getConfig(process)
+const opts = parseArgs(process, config)
 
 let data
 if (opts.url) {

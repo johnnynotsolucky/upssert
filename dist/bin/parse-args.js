@@ -27,19 +27,21 @@ var paramsFromArgs = function paramsFromArgs(args) {
   };
 };
 
-var argsToObject = function argsToObject() {
-  return (0, _minimist2.default)(process.argv.slice(2));
+var argsToObject = function argsToObject(proc) {
+  return (0, _minimist2.default)(proc.argv.slice(2));
 };
 
-var cwd = process.cwd;
+var cwd = function cwd(proc) {
+  return proc.cwd();
+};
 
 // parseArgs :: Object -> Object -> Object -> Object
-var parseArgs = function parseArgs(_ref) {
+var parseArgs = function parseArgs(proc, _ref) {
   var globOptions = _ref.globOptions,
       pattern = _ref.pattern;
 
-  var args = argsToObject();
-  var globByAbsolutePattern = (0, _globber.globByPattern)(cwd(), globOptions, '**/*.json');
+  var args = argsToObject(proc);
+  var globByAbsolutePattern = (0, _globber.globByPattern)(cwd(proc), globOptions, '**/*.json');
   var globber = (0, _functionalUtils.flatMap)(globByAbsolutePattern);
   return _extends({}, paramsFromArgs(args), {
     files: globber((0, _functionalUtils.arrayOrDefault)(args._, pattern))

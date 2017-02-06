@@ -7,15 +7,11 @@ var _ramda = require('ramda');
 
 var _ramdaFantasy = require('ramda-fantasy');
 
-var _functionalUtils = require('../lib/util/functional-utils');
-
 var _json = require('../lib/util/json');
 
 var _parseArgs = require('./parse-args');
 
-var _package = require('../package.json');
-
-var _package2 = _interopRequireDefault(_package);
+var _menu = require('./menu');
 
 var _config = require('../lib/config');
 
@@ -23,58 +19,32 @@ var _ = require('../');
 
 var _2 = _interopRequireDefault(_);
 
+var _package = require('../package.json');
+
+var _package2 = _interopRequireDefault(_package);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 /* eslint-disable no-console */
+
+
 // eslint-disable-line import/no-unresolved
 
-
-var config = (0, _config.getConfig)();
-var opts = (0, _parseArgs.parseArgs)(config);
-
-var helpText = function helpText(p) {
-  return '\n  ' + p.description + '\n\n  Usage: upssert [options...] [glob]\n\n  Default glob searches in tests/api/**/*.js\n\n  upssert -r tap --url https://httpbin.org/get\n  upssert tests/api/**/*.json\n\n  options:\n    --url           Ping supplied URL\n    --reporter, -r  Set test reporter (tap, console)\n    --help,     -h  Show help\n    --version\n  ';
+// state :: Object -> Object
+var state = function state(proc) {
+  var conf = (0, _config.getConfig)(proc);
+  var args = (0, _parseArgs.parseArgs)(proc, conf);
+  return { args: args, conf: conf };
 };
 
-var versionText = function versionText(p) {
-  return p.version;
-};
+// init :: Object -> IO a
+var init = (0, _ramda.compose)(_ramdaFantasy.Identity, state);
 
-var state = function state(conf) {
-  return {
-    args: (0, _parseArgs.parseArgs)(conf),
-    conf: conf
-  };
-};
+init(process).chain((0, _menu.printMenu)(_package2.default)).runIO();
 
-var setup = (0, _ramda.compose)(state, _config.getConfig);
-
-var showHelp = function showHelp(x) {
-  return x ? (0, _ramdaFantasy.Maybe)(helpText(_package2.default)) : _ramdaFantasy.Maybe.Nothing();
-};
-
-var showVersion = function showVersion(x) {
-  return x ? (0, _ramdaFantasy.Maybe)(versionText(_package2.default)) : _ramdaFantasy.Maybe.Nothing();
-};
-
-var print = function print(x) {
-  console.log(x);
-  return x;
-};
-
-var exit = function exit(code) {
-  return function () {
-    return process.exit(code);
-  };
-};
-
-var printOutput = function printOutput(args) {
-  var f = (0, _ramda.compose)((0, _functionalUtils.bimap)(exit(0), _ramda.identity), (0, _functionalUtils.bimap)(print, _ramda.identity), (0, _ramda.chain)((0, _ramda.compose)((0, _functionalUtils.inverseMaybeEither)(args), showVersion, (0, _ramda.prop)('version'))), (0, _ramda.compose)((0, _functionalUtils.inverseMaybeEither)(args), showHelp, (0, _ramda.prop)('help')));
-  f(args);
-};
-
-printOutput(setup().args);
+var config = (0, _config.getConfig)(process);
+var opts = (0, _parseArgs.parseArgs)(process, config);
 
 var data = void 0;
 if (opts.url) {

@@ -1,36 +1,37 @@
 import { compose, propOr, merge, F, chain } from 'ramda'
 import { readJsonFile } from './util/json'
-import { value, bimap, inverseMaybeEither } from './util/functional-utils'
+import { fold, bimap, inverseMaybeEither } from './util/functional-utils'
 
 // defaultConfig :: Object
-const defaultConfig = () => ({
+const defaultConfig = proc => ({
   globOpts: [],
-  pattern: `${process.cwd()}/test/api/**/*.json`,
+  pattern: `${proc.cwd()}/test/api/**/*.json`,
   envPrefix: false
 })
 
-// readConfig :: String -> String
-const readConfig = file => readJsonFile(`${process.cwd()}/${file}`)
+// readConfig :: String -> Either Object
+const readConfig = compose(inverseMaybeEither(null), readJsonFile)
 
-// readRuncom :: Either String
-const readRuncom = () => {
-  const read = compose(inverseMaybeEither(null), readConfig)
-  return read('.upssertrc')
-}
+// readRuncom :: Object -> Either Object
+const readRuncom = proc => () => readConfig(`${proc.cwd()}/.upssertrc`)
 
-// readClientPackage :: Either String
-const readClientPackage = () => {
-  const read = compose(inverseMaybeEither(null), readConfig)
-  return read('package.json')
+// readClientPackage :: Object -> Either Object
+const readClientPackage = proc => () =>
+  readConfig(`${proc.cwd()}/package.json`)
     .bimap(propOr(null, 'upssert'), F)
+
+// getConfig :: Object -> Object
+const getConfig = proc => {
+  const defaultConf = defaultConfig(proc)
+  const mergeConfig = merge(defaultConf)
+  const f = compose(
+    fold,
+    bimap(mergeConfig, mergeConfig),
+    chain(readClientPackage(proc)),
+    readRuncom(proc)
+  )
+  return f()
 }
-
-// mergeConfigs :: Object -> Object
-const mergeConfigs = merge(defaultConfig())
-
-// getConfig :: Object
-const getConfig =
-  compose(value, bimap(mergeConfigs, mergeConfigs), chain(readClientPackage), readRuncom)
 
 export {
   getConfig

@@ -1,5 +1,5 @@
-import { curry, compose, flatten, map, replace } from 'ramda'
-import { Either } from 'ramda-fantasy'
+import { curry, compose, flatten, map, replace, T } from 'ramda'
+import { Either, Maybe, IO } from 'ramda-fantasy'
 import crypto from 'crypto'
 
 // trace :: String -> a -> a
@@ -9,7 +9,7 @@ const trace = curry((tag, x) => {
 })
 
 // value :: a -> b
-const value = x => x.value
+const fold = x => x.value
 
 // getOrElse :: a -> Maybe -> b
 const getOrElse = curry((x, m) => m.getOrElse(x))
@@ -19,6 +19,9 @@ const flatMap = curry((f) => compose(flatten, map(f)))
 
 // identityOrDefault :: [a] -> a -> [a]
 const arrayOrDefault = curry((args, x) => args.length ? args : [x])
+
+// booleanMaybe :: a -> b -> Maybe a
+const booleanMaybe = curry((a, x) => x ? Maybe(a) : Maybe.Nothing())
 
 // either :: a -> Boolean -> Either a
 const either = curry((a, x) => x ? Either.Right(a) : Either.Left(a))
@@ -53,14 +56,28 @@ const charCodeToString = String.fromCharCode
 // cryptoString :: Integer -> String -> String
 const cryptoString = curry((bytes, to) => crypto.randomBytes(bytes).toString(to))
 
+// bimap :: (a -> b) -> (a -> b) -> Bifunctor -> Bifunctor
 const bimap = curry((f, g, x) => x.bimap(f, g))
+
+// emptyIO :: IO True
+const emptyIO = () => IO(T)
+
+// exit :: Integer -> IO
+const exit = code => () => IO(() => process.exit(code))
+
+// log :: a -> IO a
+const log = x => IO(() => {
+  console.log(x)
+  return x
+})
 
 export {
   trace,
-  value,
+  fold,
   getOrElse,
   flatMap,
   arrayOrDefault,
+  booleanMaybe,
   either,
   inverseEither,
   inverseMaybeEither,
@@ -72,5 +89,8 @@ export {
   entityToHex,
   charCodeToString,
   cryptoString,
-  bimap
+  bimap,
+  emptyIO,
+  exit,
+  log
 }
