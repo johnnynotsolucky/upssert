@@ -115,7 +115,7 @@ class Runner extends EventEmitter {
       failMessage = err.message
       this.emit(events.SUITE_TEST_FAIL, test, err)
     } else {
-      const globals = getGlobals(this.config)
+      const globals = getGlobals(this.config.envPrefix, process.env)
       const data = {
         ...dependencies, ...globals
       }

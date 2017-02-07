@@ -1,28 +1,35 @@
-"use strict";
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+var _ramda = require('ramda');
 
-var envVariables = function envVariables(config) {
-  var env = {};
-  if (config.envPrefix) {
-    Object.keys(process.env).filter(function (key) {
-      return key.indexOf(config.envPrefix) === 0;
-    }).forEach(function (key) {
-      env[key] = process.env[key];
-    });
-  } else {
-    env = _extends({}, process.env);
-  }
-  return env;
+// prefixOrEmpty :: String -> String
+var prefixOrEmpty = function prefixOrEmpty(p) {
+  return p || '';
 };
 
-exports.default = function (config) {
-  var env = envVariables(config);
-  return {
-    env: env
-  };
+// keyWithPrefix :: -> String -> String -> Boolean
+var keyWithPrefix = (0, _ramda.curry)(function (p, k) {
+  return (0, _ramda.indexOf)(prefixOrEmpty(p), k) === 0;
+});
+
+// filterKeysByPrefix -> String -> [String] -> [String]
+var filterKeysByPrefix = function filterKeysByPrefix(p) {
+  return (0, _ramda.filter)(keyWithPrefix(p));
 };
+
+// selectKeys :: String -> Object -> [String]
+var selectKeys = function selectKeys(p) {
+  return (0, _ramda.compose)(filterKeysByPrefix(p), _ramda.keys);
+};
+
+// getGlobals :: String -> Object -> Object
+var getGlobals = (0, _ramda.curry)(function (p, a) {
+  var select = selectKeys(p);
+  return (0, _ramda.pick)(select(a), a);
+});
+
+exports.default = getGlobals;

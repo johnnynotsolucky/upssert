@@ -372,7 +372,7 @@ var Runner = function (_EventEmitter) {
                 break;
 
               case 11:
-                globals = (0, _globals2.default)(this.config);
+                globals = (0, _globals2.default)(this.config.envPrefix, process.env);
                 data = _extends({}, dependencies, globals);
                 httpRequest = new _http.HttpRequest(test.request, data, this.config);
 
