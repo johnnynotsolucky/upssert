@@ -44,7 +44,7 @@ var parseArgs = function parseArgs(proc, _ref) {
   var globByAbsolutePattern = (0, _globber.globByPattern)(cwd(proc), globOptions, '**/*.json');
   var globber = (0, _functionalUtils.flatMap)(globByAbsolutePattern);
   return _extends({}, paramsFromArgs(args), {
-    files: globber((0, _functionalUtils.arrayOrDefault)(args._, pattern))
+    files: globber((0, _functionalUtils.arrayOrDefault)(args._, [pattern]))
   });
 };
 

@@ -24,7 +24,7 @@ const parseArgs = (proc, { globOptions, pattern }) => {
   const globber = flatMap(globByAbsolutePattern)
   return {
     ...paramsFromArgs(args),
-    files: globber(arrayOrDefault(args._, pattern))
+    files: globber(arrayOrDefault(args._, [pattern]))
   }
 }
 

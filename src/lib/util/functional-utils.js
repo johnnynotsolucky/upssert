@@ -17,8 +17,11 @@ const getOrElse = curry((x, m) => m.getOrElse(x))
 // flatMap :: (a -> [b]) -> [c]
 const flatMap = curry((f) => compose(flatten, map(f)))
 
-// identityOrDefault :: [a] -> a -> [a]
-const arrayOrDefault = curry((args, x) => args.length ? args : [x])
+// arrayOrDefault :: [a] -> [a] -> [a]
+const arrayOrDefault = curry((args, x) => args.length ? args : x)
+
+// identityOrDefault :: a -> b -> c
+const identityOrDefault = curry((b, a) => a || b)
 
 // booleanMaybe :: a -> b -> Maybe a
 const booleanMaybe = curry((a, x) => x ? Maybe(a) : Maybe.Nothing())
@@ -77,6 +80,7 @@ export {
   getOrElse,
   flatMap,
   arrayOrDefault,
+  identityOrDefault,
   booleanMaybe,
   either,
   inverseEither,

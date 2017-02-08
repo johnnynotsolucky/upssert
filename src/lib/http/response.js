@@ -1,31 +1,26 @@
+import { curry, either, compose, replace, prop } from 'ramda'
 import camelcase from 'camelcase'
 import contentType from 'content-type'
 import parserFactory from '../parser/factory'
+import { identityOrDefault } from '../util/functional-utils'
 
-const getUrlProtocol = (url) => {
-  let protocol
-  if (url && url.protocol) {
-    protocol = url.protocol.replace(/:/, '')
-  }
-  return protocol
-}
+// getUrlProtocol :: a -> String
+const getUrlProtocol =
+  compose(replace(/:/, ''), identityOrDefault(''), prop('protocol'), identityOrDefault({}))
 
-const calculateResponseTimes = (times) => {
-  const calculated = {
-    dnsResolution: times.onLookup - times.begin,
-    tcpConnection: times.onConnect - times.onLookup,
-    serverProcessing: times.onTransfer - times.onConnect,
-    contentTransfer: times.onTotal - times.onTransfer,
-    nameLookup: times.onLookup - times.begin,
-    connect: times.onConnect - times.begin,
-    startTransfer: times.onTransfer - times.begin,
-    total: times.onTotal - times.begin
-  }
-  return calculated
-}
+const calculateResponseTimes = curry((times, _) => ({
+  dnsResolution: times.onLookup - times.begin,
+  tcpConnection: times.onConnect - times.onLookup,
+  serverProcessing: times.onTransfer - times.onConnect,
+  contentTransfer: times.onTotal - times.onTransfer,
+  nameLookup: times.onLookup - times.begin,
+  connect: times.onConnect - times.begin,
+  startTransfer: times.onTransfer - times.begin,
+  total: times.onTotal - times.begin
+}))
 
-const calculateTlsResponseTimes = (times) => {
-  const calculated = {
+const calculateTlsResponseTimes = curry((times, protocol) =>
+  protocol === 'https' ? {
     dnsResolution: times.onLookup - times.begin,
     tcpConnection: times.onConnect - times.onLookup,
     tlsConnection: times.onSecureConnect - times.onConnect,
@@ -36,22 +31,11 @@ const calculateTlsResponseTimes = (times) => {
     pretransfer: times.onSecureConnect - times.begin,
     startTransfer: times.onTransfer - times.begin,
     total: times.onTotal - times.begin
-  }
-  return calculated
-}
+  } : null)
 
-const calculateResponseTimesByProtocol = (protocol, times) => {
-  let responseTimes
-  switch (protocol) {
-    case 'https':
-      responseTimes = calculateTlsResponseTimes(times)
-      break
-    case 'http':
-    default:
-      responseTimes = calculateResponseTimes(times)
-  }
-  return responseTimes
-}
+// calculateResponseTimesByProtocol :: String -> Object -> Object
+const calculateResponseTimesByProtocol = curry((protocol, times) =>
+  either(calculateTlsResponseTimes(times), calculateResponseTimes(times))(protocol))
 
 const populateHeaders = (responseHeaders) => {
   const headers = {}

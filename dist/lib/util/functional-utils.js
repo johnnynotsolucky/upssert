@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.log = exports.exit = exports.emptyIO = exports.bimap = exports.cryptoString = exports.charCodeToString = exports.entityToHex = exports.toDecimalPrecision = exports.prependStr = exports.appendStr = exports.inverseJoinStr = exports.joinStr = exports.inverseMaybeEither = exports.inverseEither = exports.either = exports.booleanMaybe = exports.arrayOrDefault = exports.flatMap = exports.getOrElse = exports.fold = exports.trace = undefined;
+exports.log = exports.exit = exports.emptyIO = exports.bimap = exports.cryptoString = exports.charCodeToString = exports.entityToHex = exports.toDecimalPrecision = exports.prependStr = exports.appendStr = exports.inverseJoinStr = exports.joinStr = exports.inverseMaybeEither = exports.inverseEither = exports.either = exports.booleanMaybe = exports.identityOrDefault = exports.arrayOrDefault = exports.flatMap = exports.getOrElse = exports.fold = exports.trace = undefined;
 
 var _ramda = require('ramda');
 
@@ -36,9 +36,14 @@ var flatMap = (0, _ramda.curry)(function (f) {
   return (0, _ramda.compose)(_ramda.flatten, (0, _ramda.map)(f));
 });
 
-// identityOrDefault :: [a] -> a -> [a]
+// arrayOrDefault :: [a] -> [a] -> [a]
 var arrayOrDefault = (0, _ramda.curry)(function (args, x) {
-  return args.length ? args : [x];
+  return args.length ? args : x;
+});
+
+// identityOrDefault :: a -> b -> c
+var identityOrDefault = (0, _ramda.curry)(function (b, a) {
+  return a || b;
 });
 
 // booleanMaybe :: a -> b -> Maybe a
@@ -125,6 +130,7 @@ exports.fold = fold;
 exports.getOrElse = getOrElse;
 exports.flatMap = flatMap;
 exports.arrayOrDefault = arrayOrDefault;
+exports.identityOrDefault = identityOrDefault;
 exports.booleanMaybe = booleanMaybe;
 exports.either = either;
 exports.inverseEither = inverseEither;

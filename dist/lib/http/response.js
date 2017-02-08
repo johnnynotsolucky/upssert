@@ -4,6 +4,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _ramda = require('ramda');
+
 var _camelcase = require('camelcase');
 
 var _camelcase2 = _interopRequireDefault(_camelcase);
@@ -16,18 +18,15 @@ var _factory = require('../parser/factory');
 
 var _factory2 = _interopRequireDefault(_factory);
 
+var _functionalUtils = require('../util/functional-utils');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var getUrlProtocol = function getUrlProtocol(url) {
-  var protocol = void 0;
-  if (url && url.protocol) {
-    protocol = url.protocol.replace(/:/, '');
-  }
-  return protocol;
-};
+// getUrlProtocol :: a -> String
+var getUrlProtocol = (0, _ramda.compose)((0, _ramda.replace)(/:/, ''), (0, _functionalUtils.identityOrDefault)(''), (0, _ramda.prop)('protocol'), (0, _functionalUtils.identityOrDefault)({}));
 
-var calculateResponseTimes = function calculateResponseTimes(times) {
-  var calculated = {
+var calculateResponseTimes = (0, _ramda.curry)(function (times, _) {
+  return {
     dnsResolution: times.onLookup - times.begin,
     tcpConnection: times.onConnect - times.onLookup,
     serverProcessing: times.onTransfer - times.onConnect,
@@ -37,11 +36,10 @@ var calculateResponseTimes = function calculateResponseTimes(times) {
     startTransfer: times.onTransfer - times.begin,
     total: times.onTotal - times.begin
   };
-  return calculated;
-};
+});
 
-var calculateTlsResponseTimes = function calculateTlsResponseTimes(times) {
-  var calculated = {
+var calculateTlsResponseTimes = (0, _ramda.curry)(function (times, protocol) {
+  return protocol === 'https' ? {
     dnsResolution: times.onLookup - times.begin,
     tcpConnection: times.onConnect - times.onLookup,
     tlsConnection: times.onSecureConnect - times.onConnect,
@@ -52,22 +50,13 @@ var calculateTlsResponseTimes = function calculateTlsResponseTimes(times) {
     pretransfer: times.onSecureConnect - times.begin,
     startTransfer: times.onTransfer - times.begin,
     total: times.onTotal - times.begin
-  };
-  return calculated;
-};
+  } : null;
+});
 
-var calculateResponseTimesByProtocol = function calculateResponseTimesByProtocol(protocol, times) {
-  var responseTimes = void 0;
-  switch (protocol) {
-    case 'https':
-      responseTimes = calculateTlsResponseTimes(times);
-      break;
-    case 'http':
-    default:
-      responseTimes = calculateResponseTimes(times);
-  }
-  return responseTimes;
-};
+// calculateResponseTimesByProtocol :: String -> Object -> Object
+var calculateResponseTimesByProtocol = (0, _ramda.curry)(function (protocol, times) {
+  return (0, _ramda.either)(calculateTlsResponseTimes(times), calculateResponseTimes(times))(protocol);
+});
 
 var populateHeaders = function populateHeaders(responseHeaders) {
   var headers = {};
