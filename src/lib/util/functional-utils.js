@@ -1,4 +1,4 @@
-import { curry, compose, flatten, map, replace, T } from 'ramda'
+import { curry, compose, flatten, map, replace, head, tail, T } from 'ramda'
 import { Either, Maybe, IO } from 'ramda-fantasy'
 import crypto from 'crypto'
 
@@ -68,6 +68,12 @@ const emptyIO = () => IO(T)
 // exit :: Integer -> IO
 const exit = code => () => IO(() => process.exit(code))
 
+// toInt :: Integer -> String -> Integer
+const toInt = curry((r, x) => parseInt(x, r))
+
+// applyHead :: (a -> b) -> [a] -> [b]
+const applyHead = curry((f, arr) => [f(head(arr)), ...tail(arr)])
+
 // log :: a -> IO a
 const log = x => IO(() => {
   console.log(x)
@@ -96,5 +102,7 @@ export {
   bimap,
   emptyIO,
   exit,
+  toInt,
+  applyHead,
   log
 }

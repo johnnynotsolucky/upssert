@@ -58,34 +58,25 @@ var calculateResponseTimesByProtocol = (0, _ramda.curry)(function (protocol, tim
   return (0, _ramda.either)(calculateTlsResponseTimes(times), calculateResponseTimes(times))(protocol);
 });
 
-var populateHeaders = function populateHeaders(responseHeaders) {
-  var headers = {};
-  if (responseHeaders) {
-    Object.keys(responseHeaders).forEach(function (field) {
-      headers[(0, _camelcase2.default)(field)] = responseHeaders[field];
-    });
-  }
-  return headers;
-};
+// populateHeaders :: a -> b
+var populateHeaders = (0, _ramda.compose)(_ramda.fromPairs, (0, _ramda.map)((0, _functionalUtils.applyHead)(_camelcase2.default)), _ramda.toPairs);
 
-var getContentPropertiesIfApplicable = function getContentPropertiesIfApplicable(headers) {
-  var result = {
-    type: '',
-    charset: 'utf-8',
-    contentLength: 0
+// parseContentType :: a -> String
+var parseContentType = (0, _ramda.compose)((0, _functionalUtils.identityOrDefault)(''), (0, _ramda.prop)('type'), (0, _ramda.tryCatch)(_contentType2.default.parse, function () {
+  return {};
+}), (0, _ramda.prop)('contentType'));
+
+// parseContentLength :: a -> Integer
+var parseContentLength = (0, _ramda.compose)(function (x) {
+  return !isNaN(x) ? x : 0;
+}, (0, _functionalUtils.toInt)(10), (0, _functionalUtils.identityOrDefault)(''), (0, _ramda.prop)('contentLength'));
+
+// getContentProperties :: a -> b
+var getContentProperties = function getContentProperties(headers) {
+  return {
+    type: parseContentType(headers),
+    contentLength: parseContentLength(headers)
   };
-  if (headers.contentType) {
-    var parsed = _contentType2.default.parse(headers.contentType);
-    result.type = parsed.type || '';
-    result.charset = parsed.parameters.charset || 'utf-8';
-  }
-  if (headers.contentLength) {
-    var value = parseInt(headers.contentLength, 10);
-    if (!isNaN(value)) {
-      result.contentLength = value;
-    }
-  }
-  return result;
 };
 
 exports.default = function (result) {
@@ -93,7 +84,7 @@ exports.default = function (result) {
   var protocol = getUrlProtocol(result.url);
   var timing = calculateResponseTimesByProtocol(protocol, result.time);
   var headers = populateHeaders(result.response.headers);
-  var contentProperties = getContentPropertiesIfApplicable(headers);
+  var contentProperties = getContentProperties(headers);
   var type = contentProperties.type,
       contentLength = contentProperties.contentLength;
 

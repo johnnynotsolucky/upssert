@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.log = exports.exit = exports.emptyIO = exports.bimap = exports.cryptoString = exports.charCodeToString = exports.entityToHex = exports.toDecimalPrecision = exports.prependStr = exports.appendStr = exports.inverseJoinStr = exports.joinStr = exports.inverseMaybeEither = exports.inverseEither = exports.either = exports.booleanMaybe = exports.identityOrDefault = exports.arrayOrDefault = exports.flatMap = exports.getOrElse = exports.fold = exports.trace = undefined;
+exports.log = exports.applyHead = exports.toInt = exports.exit = exports.emptyIO = exports.bimap = exports.cryptoString = exports.charCodeToString = exports.entityToHex = exports.toDecimalPrecision = exports.prependStr = exports.appendStr = exports.inverseJoinStr = exports.joinStr = exports.inverseMaybeEither = exports.inverseEither = exports.either = exports.booleanMaybe = exports.identityOrDefault = exports.arrayOrDefault = exports.flatMap = exports.getOrElse = exports.fold = exports.trace = undefined;
 
 var _ramda = require('ramda');
 
@@ -14,6 +14,8 @@ var _crypto = require('crypto');
 var _crypto2 = _interopRequireDefault(_crypto);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 // trace :: String -> a -> a
 var trace = (0, _ramda.curry)(function (tag, x) {
@@ -117,6 +119,16 @@ var exit = function exit(code) {
   };
 };
 
+// toInt :: Integer -> String -> Integer
+var toInt = (0, _ramda.curry)(function (r, x) {
+  return parseInt(x, r);
+});
+
+// applyHead :: (a -> b) -> [a] -> [b]
+var applyHead = (0, _ramda.curry)(function (f, arr) {
+  return [f((0, _ramda.head)(arr))].concat(_toConsumableArray((0, _ramda.tail)(arr)));
+});
+
 // log :: a -> IO a
 var log = function log(x) {
   return (0, _ramdaFantasy.IO)(function () {
@@ -146,4 +158,6 @@ exports.cryptoString = cryptoString;
 exports.bimap = bimap;
 exports.emptyIO = emptyIO;
 exports.exit = exit;
+exports.toInt = toInt;
+exports.applyHead = applyHead;
 exports.log = log;

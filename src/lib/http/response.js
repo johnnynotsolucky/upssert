@@ -1,8 +1,18 @@
-import { curry, either, compose, replace, prop } from 'ramda'
+import {
+  map,
+  tryCatch,
+  toPairs,
+  fromPairs,
+  curry,
+  either,
+  compose,
+  replace,
+  prop
+} from 'ramda'
 import camelcase from 'camelcase'
 import contentType from 'content-type'
 import parserFactory from '../parser/factory'
-import { identityOrDefault } from '../util/functional-utils'
+import { identityOrDefault, toInt, applyHead } from '../util/functional-utils'
 
 // getUrlProtocol :: a -> String
 const getUrlProtocol =
@@ -37,42 +47,39 @@ const calculateTlsResponseTimes = curry((times, protocol) =>
 const calculateResponseTimesByProtocol = curry((protocol, times) =>
   either(calculateTlsResponseTimes(times), calculateResponseTimes(times))(protocol))
 
-const populateHeaders = (responseHeaders) => {
-  const headers = {}
-  if (responseHeaders) {
-    Object.keys(responseHeaders).forEach((field) => {
-      headers[camelcase(field)] = responseHeaders[field]
-    })
-  }
-  return headers
-}
+// populateHeaders :: a -> b
+const populateHeaders = compose(fromPairs, map(applyHead(camelcase)), toPairs)
 
-const getContentPropertiesIfApplicable = (headers) => {
-  const result = {
-    type: '',
-    charset: 'utf-8',
-    contentLength: 0
-  }
-  if (headers.contentType) {
-    const parsed = contentType.parse(headers.contentType)
-    result.type = parsed.type || ''
-    result.charset = parsed.parameters.charset || 'utf-8'
-  }
-  if (headers.contentLength) {
-    const value = parseInt(headers.contentLength, 10)
-    if (!isNaN(value)) {
-      result.contentLength = value
-    }
-  }
-  return result
-}
+// parseContentType :: a -> String
+const parseContentType =
+  compose(
+    identityOrDefault(''),
+    prop('type'),
+    tryCatch(contentType.parse, () => ({})),
+    prop('contentType')
+  )
+
+// parseContentLength :: a -> Integer
+const parseContentLength =
+  compose(
+    x => !isNaN(x) ? x : 0,
+    toInt(10),
+    identityOrDefault(''),
+    prop('contentLength')
+  )
+
+// getContentProperties :: a -> b
+const getContentProperties = (headers) => ({
+  type: parseContentType(headers),
+  contentLength: parseContentLength(headers)
+})
 
 export default (result) => {
   const statusCode = result.response.statusCode
   const protocol = getUrlProtocol(result.url)
   const timing = calculateResponseTimesByProtocol(protocol, result.time)
   const headers = populateHeaders(result.response.headers)
-  const contentProperties = getContentPropertiesIfApplicable(headers)
+  const contentProperties = getContentProperties(headers)
   const { type, contentLength } = contentProperties
   const parser = parserFactory(type)
   const body = parser(result.response.body)
